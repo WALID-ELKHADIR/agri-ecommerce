@@ -1,3 +1,5 @@
+import { siteConfig, whatsappUrl } from "./site-config";
+
 export type Category = {
   id: string;
   label: string;
@@ -31,21 +33,11 @@ export type GalleryImage = {
   contain?: boolean;
 };
 
-export const BRAND = {
-  name: "AgriFlow",
-  tagline: "Irrigation & pompage agricole",
-  phoneDisplay: "+212 6 00 00 00 00",
-  phoneRaw: "+212600000000",
-  email: "contact@agriflow.ma",
-  address: "Casablanca, Maroc — livraison nationale",
-  hours: "Lun – Sam · 8h30 – 18h30",
-};
+/** Coordonnées de l'entreprise : à régler via les variables `NEXT_PUBLIC_*` (voir `.env.example`). */
+export const BRAND = siteConfig;
 
-/**
- * Remplacez ce numéro par le numéro WhatsApp réel de l'entreprise.
- * Format international sans "+" ni espaces (ex: 212612345678).
- */
-export const WHATSAPP_NUMBER = "212600000000";
+/** Numéro WhatsApp au format international, chiffres uniquement. */
+export const WHATSAPP_NUMBER = siteConfig.whatsappNumber;
 
 export const categories: Category[] = [
   {
@@ -335,7 +327,7 @@ export const galleryImages: GalleryImage[] = [
 ];
 
 export function whatsappLink(message: string) {
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  return whatsappUrl(message);
 }
 
 export function generalMessage() {

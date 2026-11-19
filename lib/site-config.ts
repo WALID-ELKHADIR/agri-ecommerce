@@ -1,0 +1,110 @@
+/**
+ * Coordonnées et réglages publics du site, lus depuis les variables
+ * d'environnement `NEXT_PUBLIC_*` avec des valeurs de repli.
+ *
+ * Module sans dépendance Next : il est importé tel quel par les tests Node.
+ */
+
+export type SiteEnvKey =
+  | "NEXT_PUBLIC_WHATSAPP_NUMBER"
+  | "NEXT_PUBLIC_PHONE"
+  | "NEXT_PUBLIC_CONTACT_EMAIL"
+  | "NEXT_PUBLIC_ADDRESS"
+  | "NEXT_PUBLIC_HOURS"
+  | "NEXT_PUBLIC_SITE_URL";
+
+export type SiteEnv = Partial<Record<SiteEnvKey, string | undefined>>;
+
+export type SiteConfig = {
+  name: string;
+  tagline: string;
+  /** Format international, chiffres uniquement (ex. 212612345678). */
+  whatsappNumber: string;
+  phoneDisplay: string;
+  /** Pour les liens `tel:` (ex. +212612345678). */
+  phoneRaw: string;
+  email: string;
+  address: string;
+  hours: string;
+  /** URL absolue, sans slash final. */
+  siteUrl: string;
+};
+
+export const FALLBACK_SITE_CONFIG: SiteConfig = {
+  name: "AgriFlow",
+  tagline: "Irrigation & pompage agricole",
+  whatsappNumber: "212600000000",
+  phoneDisplay: "+212 6 00 00 00 00",
+  phoneRaw: "+212600000000",
+  email: "contact@agriflow.ma",
+  address: "Casablanca, Maroc — livraison nationale",
+  hours: "Lun – Sam · 8h30 – 18h30",
+  siteUrl: "https://agriflow.ma",
+};
+
+function text(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : undefined;
+}
+
+/** Chiffres seuls, 8 à 15 chiffres (norme E.164), sinon `undefined`. */
+function phoneDigits(value: string | undefined): string | undefined {
+  const digits = text(value)?.replace(/\D/g, "");
+  return digits && digits.length >= 8 && digits.length <= 15 ? digits : undefined;
+}
+
+function absoluteUrl(value: string | undefined): string | undefined {
+  const raw = text(value);
+  if (!raw) return undefined;
+  try {
+    const url = new URL(raw);
+    return url.protocol === "http:" || url.protocol === "https:"
+      ? url.href.replace(/\/+$/, "")
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export function readSiteConfig(env: SiteEnv): SiteConfig {
+  const fallback = FALLBACK_SITE_CONFIG;
+  const whatsappNumber = phoneDigits(env.NEXT_PUBLIC_WHATSAPP_NUMBER);
+  const phone = text(env.NEXT_PUBLIC_PHONE);
+  const phoneNumber = phoneDigits(phone);
+
+  if (env.NEXT_PUBLIC_WHATSAPP_NUMBER && !whatsappNumber) {
+    console.warn(
+      "[site-config] NEXT_PUBLIC_WHATSAPP_NUMBER invalide : numéro de repli utilisé.",
+    );
+  }
+
+  return {
+    name: fallback.name,
+    tagline: fallback.tagline,
+    whatsappNumber: whatsappNumber ?? fallback.whatsappNumber,
+    phoneDisplay: phone && phoneNumber ? phone : fallback.phoneDisplay,
+    phoneRaw: phoneNumber ? `+${phoneNumber}` : fallback.phoneRaw,
+    email: text(env.NEXT_PUBLIC_CONTACT_EMAIL) ?? fallback.email,
+    address: text(env.NEXT_PUBLIC_ADDRESS) ?? fallback.address,
+    hours: text(env.NEXT_PUBLIC_HOURS) ?? fallback.hours,
+    siteUrl: absoluteUrl(env.NEXT_PUBLIC_SITE_URL) ?? fallback.siteUrl,
+  };
+}
+
+// Chaque variable est lue littéralement : Next ne remplace dans le code client
+// que les accès `process.env.NEXT_PUBLIC_X` écrits en toutes lettres.
+export const siteConfig: SiteConfig = readSiteConfig({
+  NEXT_PUBLIC_WHATSAPP_NUMBER: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER,
+  NEXT_PUBLIC_PHONE: process.env.NEXT_PUBLIC_PHONE,
+  NEXT_PUBLIC_CONTACT_EMAIL: process.env.NEXT_PUBLIC_CONTACT_EMAIL,
+  NEXT_PUBLIC_ADDRESS: process.env.NEXT_PUBLIC_ADDRESS,
+  NEXT_PUBLIC_HOURS: process.env.NEXT_PUBLIC_HOURS,
+  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+});
+
+export function whatsappUrl(
+  message: string,
+  number: string = siteConfig.whatsappNumber,
+): string {
+  return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+}
