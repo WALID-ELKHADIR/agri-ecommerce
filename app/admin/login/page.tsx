@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { ArrowLeft, Droplet, ShieldCheck, WhatsApp } from "@/components/icons";
+import { Logo } from "@/components/brand/logo";
+import { ArrowLeft, ShieldCheck, WhatsApp } from "@/components/icons";
 import { signInAction } from "@/lib/actions/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/public";
 
@@ -32,15 +33,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
 
       <div className="relative w-full max-w-sm">
         <div className="flex items-center justify-center gap-2.5">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-teal-500 text-[#0A2540] shadow-lg shadow-cyan-900/30">
-            <Droplet className="h-5 w-5" />
-          </span>
-          <span>
-            <span className="block text-base font-bold text-white">Saqia</span>
-            <span className="block text-[10px] font-semibold uppercase tracking-[0.22em] text-cyan-300/70">
-              Administration
-            </span>
-          </span>
+          <Logo tone="inverse" title="Saqia, administration" className="h-10 w-auto" />
         </div>
 
         <Suspense fallback={<LoginCard />}>

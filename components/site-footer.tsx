@@ -8,7 +8,7 @@ import {
   Truck,
   WhatsApp,
 } from "@/components/icons";
-import { Logo } from "@/components/logo";
+import { Logo } from "@/components/brand/logo";
 import {
   BRAND,
   generalMessage,
@@ -38,7 +38,7 @@ export function SiteFooter() {
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.3fr]">
           <div>
             <Link href="/" aria-label="Saqia — accueil">
-              <Logo />
+              <Logo className="h-10 w-auto" />
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-600">
               Matériel d’irrigation et de pompage pour les agriculteurs et les

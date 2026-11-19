@@ -13,7 +13,7 @@ import {
   WhatsApp,
   X,
 } from "@/components/icons";
-import { Logo } from "@/components/logo";
+import { Logo } from "@/components/brand/logo";
 import { catalogFilters } from "@/lib/catalog-filters";
 import { BRAND, generalMessage, whatsappLink } from "@/lib/catalog";
 
@@ -73,7 +73,7 @@ export function SiteHeader() {
       <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-[#f5f8fb]/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
           <Link href="/" aria-label="Saqia — accueil">
-            <Logo />
+            <Logo className="h-9 w-auto" />
           </Link>
 
           <nav className="ml-6 hidden items-center gap-0.5 lg:flex">

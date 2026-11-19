@@ -5,13 +5,13 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import {
   ArrowUpRight,
-  Droplet,
   Gauge,
   Headset,
   Layers,
   LogOut,
   Menu,
 } from "@/components/icons";
+import { Logo } from "@/components/brand/logo";
 import { signOutAction } from "@/lib/actions/auth";
 
 const links = [
@@ -27,15 +27,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-[#eef2f7] lg:grid lg:grid-cols-[260px_1fr]">
       <aside className="sticky top-0 z-40 hidden h-screen flex-col bg-[#0A2540] p-5 lg:flex">
         <Link href="/admin" className="flex items-center gap-2.5">
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-teal-500 text-[#0A2540]">
-            <Droplet className="h-5 w-5" />
-          </span>
-          <span>
-            <span className="block text-sm font-bold text-white">Saqia</span>
-            <span className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-300/70">
-              Administration
-            </span>
-          </span>
+          <Logo tone="inverse" title="Saqia" className="h-8 w-auto" />
+          <span className="sr-only">Administration</span>
         </Link>
 
         <nav className="mt-8 grid gap-1">
@@ -92,12 +85,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
         <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur lg:hidden">
           <div className="flex items-center justify-between gap-3">
             <Link href="/admin" className="flex items-center gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0A2540] text-cyan-300">
-                <Droplet className="h-4 w-4" />
-              </span>
-              <span className="text-sm font-bold text-[#0A2540]">
-                Saqia <span className="text-cyan-700">Admin</span>
-              </span>
+              <Logo title="Saqia" className="h-7 w-auto" />
+              <span className="text-sm font-semibold text-[#6b6352]">Admin</span>
             </Link>
             <details className="relative">
               <summary className="flex h-9 w-9 cursor-pointer list-none items-center justify-center rounded-xl border border-slate-300 text-[#0A2540]">
