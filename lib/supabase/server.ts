@@ -11,13 +11,15 @@ const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
  * Server Components / Server Actions — jamais dans un scope `use cache`.
  */
 export async function createSupabaseServerClient() {
+  // Lire les cookies en premier marque la page comme dynamique : sans cela,
+  // l'erreur de configuration ci-dessous ferait échouer le pré-rendu au build.
+  const cookieStore = await cookies();
+
   if (!url || !anonKey) {
     throw new Error(
       "Supabase n'est pas configuré : renseignez NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY dans .env.local",
     );
   }
-
-  const cookieStore = await cookies();
 
   return createServerClient(url, anonKey, {
     cookies: {
