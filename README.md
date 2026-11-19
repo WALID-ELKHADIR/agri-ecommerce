@@ -51,6 +51,10 @@ Les migrations sont dans `supabase/migrations/` et s'appliquent **dans l'ordre d
 
 Règle du projet : une migration déjà appliquée n'est jamais modifiée. Tout changement passe par une nouvelle migration.
 
+> ⚠️ **Ordre de déploiement** : appliquez les migrations **avant** de déployer le code qui en dépend. Par exemple, sans `20261119100000_admin_rls.sql`, l'admin affiche « Impossible de vérifier vos droits ».
+>
+> ⚠️ **Ne relancez pas une ancienne migration seule** : relancer `20261118000000_init.sql` après `20261119100000_admin_rls.sql` remettrait les anciennes policies permissives. Pour rejouer, relancez toutes les migrations dans l'ordre.
+
 ## Créer un administrateur
 
 Seuls les comptes listés dans la table `admin_users` accèdent à l'admin. Un compte connecté qui n'y figure pas est déconnecté automatiquement, et la base refuse aussi ses écritures (RLS).
