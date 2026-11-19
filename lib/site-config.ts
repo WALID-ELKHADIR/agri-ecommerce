@@ -47,10 +47,34 @@ function text(value: string | undefined): string | undefined {
   return trimmed ? trimmed : undefined;
 }
 
-/** Chiffres seuls, 8 à 15 chiffres (norme E.164), sinon `undefined`. */
+const MOROCCO_COUNTRY_CODE = "212";
+
+/**
+ * Numéro international en chiffres seuls (norme E.164 : 8 à 15 chiffres,
+ * indicatif pays sans 0 initial), sinon `undefined`.
+ * Accepte « +212 6… », « 00212 6… », « +212 (0)6… » et le format national
+ * marocain « 06 12 34 56 78 ».
+ */
 function phoneDigits(value: string | undefined): string | undefined {
-  const digits = text(value)?.replace(/\D/g, "");
-  return digits && digits.length >= 8 && digits.length <= 15 ? digits : undefined;
+  const raw = text(value)?.replace(/\(0\)/g, "");
+  let digits = raw?.replace(/\D/g, "");
+  if (!digits) return undefined;
+
+  if (digits.startsWith("00")) {
+    digits = digits.slice(2);
+  } else if (digits.length === 10 && digits.startsWith("0")) {
+    digits = MOROCCO_COUNTRY_CODE + digits.slice(1);
+  }
+
+  const valid = !digits.startsWith("0") && digits.length >= 8 && digits.length <= 15;
+  return valid ? digits : undefined;
+}
+
+/** Avertit au build / côté serveur uniquement, jamais dans la console des visiteurs. */
+function warnInvalid(variable: SiteEnvKey): void {
+  if (typeof window === "undefined") {
+    console.warn(`[site-config] ${variable} invalide : valeur de repli utilisée.`);
+  }
 }
 
 function absoluteUrl(value: string | undefined): string | undefined {
@@ -72,10 +96,11 @@ export function readSiteConfig(env: SiteEnv): SiteConfig {
   const phone = text(env.NEXT_PUBLIC_PHONE);
   const phoneNumber = phoneDigits(phone);
 
-  if (env.NEXT_PUBLIC_WHATSAPP_NUMBER && !whatsappNumber) {
-    console.warn(
-      "[site-config] NEXT_PUBLIC_WHATSAPP_NUMBER invalide : numéro de repli utilisé.",
-    );
+  if (text(env.NEXT_PUBLIC_WHATSAPP_NUMBER) && !whatsappNumber) {
+    warnInvalid("NEXT_PUBLIC_WHATSAPP_NUMBER");
+  }
+  if (phone && !phoneNumber) {
+    warnInvalid("NEXT_PUBLIC_PHONE");
   }
 
   return {

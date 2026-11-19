@@ -7,6 +7,19 @@ test("normalise un numéro WhatsApp saisi avec +, espaces et tirets", () => {
   assert.equal(config.whatsappNumber, "212612345678");
 });
 
+test("accepte les formats marocains courants : national, préfixe 00 et (0)", () => {
+  for (const value of ["06 12 34 56 78", "0612345678", "00212 6 12 34 56 78", "+212 (0)6 12 34 56 78"]) {
+    const config = readSiteConfig({ NEXT_PUBLIC_WHATSAPP_NUMBER: value, NEXT_PUBLIC_PHONE: value });
+    assert.equal(config.whatsappNumber, "212612345678", `valeur: ${value}`);
+    assert.equal(config.phoneRaw, "+212612345678", `valeur: ${value}`);
+  }
+});
+
+test("refuse un numéro qui commence par 0 sans être un numéro national marocain", () => {
+  const config = readSiteConfig({ NEXT_PUBLIC_WHATSAPP_NUMBER: "0123" + "456789012" });
+  assert.equal(config.whatsappNumber, FALLBACK_SITE_CONFIG.whatsappNumber);
+});
+
 test("revient au numéro de repli si la valeur est vide, invalide ou de mauvaise longueur", () => {
   for (const value of [undefined, "", "abc", "1234567", "1234567890123456"]) {
     const config = readSiteConfig({ NEXT_PUBLIC_WHATSAPP_NUMBER: value });
