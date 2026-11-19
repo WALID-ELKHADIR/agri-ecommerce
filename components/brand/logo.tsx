@@ -7,7 +7,7 @@ type LogoProps = {
   lang?: LogoLang;
   /** Nom accessible. Sans titre, le logo est décoratif (aria-hidden). */
   title?: string;
-  /** Taille : fixez la hauteur (ex. `h-8 w-auto`). */
+  /** Taille : fixez la hauteur (ex. `h-8 w-auto`). En ton « mono », la couleur suit `color` (currentColor). */
   className?: string;
   /** Proportions renforcées pour les très petites tailles (≤ 32 px). */
   small?: boolean;
@@ -29,7 +29,15 @@ export function Logo({
   animated = false,
 }: LogoProps) {
   const maskId = `saqia-${useId().replace(/[^a-zA-Z0-9-]/g, "")}`;
-  const { viewBox, width, height, inner } = logoMarkup({ variant, tone, lang, maskId, small });
+  const { viewBox, width, height, inner } = logoMarkup({
+    variant,
+    tone,
+    lang,
+    maskId,
+    small,
+    animatable: animated,
+    currentColor: true,
+  });
 
   return (
     <svg

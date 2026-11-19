@@ -81,7 +81,7 @@ export default function BrandPage() {
               <Logo tone="inverse" title="Saqia, inversé" className="h-14 w-auto" />
             </Tile>
             <Tile>
-              <Logo tone="mono" title="Saqia, monochrome" className="h-14 w-auto" />
+              <Logo tone="mono" title="Saqia, monochrome" className="h-14 w-auto text-[#1f1c16]" />
             </Tile>
             <Tile>
               <Logo lang="ar" title="ساقية" className="h-14 w-auto" />

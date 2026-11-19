@@ -48,20 +48,38 @@ const LOCKUP_BASELINE = 55;
 
 export type LogoMarkup = { viewBox: string; width: number; height: number; inner: string };
 
-function symbolInner(tone: LogoTone, maskId: string, size: "standard" | "small", x = 0): string {
-  const c = TONES[tone];
+type Colors = { field: string; water: string; text: string };
+
+type SymbolDrawing = {
+  colors: Colors;
+  maskId: string;
+  size: "standard" | "small";
+  x?: number;
+  animatable: boolean;
+};
+
+function symbolInner({ colors, maskId, size, x = 0, animatable }: SymbolDrawing): string {
   const g = GEOMETRY[size];
   const t = x ? ` transform="translate(${x} 0)"` : "";
+  const tile = `<rect width="64" height="64" rx="${g.radius}"/>`;
+  // Attributs utiles seulement au tracé animé du composant React.
+  const animation = animatable ? ` class="saqia-channel" pathLength="1"` : "";
   return (
     `<g${t}>` +
     `<mask id="${maskId}" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64">` +
     `<rect width="64" height="64" fill="#fff"/>` +
     `<path d="${CHANNEL_PATH}" fill="none" stroke="#000" stroke-width="${g.cut}"/>` +
     `</mask>` +
-    `<rect width="64" height="64" rx="${g.radius}" fill="${c.field}" mask="url(#${maskId})"/>` +
-    `<path class="saqia-channel" d="${CHANNEL_PATH}" fill="none" stroke="${c.water}" stroke-width="${g.channel}" pathLength="1"/>` +
+    // Le canal est découpé selon la parcelle : rien ne dépasse des coins arrondis.
+    `<clipPath id="${maskId}-clip">${tile}</clipPath>` +
+    `<rect width="64" height="64" rx="${g.radius}" fill="${colors.field}" mask="url(#${maskId})"/>` +
+    `<path${animation} d="${CHANNEL_PATH}" fill="none" stroke="${colors.water}" stroke-width="${g.channel}" clip-path="url(#${maskId}-clip)"/>` +
     `</g>`
   );
+}
+
+function escapeXml(text: string): string {
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 function wordmarkInner(outline: WordmarkOutline, scale: number, x: number, y: number, fill: string): string {
@@ -81,6 +99,10 @@ export type LogoOptions = {
   maskId?: string;
   /** Proportions renforcées pour les très petites tailles. */
   small?: boolean;
+  /** Ajoute les attributs du tracé animé (composant React uniquement). */
+  animatable?: boolean;
+  /** Ton « mono » en `currentColor` : le logo suit la couleur du texte (React). */
+  currentColor?: boolean;
 };
 
 /** Contenu SVG (sans la balise <svg>) et dimensions du logo demandé. */
@@ -90,9 +112,15 @@ export function logoMarkup({
   lang = "fr",
   maskId = "saqia-parcelle",
   small = false,
+  animatable = false,
+  currentColor = false,
 }: LogoOptions = {}): LogoMarkup {
-  const c = TONES[tone];
+  const c: Colors =
+    tone === "mono" && currentColor
+      ? { field: "currentColor", water: "currentColor", text: "currentColor" }
+      : TONES[tone];
   const size = small ? "small" : "standard";
+  const drawing = { colors: c, maskId, size, animatable } as const;
   const outline = lang === "ar" ? WORDMARK_ARABIC : WORDMARK_LATIN;
   const scale = lang === "ar" ? ARABIC_SCALE : LATIN_SCALE;
   const wordWidth = outline.width * scale;
@@ -100,7 +128,7 @@ export function logoMarkup({
   const wordTop = LOCKUP_BASELINE - outline.baseline * scale;
 
   if (variant === "symbol") {
-    return { viewBox: "0 0 64 64", width: 64, height: 64, inner: symbolInner(tone, maskId, size) };
+    return { viewBox: "0 0 64 64", width: 64, height: 64, inner: symbolInner(drawing) };
   }
 
   if (variant === "wordmark") {
@@ -114,8 +142,8 @@ export function logoMarkup({
   // Lecture de droite à gauche en arabe : le symbole passe à droite.
   const inner =
     lang === "ar"
-      ? wordmarkInner(outline, scale, 0, wordTop, c.text) + symbolInner(tone, maskId, size, width - SYMBOL_SIZE)
-      : symbolInner(tone, maskId, size) + wordmarkInner(outline, scale, SYMBOL_SIZE + LOCKUP_GAP, wordTop, c.text);
+      ? wordmarkInner(outline, scale, 0, wordTop, c.text) + symbolInner({ ...drawing, x: width - SYMBOL_SIZE })
+      : symbolInner(drawing) + wordmarkInner(outline, scale, SYMBOL_SIZE + LOCKUP_GAP, wordTop, c.text);
 
   return { viewBox: `0 0 ${width} ${height}`, width, height, inner };
 }
@@ -125,7 +153,7 @@ export function logoSvgDocument(options: LogoOptions & { title?: string; pixelWi
   const { viewBox, width, height, inner } = logoMarkup(options);
   const pixelWidth = options.pixelWidth ?? width;
   const pixelHeight = round((pixelWidth * height) / width);
-  const title = options.title ? `<title>${options.title}</title>` : "";
+  const title = options.title ? `<title>${escapeXml(options.title)}</title>` : "";
   return (
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="${pixelWidth}" height="${pixelHeight}" role="img">` +
     `${title}${inner}</svg>`
