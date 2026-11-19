@@ -465,7 +465,7 @@ export function HomePage({ products }: { products: Product[] }) {
                         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-water-50 text-water-700">
                           <Icon className="h-5 w-5" />
                         </span>
-                        <span className="text-xs font-semibold tracking-[0.16em] text-soil-300">
+                        <span className="text-xs font-semibold tracking-[0.16em] text-field-600">
                           0{index + 1}
                         </span>
                       </div>

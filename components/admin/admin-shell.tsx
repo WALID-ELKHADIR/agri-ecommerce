@@ -65,7 +65,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             <ArrowUpRight className="h-3.5 w-3.5" />
           </Link>
 
-          <p className="truncate px-1 text-[11px] text-soil-500">
+          <p className="truncate px-1 text-[11px] text-soil-300">
             Espace administrateur
           </p>
 

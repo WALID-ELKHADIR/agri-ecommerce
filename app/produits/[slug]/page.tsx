@@ -118,11 +118,11 @@ async function ProductDetail({ slug }: { slug: string }) {
             <Link href="/" className="relative after:absolute after:-inset-x-2 after:-inset-y-4 after:content-[''] transition hover:text-water-300">
               Accueil
             </Link>
-            <span className="mx-2 text-soil-600">/</span>
+            <span aria-hidden="true" className="mx-2 text-soil-600">/</span>
             <Link href="/produits" className="relative after:absolute after:-inset-x-2 after:-inset-y-4 after:content-[''] transition hover:text-water-300">
               Produits
             </Link>
-            <span className="mx-2 text-soil-600">/</span>
+            <span aria-hidden="true" className="mx-2 text-soil-600">/</span>
             <span className="text-soil-200">{product.name}</span>
           </nav>
         </div>

@@ -44,11 +44,11 @@ export default async function ProduitsPage() {
           <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-water-500/20 blur-3xl" />
 
           <div className="relative mx-auto max-w-7xl px-4 pb-10 pt-8 sm:pb-12 sm:pt-10">
-            <nav aria-label="Fil d'Ariane" className="text-xs text-soil-500">
+            <nav aria-label="Fil d'Ariane" className="text-xs text-soil-300">
               <Link href="/" className="relative after:absolute after:-inset-x-2 after:-inset-y-4 after:content-[''] transition hover:text-water-300">
                 Accueil
               </Link>
-              <span className="mx-2 text-soil-600">/</span>
+              <span aria-hidden="true" className="mx-2 text-soil-400">/</span>
               <span className="text-soil-200">Produits</span>
             </nav>
 
