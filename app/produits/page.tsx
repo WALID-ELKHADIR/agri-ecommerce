@@ -8,7 +8,7 @@ import { SiteHeader } from "@/components/site-header";
 import { getCatalog } from "@/lib/catalog-data";
 
 export const metadata: Metadata = {
-  title: "Catalogue — Pompes, raccords et kits d'irrigation | AgriFlow",
+  title: "Catalogue — Pompes, raccords et kits d'irrigation | Saqia",
   description:
     "Découvrez notre catalogue de pompes centrifuges et immergées, raccords PE/PVC et kits de pompage. Devis technique sous 24h.",
 };

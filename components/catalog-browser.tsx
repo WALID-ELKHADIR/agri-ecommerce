@@ -12,6 +12,7 @@ import { ProductCard } from "@/components/product-card";
 import { QuickView } from "@/components/quick-view";
 import { catalogFilters } from "@/lib/catalog-filters";
 import {
+  BRAND,
   generalMessage,
   whatsappLink,
   type Category,
@@ -264,7 +265,7 @@ export function CatalogBrowser({
           </p>
           <a
             href={whatsappLink(
-              "Bonjour AgriFlow 👋, je recherche un produit spécifique qui n'est pas dans le catalogue. Pouvez-vous m'aider ?",
+              `Bonjour ${BRAND.name} 👋, je recherche un produit spécifique qui n'est pas dans le catalogue. Pouvez-vous m'aider ?`,
             )}
             target="_blank"
             rel="noopener noreferrer"

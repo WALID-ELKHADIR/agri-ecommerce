@@ -6,7 +6,7 @@ import { signInAction } from "@/lib/actions/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/public";
 
 export const metadata: Metadata = {
-  title: "Connexion — Administration AgriFlow",
+  title: "Connexion — Administration Saqia",
   robots: { index: false, follow: false },
 };
 
@@ -36,7 +36,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
             <Droplet className="h-5 w-5" />
           </span>
           <span>
-            <span className="block text-base font-bold text-white">AgriFlow</span>
+            <span className="block text-base font-bold text-white">Saqia</span>
             <span className="block text-[10px] font-semibold uppercase tracking-[0.22em] text-cyan-300/70">
               Administration
             </span>

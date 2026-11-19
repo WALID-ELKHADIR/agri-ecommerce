@@ -17,6 +17,9 @@ export type SiteEnv = Partial<Record<SiteEnvKey, string | undefined>>;
 
 export type SiteConfig = {
   name: string;
+  /** Slogan de marque. */
+  slogan: string;
+  /** Sous-titre descriptif (métadonnées, pied de page). */
   tagline: string;
   /** Format international, chiffres uniquement (ex. 212612345678). */
   whatsappNumber: string;
@@ -31,15 +34,16 @@ export type SiteConfig = {
 };
 
 export const FALLBACK_SITE_CONFIG: SiteConfig = {
-  name: "AgriFlow",
-  tagline: "Irrigation & pompage agricole",
+  name: "Saqia",
+  slogan: "L’eau au bon endroit.",
+  tagline: "Pompes & irrigation — devis sur WhatsApp",
   whatsappNumber: "212600000000",
   phoneDisplay: "+212 6 00 00 00 00",
   phoneRaw: "+212600000000",
-  email: "contact@agriflow.ma",
+  email: "contact@saqia.com",
   address: "Casablanca, Maroc — livraison nationale",
   hours: "Lun – Sam · 8h30 – 18h30",
-  siteUrl: "https://agriflow.ma",
+  siteUrl: "https://saqia.com",
 };
 
 function text(value: string | undefined): string | undefined {
@@ -105,6 +109,7 @@ export function readSiteConfig(env: SiteEnv): SiteConfig {
 
   return {
     name: fallback.name,
+    slogan: fallback.slogan,
     tagline: fallback.tagline,
     whatsappNumber: whatsappNumber ?? fallback.whatsappNumber,
     phoneDisplay: phone && phoneNumber ? phone : fallback.phoneDisplay,

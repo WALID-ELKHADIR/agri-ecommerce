@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowRight, Check, WhatsApp } from "@/components/icons";
 import { saveQuoteRequest } from "@/lib/actions/quotes";
-import { whatsappLink } from "@/lib/catalog";
+import { BRAND, whatsappLink } from "@/lib/catalog";
 
 const profiles = [
   "Agriculteur / exploitation",
@@ -34,7 +34,7 @@ export function QuoteForm() {
     event.preventDefault();
 
     const message = [
-      "Bonjour AgriFlow 👋,",
+      `Bonjour ${BRAND.name} 👋,`,
       "Je souhaite un devis pour du matériel d'irrigation / de pompage.",
       "",
       name ? `• Nom : ${name}` : null,

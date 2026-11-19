@@ -46,11 +46,11 @@ export async function generateMetadata({
   const product = await getProductBySlug(slug);
 
   if (!product) {
-    return { title: "Produit introuvable | AgriFlow" };
+    return { title: "Produit introuvable | Saqia" };
   }
 
   return {
-    title: `${product.name} — ${product.categoryLabel} | AgriFlow`,
+    title: `${product.name} — ${product.categoryLabel} | Saqia`,
     description: product.description,
   };
 }

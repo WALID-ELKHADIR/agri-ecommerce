@@ -31,7 +31,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             <Droplet className="h-5 w-5" />
           </span>
           <span>
-            <span className="block text-sm font-bold text-white">AgriFlow</span>
+            <span className="block text-sm font-bold text-white">Saqia</span>
             <span className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-300/70">
               Administration
             </span>
@@ -96,7 +96,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 <Droplet className="h-4 w-4" />
               </span>
               <span className="text-sm font-bold text-[#0A2540]">
-                AgriFlow <span className="text-cyan-700">Admin</span>
+                Saqia <span className="text-cyan-700">Admin</span>
               </span>
             </Link>
             <details className="relative">

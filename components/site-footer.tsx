@@ -37,7 +37,7 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-4 pb-24 pt-12 sm:pb-14 sm:pt-14">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.3fr]">
           <div>
-            <Link href="/" aria-label="AgriFlow — accueil">
+            <Link href="/" aria-label="Saqia — accueil">
               <Logo />
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-600">

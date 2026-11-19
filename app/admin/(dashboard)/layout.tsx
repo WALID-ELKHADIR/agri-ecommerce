@@ -8,7 +8,7 @@ import { AdminShell } from "@/components/admin/admin-shell";
 export const instant = false;
 
 export const metadata = {
-  title: "Administration — AgriFlow",
+  title: "Administration — Saqia",
   robots: { index: false, follow: false },
 };
 

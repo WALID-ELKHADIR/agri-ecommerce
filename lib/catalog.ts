@@ -331,12 +331,12 @@ export function whatsappLink(message: string) {
 }
 
 export function generalMessage() {
-  return "Bonjour AgriFlow 👋, je souhaite un devis pour du matériel d'irrigation / de pompage. Pouvez-vous m'aider ?";
+  return `Bonjour ${BRAND.name} 👋, je souhaite un devis pour du matériel d'irrigation / de pompage. Pouvez-vous m'aider ?`;
 }
 
 export function productMessage(product: Product, quantity = 1) {
   return [
-    "Bonjour AgriFlow 👋,",
+    `Bonjour ${BRAND.name} 👋,`,
     "Je souhaite un devis pour :",
     `• ${product.name}${quantity > 1 ? ` — ${quantity} unités` : ""}`,
     ...product.specs.slice(0, 2).map((spec) => `  ${spec.label} : ${spec.value}`),
@@ -346,5 +346,5 @@ export function productMessage(product: Product, quantity = 1) {
 }
 
 export function categoryMessage(category: Category) {
-  return `Bonjour AgriFlow 👋, je souhaite un devis pour la gamme « ${category.label} ». Pouvez-vous me conseiller ?`;
+  return `Bonjour ${BRAND.name} 👋, je souhaite un devis pour la gamme « ${category.label} ». Pouvez-vous me conseiller ?`;
 }

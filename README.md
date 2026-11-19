@@ -1,6 +1,4 @@
-# AgriFlow — catalogue d'irrigation et de pompage
-
-> Le site devient **Saqia** en phase 1bis de la refonte (voir `docs/plans/PLAN.md`).
+# Saqia — pompes et irrigation, devis sur WhatsApp
 
 Catalogue agricole mobile-first (pompes, raccords, kits d'irrigation, Maroc). Il n'y a ni panier ni paiement en ligne : **chaque demande se fait sur WhatsApp**, et chaque clic est aussi enregistré comme demande de devis dans Supabase, ce qui sert de mini-CRM dans l'espace admin.
 

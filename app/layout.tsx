@@ -1,3 +1,4 @@
+import { siteConfig } from "@/lib/site-config";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -13,7 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AgriFlow — Pompes, raccords et solutions d'irrigation",
+  metadataBase: new URL(siteConfig.siteUrl),
+  title: `${siteConfig.name} — ${siteConfig.slogan} Pompes, raccords et irrigation`,
   description:
     "Pompes centrifuges et immergées, raccords PE/PVC et kits d'irrigation pour les professionnels agricoles. Conseil technique et devis sous 24h.",
 };
