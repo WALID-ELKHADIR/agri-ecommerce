@@ -61,7 +61,7 @@ export function SiteHeader() {
             </span>
             <a
               href={`tel:${BRAND.phoneRaw}`}
-              className="flex items-center gap-1.5 font-semibold text-white transition hover:text-water-300"
+              className="relative after:absolute after:-inset-x-2 after:-inset-y-4 after:content-[''] flex items-center gap-1.5 font-semibold text-white transition hover:text-water-300"
             >
               <Phone className="h-3.5 w-3.5 text-water-400" />
               {BRAND.phoneDisplay}
@@ -72,7 +72,7 @@ export function SiteHeader() {
 
       <header className="sticky top-0 z-50 border-b border-soil-200/80 bg-soil-50/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
-          <Link href="/" aria-label="Saqia — accueil">
+          <Link href="/" aria-label="Saqia — accueil" className="flex min-h-11 items-center">
             <Logo className="h-9 w-auto" />
           </Link>
 
@@ -105,7 +105,7 @@ export function SiteHeader() {
           <div className="ml-auto flex items-center gap-2">
             <form
               onSubmit={submitSearch}
-              className="hidden items-center gap-2 rounded-full border border-soil-300/80 bg-white px-3.5 py-2 lg:flex"
+              className="hidden items-center gap-2 rounded-full border border-soil-300/80 bg-white px-3.5 py-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-water-600 lg:flex"
               role="search"
             >
               <Search className="h-4 w-4 text-soil-500" />
@@ -141,7 +141,7 @@ export function SiteHeader() {
             <button
               type="button"
               onClick={() => setOpen((value) => !value)}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-soil-300/80 bg-white text-soil-900 transition hover:bg-soil-50 lg:hidden"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-soil-300/80 bg-white text-soil-900 transition hover:bg-soil-50 lg:hidden"
               aria-expanded={open}
               aria-controls="mobile-menu"
               aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
@@ -158,7 +158,7 @@ export function SiteHeader() {
           >
             <form
               onSubmit={submitSearch}
-              className="flex items-center gap-2 rounded-2xl border border-soil-300/80 bg-white px-3.5 py-2.5"
+              className="flex min-h-11 items-center gap-2 rounded-2xl border border-soil-300/80 bg-white px-3.5 py-2.5 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-water-600"
               role="search"
             >
               <Search className="h-4 w-4 text-soil-500" />

@@ -146,7 +146,7 @@ export function CatalogBrowser({
       {/* Main */}
       <div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <label className="flex flex-1 items-center gap-2 rounded-xl border border-soil-300/80 bg-white px-3.5 py-2.5">
+          <label className="flex min-h-11 flex-1 items-center gap-2 rounded-xl border border-soil-300/80 bg-white px-3.5 py-2.5 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-water-600">
             <Search className="h-4 w-4 text-soil-500" />
             <span className="sr-only">Rechercher un produit</span>
             <input
@@ -159,7 +159,7 @@ export function CatalogBrowser({
               <button
                 type="button"
                 onClick={() => catalogFilters.setQuery("")}
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-soil-500 transition hover:bg-soil-100 hover:text-soil-600"
+                className="-my-2 -mr-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-soil-500 transition hover:bg-soil-100 hover:text-soil-600"
                 aria-label="Effacer la recherche"
               >
                 <X className="h-3.5 w-3.5" />
@@ -175,7 +175,7 @@ export function CatalogBrowser({
               id="sort"
               value={sort}
               onChange={(event) => setSort(event.target.value)}
-              className="w-full appearance-none rounded-xl border border-soil-300/80 bg-white py-2.5 pl-3.5 pr-9 text-sm font-medium text-soil-900 focus:outline-none sm:w-44"
+              className="min-h-11 w-full appearance-none rounded-xl border border-soil-300/80 bg-white py-2.5 pl-3.5 pr-9 text-sm font-medium text-soil-900 sm:w-44"
             >
               {sortOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -197,7 +197,7 @@ export function CatalogBrowser({
                 type="button"
                 onClick={() => catalogFilters.setCategory(category.id)}
                 aria-pressed={active}
-                className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-sm font-medium transition ${
+                className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-sm font-medium transition ${
                   active
                     ? "border-soil-900 bg-field-900 text-white"
                     : "border-soil-300/80 bg-white text-soil-600 hover:bg-soil-50"
@@ -269,7 +269,7 @@ export function CatalogBrowser({
             )}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
+            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
           >
             <WhatsApp className="h-4 w-4" />
             Demander un produit

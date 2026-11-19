@@ -90,14 +90,14 @@ export function ProductCard({ product, onDetails }: ProductCardProps) {
             <button
               type="button"
               onClick={() => onDetails(product)}
-              className="flex-1 rounded-xl border border-soil-300 bg-white px-3 py-2.5 text-sm font-semibold text-soil-900 transition hover:border-water-300 hover:bg-water-50/50"
+              className="flex-1 min-h-11 rounded-xl border border-soil-300 bg-white px-3 py-2.5 text-sm font-semibold text-soil-900 transition hover:border-water-300 hover:bg-water-50/50"
             >
               Détails
             </button>
           ) : (
             <Link
               href={`/produits/${product.slug}`}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-soil-300 bg-white px-3 py-2.5 text-sm font-semibold text-soil-900 transition hover:border-water-300 hover:bg-water-50/50"
+              className="flex flex-1 items-center justify-center gap-1.5 min-h-11 rounded-xl border border-soil-300 bg-white px-3 py-2.5 text-sm font-semibold text-soil-900 transition hover:border-water-300 hover:bg-water-50/50"
             >
               Voir la fiche
               <ArrowRight className="h-3.5 w-3.5" />
@@ -107,7 +107,7 @@ export function ProductCard({ product, onDetails }: ProductCardProps) {
             href={whatsappLink(productMessage(product))}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-whatsapp px-3.5 py-2.5 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
+            className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-whatsapp px-3.5 py-2.5 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
             aria-label={`Demander un devis pour ${product.name}`}
           >
             <WhatsApp className="h-4 w-4" />

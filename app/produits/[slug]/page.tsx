@@ -115,11 +115,11 @@ async function ProductDetail({ slug }: { slug: string }) {
 
         <div className="relative mx-auto max-w-7xl px-4 py-6 sm:py-8">
           <nav aria-label="Fil d'Ariane" className="text-xs text-soil-500">
-            <Link href="/" className="transition hover:text-water-300">
+            <Link href="/" className="relative after:absolute after:-inset-x-2 after:-inset-y-4 after:content-[''] transition hover:text-water-300">
               Accueil
             </Link>
             <span className="mx-2 text-soil-600">/</span>
-            <Link href="/produits" className="transition hover:text-water-300">
+            <Link href="/produits" className="relative after:absolute after:-inset-x-2 after:-inset-y-4 after:content-[''] transition hover:text-water-300">
               Produits
             </Link>
             <span className="mx-2 text-soil-600">/</span>

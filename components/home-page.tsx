@@ -202,7 +202,7 @@ export function HomePage({ products }: { products: Product[] }) {
                   </div>
                   <Link
                     href="/produits"
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-soil-900 transition hover:text-water-700"
+                    className="relative after:absolute after:-inset-x-2 after:-inset-y-4 after:content-[''] inline-flex items-center gap-1 text-xs font-semibold text-soil-900 transition hover:text-water-700"
                   >
                     Voir
                     <ArrowUpRight className="h-3.5 w-3.5" />
@@ -401,7 +401,7 @@ export function HomePage({ products }: { products: Product[] }) {
                 onClick={() =>
                   catalogFilters.set({ category: "all", query: "" })
                 }
-                className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-soil-900 transition hover:text-water-700"
+                className="inline-flex min-h-11 shrink-0 items-center gap-1.5 text-sm font-semibold text-soil-900 transition hover:text-water-700"
               >
                 Voir tout le catalogue
                 <ArrowRight className="h-4 w-4" />
@@ -445,7 +445,7 @@ export function HomePage({ products }: { products: Product[] }) {
                   </div>
                   <a
                     href={`tel:${BRAND.phoneRaw}`}
-                    className="inline-flex items-center gap-2 rounded-full border border-soil-300 bg-white px-4 py-2.5 text-sm font-semibold text-soil-900 transition hover:border-water-300"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-full border border-soil-300 bg-white px-4 py-2.5 text-sm font-semibold text-soil-900 transition hover:border-water-300"
                   >
                     <Phone className="h-4 w-4 text-water-600" />
                     Appeler

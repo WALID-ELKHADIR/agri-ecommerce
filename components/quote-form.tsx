@@ -90,7 +90,7 @@ export function QuoteForm() {
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder="Votre nom ou votre exploitation"
-            className="w-full rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 placeholder:text-soil-500 focus:border-water-500 focus:outline-none"
+            className="min-h-11 w-full rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 placeholder:text-soil-500 focus:border-water-500"
           />
         </label>
 
@@ -104,7 +104,7 @@ export function QuoteForm() {
             value={phone}
             onChange={(event) => setPhone(event.target.value)}
             placeholder="+212 6 00 00 00 00"
-            className="w-full rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 placeholder:text-soil-500 focus:border-water-500 focus:outline-none"
+            className="min-h-11 w-full rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 placeholder:text-soil-500 focus:border-water-500"
           />
         </label>
 
@@ -115,7 +115,7 @@ export function QuoteForm() {
           <select
             value={profile}
             onChange={(event) => setProfile(event.target.value)}
-            className="w-full rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 focus:border-water-500 focus:outline-none"
+            className="min-h-11 w-full rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 focus:border-water-500"
           >
             {profiles.map((item) => (
               <option key={item} value={item}>
@@ -134,7 +134,7 @@ export function QuoteForm() {
             onChange={(event) => setNeed(event.target.value)}
             rows={4}
             placeholder="Ex : pompe immergée pour un forage de 40 m, irrigation de 2 ha…"
-            className="w-full resize-none rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 placeholder:text-soil-500 focus:border-water-500 focus:outline-none"
+            className="w-full resize-none rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 placeholder:text-soil-500 focus:border-water-500"
           />
         </label>
       </div>

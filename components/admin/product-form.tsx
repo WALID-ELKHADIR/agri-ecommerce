@@ -12,7 +12,7 @@ type ProductFormProps = {
 };
 
 const inputClass =
-  "w-full rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 placeholder:text-soil-500 focus:border-water-500 focus:outline-none";
+  "min-h-11 w-full rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 placeholder:text-soil-500 focus:border-water-500";
 const labelClass = "grid gap-1.5 text-xs font-semibold text-soil-600";
 
 export function ProductForm({ product, categories, error }: ProductFormProps) {

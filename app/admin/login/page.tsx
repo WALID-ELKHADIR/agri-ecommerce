@@ -46,7 +46,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
         </Suspense>
 
         <div className="mt-5 flex items-center justify-center gap-4 text-[11px] text-soil-300/70">
-          <Link href="/" className="inline-flex items-center gap-1.5 transition hover:text-white">
+          <Link href="/" className="inline-flex min-h-11 items-center gap-1.5 transition hover:text-white">
             <ArrowLeft className="h-3.5 w-3.5" />
             Retour au site
           </Link>
@@ -109,7 +109,7 @@ function LoginCard({
             required
             autoComplete="email"
             placeholder="vous@entreprise.ma"
-            className="w-full rounded-xl border border-soil-300 px-3.5 py-2.5 text-sm font-normal text-soil-900 placeholder:text-soil-500 focus:border-water-500 focus:outline-none"
+            className="min-h-11 w-full rounded-xl border border-soil-300 px-3.5 py-2.5 text-sm font-normal text-soil-900 placeholder:text-soil-500 focus:border-water-500"
           />
         </label>
 
@@ -121,7 +121,7 @@ function LoginCard({
             required
             autoComplete="current-password"
             placeholder="••••••••"
-            className="w-full rounded-xl border border-soil-300 px-3.5 py-2.5 text-sm font-normal text-soil-900 placeholder:text-soil-500 focus:border-water-500 focus:outline-none"
+            className="min-h-11 w-full rounded-xl border border-soil-300 px-3.5 py-2.5 text-sm font-normal text-soil-900 placeholder:text-soil-500 focus:border-water-500"
           />
         </label>
 
