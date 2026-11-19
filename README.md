@@ -41,7 +41,9 @@ Elles sont toutes décrites dans [`.env.example`](.env.example).
 | `NEXT_PUBLIC_PHONE`, `NEXT_PUBLIC_CONTACT_EMAIL`, `NEXT_PUBLIC_ADDRESS`, `NEXT_PUBLIC_HOURS` | coordonnées affichées |
 | `NEXT_PUBLIC_SITE_URL` | URL publique (métadonnées, sitemap) |
 
-Chaque variable a une valeur de repli dans `lib/site-config.ts`.
+Chaque variable a une valeur de repli dans `lib/site-config.ts`. Le numéro WhatsApp accepte les formats `+212 6…`, `00212 6…` et `06…`.
+
+> ⚠️ Les variables `NEXT_PUBLIC_*` sont intégrées au site **au moment du build**. Après les avoir modifiées sur Vercel, relancez un déploiement (*Deployments → Redeploy*) pour qu'elles s'appliquent.
 
 ## Base de données Supabase
 
