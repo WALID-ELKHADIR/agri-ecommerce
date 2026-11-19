@@ -19,7 +19,11 @@ import { ProductQuote } from "@/components/product-quote";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { generalMessage, whatsappLink } from "@/lib/catalog";
-import { getProductBySlug, getRelatedProducts } from "@/lib/catalog-data";
+import {
+  getCatalog,
+  getProductBySlug,
+  getRelatedProducts,
+} from "@/lib/catalog-data";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
