@@ -39,17 +39,17 @@ export default async function ProduitsPage() {
       <SiteHeader />
 
       <main className="pb-24 md:pb-0">
-        <section className="relative overflow-hidden bg-[#0A2540]">
+        <section className="relative overflow-hidden bg-field-900">
           <div className="blueprint-grid pointer-events-none absolute inset-0 opacity-70" />
-          <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-water-500/20 blur-3xl" />
 
           <div className="relative mx-auto max-w-7xl px-4 pb-10 pt-8 sm:pb-12 sm:pt-10">
-            <nav aria-label="Fil d'Ariane" className="text-xs text-slate-400">
-              <Link href="/" className="transition hover:text-cyan-300">
+            <nav aria-label="Fil d'Ariane" className="text-xs text-soil-300">
+              <Link href="/" className="relative after:absolute after:-inset-x-2 after:-inset-y-4 after:content-[''] transition hover:text-water-300">
                 Accueil
               </Link>
-              <span className="mx-2 text-slate-600">/</span>
-              <span className="text-slate-200">Produits</span>
+              <span aria-hidden="true" className="mx-2 text-soil-400">/</span>
+              <span className="text-soil-200">Produits</span>
             </nav>
 
             <div className="mt-4 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
@@ -57,20 +57,20 @@ export default async function ProduitsPage() {
                 <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
                   Catalogue irrigation &amp; pompage
                 </h1>
-                <p className="mt-2 text-sm leading-relaxed text-slate-300/80 sm:text-base">
+                <p className="mt-2 text-sm leading-relaxed text-soil-300/80 sm:text-base">
                   Pompes, raccords et kits complets. Filtrez par gamme, comparez
                   les caractéristiques et demandez un devis en un clic.
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-2 text-[11px] font-medium">
-                <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-cyan-200">
+                <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-water-200">
                   {products.length} références
                 </span>
-                <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-slate-200">
+                <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-soil-200">
                   Devis sous 24h
                 </span>
-                <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-slate-200">
+                <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-soil-200">
                   Conseil technique
                 </span>
               </div>
@@ -80,20 +80,20 @@ export default async function ProduitsPage() {
 
         <CatalogBrowser products={products} categories={categories} />
 
-        <section className="border-t border-slate-200 bg-white">
+        <section className="border-t border-soil-200 bg-white">
           <div className="mx-auto grid max-w-7xl gap-4 px-4 py-10 sm:grid-cols-3">
             {trust.map((item) => {
               const Icon = item.icon;
               return (
                 <div key={item.title} className="flex items-start gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-50 text-cyan-700">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-water-50 text-water-700">
                     <Icon className="h-5 w-5" />
                   </span>
                   <div>
-                    <p className="text-sm font-semibold text-[#0A2540]">
+                    <p className="text-sm font-semibold text-soil-900">
                       {item.title}
                     </p>
-                    <p className="text-xs text-slate-500">{item.text}</p>
+                    <p className="text-xs text-soil-500">{item.text}</p>
                   </div>
                 </div>
               );

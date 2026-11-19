@@ -100,14 +100,14 @@ export function HomePage({ products }: { products: Product[] }) {
 
       <main className="pb-24 md:pb-0">
         {/* Hero */}
-        <section id="accueil" className="relative scroll-mt-24 overflow-hidden bg-[#0A2540]">
+        <section id="accueil" className="relative scroll-mt-24 overflow-hidden bg-field-900">
           <div className="blueprint-grid pointer-events-none absolute inset-0 opacity-70" />
-          <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-cyan-500/20 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-32 left-1/4 h-80 w-80 rounded-full bg-cyan-400/10 blur-3xl" />
+          <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-water-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-32 left-1/4 h-80 w-80 rounded-full bg-water-400/10 blur-3xl" />
 
           <div className="relative mx-auto grid max-w-7xl gap-14 px-4 pb-12 pt-12 sm:pt-16 lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:gap-10 lg:pb-16 lg:pt-20">
             <div className="animate-rise">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-medium text-cyan-200 backdrop-blur">
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-medium text-water-200 backdrop-blur">
                 <Gauge className="h-3.5 w-3.5" />
                 Matériel d’irrigation &amp; de pompage
               </span>
@@ -115,12 +115,12 @@ export function HomePage({ products }: { products: Product[] }) {
               <h1 className="mt-5 text-balance text-4xl font-semibold leading-[1.06] tracking-tight text-white sm:text-5xl lg:text-6xl">
                 L’eau au bon endroit,
                 <br />
-                <span className="bg-gradient-to-r from-cyan-300 via-cyan-400 to-teal-300 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-water-300 via-water-400 to-water-300 bg-clip-text text-transparent">
                   la pression au bon niveau.
                 </span>
               </h1>
 
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-300/90 sm:text-lg">
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-soil-300/90 sm:text-lg">
                 Pompes centrifuges et immergées, raccords PE/PVC et kits prêts à
                 installer. Du matériel professionnel, conseillé et livré partout
                 au Maroc.
@@ -132,7 +132,7 @@ export function HomePage({ products }: { products: Product[] }) {
                   onClick={() =>
                     catalogFilters.set({ category: "all", query: "" })
                   }
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-cyan-400 px-6 py-3.5 text-sm font-semibold text-[#0A2540] shadow-lg shadow-cyan-500/20 transition hover:bg-cyan-300"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-water-400 px-6 py-3.5 text-sm font-semibold text-soil-900 shadow-lg shadow-water-500/20 transition hover:bg-water-300"
                 >
                   Découvrir la gamme
                   <ArrowRight className="h-4 w-4" />
@@ -143,16 +143,16 @@ export function HomePage({ products }: { products: Product[] }) {
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
                 >
-                  <WhatsApp className="h-4 w-4 text-cyan-300" />
+                  <WhatsApp className="h-4 w-4 text-water-300" />
                   Demander un devis
                 </a>
               </div>
 
-              <ul className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-300/80">
+              <ul className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-sm text-soil-300/80">
                 {["Conseil technique", "Devis sous 24h", "Stock & livraison"].map(
                   (item) => (
                     <li key={item} className="inline-flex items-center gap-1.5">
-                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-400/15 text-cyan-300">
+                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-water-400/15 text-water-300">
                         <Check className="h-3 w-3" />
                       </span>
                       {item}
@@ -167,20 +167,20 @@ export function HomePage({ products }: { products: Product[] }) {
               <div className="relative rounded-3xl border border-white/10 bg-white p-4 shadow-2xl shadow-black/30">
                 <div className="flex items-center justify-between gap-3 px-1 pb-3">
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cyan-700">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-water-700">
                       Sélection pro
                     </p>
-                    <p className="text-sm font-semibold text-[#0A2540]">
+                    <p className="text-sm font-semibold text-soil-900">
                       Pompe centrifuge monobloc
                     </p>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-700">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-field-50 px-2.5 py-1 text-[10px] font-semibold text-field-700">
+                    <span className="h-1.5 w-1.5 rounded-full bg-field-500" />
                     En stock
                   </span>
                 </div>
 
-                <div className="relative h-52 overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50 via-white to-cyan-50/60 sm:h-60">
+                <div className="relative h-52 overflow-hidden rounded-2xl bg-gradient-to-br from-soil-50 via-white to-water-50/60 sm:h-60">
                   <Image
                     src="/images/products/pompe-centrifuge-monobloc.jpg"
                     alt="Pompe centrifuge monobloc"
@@ -191,18 +191,18 @@ export function HomePage({ products }: { products: Product[] }) {
                   />
                 </div>
 
-                <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3.5 py-3">
+                <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-soil-50 px-3.5 py-3">
                   <div className="flex flex-wrap gap-1.5">
-                    <span className="rounded-md bg-white px-2 py-1 text-[10px] font-medium text-slate-600 shadow-sm">
+                    <span className="rounded-md bg-white px-2 py-1 text-[10px] font-medium text-soil-600 shadow-sm">
                       0,75 – 7,5 kW
                     </span>
-                    <span className="rounded-md bg-white px-2 py-1 text-[10px] font-medium text-slate-600 shadow-sm">
+                    <span className="rounded-md bg-white px-2 py-1 text-[10px] font-medium text-soil-600 shadow-sm">
                       60 m³/h
                     </span>
                   </div>
                   <Link
                     href="/produits"
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#0A2540] transition hover:text-cyan-700"
+                    className="relative after:absolute after:-inset-x-2 after:-inset-y-4 after:content-[''] inline-flex items-center gap-1 text-xs font-semibold text-soil-900 transition hover:text-water-700"
                   >
                     Voir
                     <ArrowUpRight className="h-3.5 w-3.5" />
@@ -210,23 +210,23 @@ export function HomePage({ products }: { products: Product[] }) {
                 </div>
               </div>
 
-              <div className="absolute -right-3 top-8 animate-floaty rounded-xl border border-slate-200 bg-white p-3 shadow-xl sm:-right-6">
+              <div className="absolute -right-3 top-8 animate-floaty rounded-xl border border-soil-200 bg-white p-3 shadow-xl sm:-right-6">
                 <div className="flex items-center gap-2.5">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-cyan-50 text-cyan-700">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-water-50 text-water-700">
                     <Gauge className="h-4.5 w-4.5" />
                   </span>
                   <div>
-                    <p className="text-xs font-semibold text-[#0A2540]">
+                    <p className="text-xs font-semibold text-soil-900">
                       60 m³/h
                     </p>
-                    <p className="text-[10px] text-slate-500">Débit selon modèle</p>
+                    <p className="text-[10px] text-soil-500">Débit selon modèle</p>
                   </div>
                 </div>
               </div>
 
-              <div className="absolute -bottom-14 left-2 animate-floaty rounded-xl border border-slate-200 bg-white p-2.5 shadow-xl [animation-delay:1.3s] sm:-left-8">
+              <div className="absolute -bottom-14 left-2 animate-floaty rounded-xl border border-soil-200 bg-white p-2.5 shadow-xl [animation-delay:1.3s] sm:-left-8">
                 <div className="flex items-center gap-2.5">
-                  <div className="relative h-12 w-12 overflow-hidden rounded-lg bg-slate-50">
+                  <div className="relative h-12 w-12 overflow-hidden rounded-lg bg-soil-50">
                     <Image
                       src="/images/products/raccord-pe-90.jpg"
                       alt="Raccord PE à compression"
@@ -236,10 +236,10 @@ export function HomePage({ products }: { products: Product[] }) {
                     />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-[#0A2540]">
+                    <p className="text-xs font-semibold text-soil-900">
                       Raccords PN16
                     </p>
-                    <p className="text-[10px] text-slate-500">Ø20 – 63 mm</p>
+                    <p className="text-[10px] text-soil-500">Ø20 – 63 mm</p>
                   </div>
                 </div>
               </div>
@@ -251,9 +251,9 @@ export function HomePage({ products }: { products: Product[] }) {
               {heroFamilies.map((item) => (
                 <div
                   key={item}
-                  className="flex items-center gap-2 py-4 text-[11px] font-medium uppercase tracking-[0.12em] text-slate-300/70 sm:text-xs"
+                  className="flex items-center gap-2 py-4 text-[11px] font-medium uppercase tracking-[0.12em] text-soil-300/70 sm:text-xs"
                 >
-                  <span className="h-1 w-1 rounded-full bg-cyan-400" />
+                  <span className="h-1 w-1 rounded-full bg-water-400" />
                   {item}
                 </div>
               ))}
@@ -262,23 +262,23 @@ export function HomePage({ products }: { products: Product[] }) {
         </section>
 
         {/* Animated gallery */}
-        <section className="relative overflow-hidden bg-[#f5f8fb] py-16 sm:py-20">
+        <section className="relative overflow-hidden bg-soil-50 py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-4">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div className="max-w-2xl">
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-700">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-water-700">
                   En images
                 </p>
-                <h2 className="mt-2 text-3xl font-semibold tracking-tight text-[#0A2540] sm:text-4xl">
+                <h2 className="mt-2 text-3xl font-semibold tracking-tight text-soil-900 sm:text-4xl">
                   Les équipements, en conditions réelles
                 </h2>
-                <p className="mt-3 text-sm leading-relaxed text-slate-500 sm:text-base">
+                <p className="mt-3 text-sm leading-relaxed text-soil-500 sm:text-base">
                   Pompes, raccords et installations : un aperçu du matériel que
                   nous sélectionnons et livrons.
                 </p>
               </div>
-              <p className="hidden shrink-0 items-center gap-2 text-xs text-slate-400 sm:flex">
-                <span className="h-1.5 w-1.5 rounded-full bg-cyan-500" />
+              <p className="hidden shrink-0 items-center gap-2 text-xs text-soil-500 sm:flex">
+                <span className="h-1.5 w-1.5 rounded-full bg-water-500" />
                 Survolez pour mettre en pause
               </p>
             </div>
@@ -305,8 +305,8 @@ export function HomePage({ products }: { products: Product[] }) {
                 ),
               )}
             </div>
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#f5f8fb] to-transparent sm:w-24" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#f5f8fb] to-transparent sm:w-24" />
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-soil-50 to-transparent sm:w-24" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-soil-50 to-transparent sm:w-24" />
           </div>
         </section>
 
@@ -314,13 +314,13 @@ export function HomePage({ products }: { products: Product[] }) {
         <section id="categories" className="scroll-mt-24 bg-white py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-4">
             <div className="max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-700">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-water-700">
                 Nos gammes
               </p>
-              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-[#0A2540] sm:text-4xl">
+              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-soil-900 sm:text-4xl">
                 Tout pour votre réseau d’eau
               </h2>
-              <p className="mt-3 text-sm leading-relaxed text-slate-500 sm:text-base">
+              <p className="mt-3 text-sm leading-relaxed text-soil-500 sm:text-base">
                 Du forage à la parcelle : pompage, raccordement et distribution.
                 Chaque gamme est disponible en plusieurs puissances et diamètres.
               </p>
@@ -336,22 +336,22 @@ export function HomePage({ products }: { products: Product[] }) {
                     onClick={() =>
                       catalogFilters.set({ category: family.id, query: "" })
                     }
-                    className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:border-cyan-200 hover:shadow-lg"
+                    className="group flex flex-col rounded-2xl border border-soil-200 bg-white p-5 transition hover:-translate-y-1 hover:border-water-200 hover:shadow-lg"
                   >
-                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-50 text-cyan-700">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-water-50 text-water-700">
                       <Icon className="h-5 w-5" />
                     </span>
-                    <h3 className="mt-4 text-base font-semibold text-[#0A2540]">
+                    <h3 className="mt-4 text-base font-semibold text-soil-900">
                       {family.title}
                     </h3>
-                    <p className="mt-1.5 flex-1 text-sm leading-relaxed text-slate-500">
+                    <p className="mt-1.5 flex-1 text-sm leading-relaxed text-soil-500">
                       {family.description}
                     </p>
-                    <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-                      <span className="text-[11px] font-medium text-slate-400">
+                    <div className="mt-4 flex items-center justify-between border-t border-soil-100 pt-3">
+                      <span className="text-[11px] font-medium text-soil-500">
                         {family.count} référence{family.count > 1 ? "s" : ""}
                       </span>
-                      <ArrowUpRight className="h-4 w-4 text-slate-400 transition group-hover:text-cyan-700" />
+                      <ArrowUpRight className="h-4 w-4 text-soil-500 transition group-hover:text-water-700" />
                     </div>
                   </Link>
                 );
@@ -361,9 +361,9 @@ export function HomePage({ products }: { products: Product[] }) {
                 href={whatsappLink(generalMessage())}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col rounded-2xl bg-gradient-to-br from-[#0A2540] to-[#0E7490] p-5 text-white transition hover:-translate-y-1 hover:shadow-lg"
+                className="group flex flex-col rounded-2xl bg-gradient-to-br from-field-900 to-water-600 p-5 text-white transition hover:-translate-y-1 hover:shadow-lg"
               >
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-cyan-300">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-water-300">
                   <Headset className="h-5 w-5" />
                 </span>
                 <h3 className="mt-4 text-base font-semibold">
@@ -377,7 +377,7 @@ export function HomePage({ products }: { products: Product[] }) {
                   <span className="text-[11px] font-medium text-white/55">
                     Devis personnalisé
                   </span>
-                  <ArrowUpRight className="h-4 w-4 text-cyan-300" />
+                  <ArrowUpRight className="h-4 w-4 text-water-300" />
                 </div>
               </a>
             </div>
@@ -385,14 +385,14 @@ export function HomePage({ products }: { products: Product[] }) {
         </section>
 
         {/* Featured products */}
-        <section className="border-y border-slate-200/70 bg-[#f5f8fb] py-16 sm:py-20">
+        <section className="border-y border-soil-200/70 bg-soil-50 py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-700">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-water-700">
                   Sélection du moment
                 </p>
-                <h2 className="mt-2 text-3xl font-semibold tracking-tight text-[#0A2540] sm:text-4xl">
+                <h2 className="mt-2 text-3xl font-semibold tracking-tight text-soil-900 sm:text-4xl">
                   Les références les plus demandées
                 </h2>
               </div>
@@ -401,7 +401,7 @@ export function HomePage({ products }: { products: Product[] }) {
                 onClick={() =>
                   catalogFilters.set({ category: "all", query: "" })
                 }
-                className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-[#0A2540] transition hover:text-cyan-700"
+                className="inline-flex min-h-11 shrink-0 items-center gap-1.5 text-sm font-semibold text-soil-900 transition hover:text-water-700"
               >
                 Voir tout le catalogue
                 <ArrowRight className="h-4 w-4" />
@@ -421,33 +421,33 @@ export function HomePage({ products }: { products: Product[] }) {
           <div className="mx-auto max-w-7xl px-4">
             <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-700">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-water-700">
                   Services
                 </p>
-                <h2 className="mt-2 text-3xl font-semibold tracking-tight text-[#0A2540] sm:text-4xl">
+                <h2 className="mt-2 text-3xl font-semibold tracking-tight text-soil-900 sm:text-4xl">
                   Un partenaire technique, pas seulement un fournisseur
                 </h2>
-                <p className="mt-3 text-sm leading-relaxed text-slate-500 sm:text-base">
+                <p className="mt-3 text-sm leading-relaxed text-soil-500 sm:text-base">
                   Un mauvais dimensionnement coûte cher : surconsommation,
                   cavitation, débit insuffisant. Notre équipe vous aide à choisir
                   juste, dès le départ.
                 </p>
 
-                <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-[#f5f8fb] p-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-soil-200 bg-soil-50 p-5 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-start gap-3">
-                    <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-cyan-600" />
+                    <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-water-600" />
                     <div>
-                      <p className="text-sm font-semibold text-[#0A2540]">
+                      <p className="text-sm font-semibold text-soil-900">
                         Livraison nationale
                       </p>
-                      <p className="text-xs text-slate-500">{BRAND.address}</p>
+                      <p className="text-xs text-soil-500">{BRAND.address}</p>
                     </div>
                   </div>
                   <a
                     href={`tel:${BRAND.phoneRaw}`}
-                    className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-[#0A2540] transition hover:border-cyan-300"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-full border border-soil-300 bg-white px-4 py-2.5 text-sm font-semibold text-soil-900 transition hover:border-water-300"
                   >
-                    <Phone className="h-4 w-4 text-cyan-600" />
+                    <Phone className="h-4 w-4 text-water-600" />
                     Appeler
                   </a>
                 </div>
@@ -459,20 +459,20 @@ export function HomePage({ products }: { products: Product[] }) {
                   return (
                     <div
                       key={service.title}
-                      className="rounded-2xl border border-slate-200 bg-white p-5"
+                      className="rounded-2xl border border-soil-200 bg-white p-5"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-50 text-cyan-700">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-water-50 text-water-700">
                           <Icon className="h-5 w-5" />
                         </span>
-                        <span className="text-xs font-semibold tracking-[0.16em] text-slate-300">
+                        <span className="text-xs font-semibold tracking-[0.16em] text-field-600">
                           0{index + 1}
                         </span>
                       </div>
-                      <h3 className="mt-3 text-base font-semibold text-[#0A2540]">
+                      <h3 className="mt-3 text-base font-semibold text-soil-900">
                         {service.title}
                       </h3>
-                      <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
+                      <p className="mt-1.5 text-sm leading-relaxed text-soil-500">
                         {service.text}
                       </p>
                     </div>
@@ -484,22 +484,22 @@ export function HomePage({ products }: { products: Product[] }) {
         </section>
 
         {/* CTA */}
-        <section className="bg-[#f5f8fb] pb-16 sm:pb-20">
+        <section className="bg-soil-50 pb-16 sm:pb-20">
           <div className="mx-auto max-w-7xl px-4">
-            <div className="relative overflow-hidden rounded-3xl bg-[#0A2540] px-6 py-12 sm:px-10 sm:py-14">
+            <div className="relative overflow-hidden rounded-3xl bg-field-900 px-6 py-12 sm:px-10 sm:py-14">
               <div className="blueprint-grid pointer-events-none absolute inset-0 opacity-60" />
-              <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-cyan-500/20 blur-3xl" />
-              <div className="pointer-events-none absolute -bottom-20 left-1/4 h-56 w-56 rounded-full bg-teal-400/10 blur-3xl" />
+              <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-water-500/20 blur-3xl" />
+              <div className="pointer-events-none absolute -bottom-20 left-1/4 h-56 w-56 rounded-full bg-water-400/10 blur-3xl" />
 
               <div className="relative flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
                 <div className="max-w-2xl">
-                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300/80">
+                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-water-300/80">
                     Votre projet
                   </p>
                   <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
                     Un devis précis, basé sur vos besoins réels
                   </h2>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-300/80 sm:text-base">
+                  <p className="mt-3 text-sm leading-relaxed text-soil-300/80 sm:text-base">
                     Indiquez-nous votre surface, votre débit souhaité et la
                     hauteur de refoulement. Nous revenons vers vous avec une
                     configuration adaptée et un prix ferme.
@@ -511,7 +511,7 @@ export function HomePage({ products }: { products: Product[] }) {
                     href={whatsappLink(generalMessage())}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1FA855] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#178f47]"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-whatsapp px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
                   >
                     <WhatsApp className="h-4 w-4" />
                     Demander un devis
@@ -545,7 +545,7 @@ function GalleryCard({
 }) {
   return (
     <figure
-      className="relative mr-4 h-36 w-56 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm sm:h-40 sm:w-64"
+      className="relative mr-4 h-36 w-56 shrink-0 overflow-hidden rounded-xl border border-soil-200 bg-white shadow-sm sm:h-40 sm:w-64"
       aria-hidden={hidden || undefined}
     >
       <Image
@@ -555,7 +555,7 @@ function GalleryCard({
         sizes="256px"
         className={image.contain ? "object-contain p-4" : "object-cover"}
       />
-      <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0A2540]/85 via-[#0A2540]/30 to-transparent px-3 pb-2 pt-8 text-[11px] font-medium text-white">
+      <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-field-900/85 via-field-900/30 to-transparent px-3 pb-2 pt-8 text-[11px] font-medium text-white">
         {image.label}
       </figcaption>
     </figure>

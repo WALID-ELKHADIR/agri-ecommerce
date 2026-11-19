@@ -19,10 +19,10 @@ export const statusLabels: Record<string, string> = {
 };
 
 const statusStyles: Record<string, string> = {
-  new: "bg-cyan-50 text-cyan-700",
-  contacted: "bg-amber-50 text-amber-700",
-  won: "bg-emerald-50 text-emerald-700",
-  lost: "bg-slate-100 text-slate-500",
+  new: "bg-water-50 text-water-700",
+  contacted: "bg-harvest-50 text-harvest-800",
+  won: "bg-field-50 text-field-700",
+  lost: "bg-soil-100 text-soil-500",
 };
 
 export default function DemandesPage() {
@@ -53,18 +53,18 @@ async function DemandesContent() {
       />
 
       {quotes.length === 0 ? (
-        <div className="rounded-2xl border border-slate-200 bg-white px-6 py-12 text-center">
-          <p className="text-sm font-semibold text-[#0A2540]">
+        <div className="rounded-2xl border border-soil-200 bg-white px-6 py-12 text-center">
+          <p className="text-sm font-semibold text-soil-900">
             Aucune demande pour le moment.
           </p>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-soil-500">
             Les demandes arrivent ici dès qu’un visiteur envoie le formulaire de
             contact.
           </p>
           <Link
             href="/contact"
             target="_blank"
-            className="mt-4 inline-flex items-center gap-1.5 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-[#0A2540]"
+            className="mt-4 inline-flex items-center gap-1.5 rounded-xl border border-soil-300 px-4 py-2.5 text-sm font-semibold text-soil-900"
           >
             Voir le formulaire public
           </Link>
@@ -74,12 +74,12 @@ async function DemandesContent() {
           {quotes.map((quote) => (
             <article
               key={quote.id}
-              className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5"
+              className="rounded-2xl border border-soil-200 bg-white p-4 sm:p-5"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-sm font-semibold text-[#0A2540]">
+                    <h2 className="text-sm font-semibold text-soil-900">
                       {quote.name || "Visiteur"}
                     </h2>
                     <span
@@ -90,18 +90,18 @@ async function DemandesContent() {
                       {statusLabels[quote.status] ?? quote.status}
                     </span>
                     {quote.productSlug ? (
-                      <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-600">
+                      <span className="rounded-md bg-soil-100 px-2 py-0.5 text-[10px] font-medium text-soil-600">
                         {quote.productSlug}
                         {quote.quantity ? ` × ${quote.quantity}` : ""}
                       </span>
                     ) : null}
                   </div>
 
-                  <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
+                  <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-soil-500">
                     {quote.phone ? (
                       <a
                         href={`tel:${quote.phone}`}
-                        className="inline-flex items-center gap-1.5 hover:text-cyan-700"
+                        className="inline-flex items-center gap-1.5 hover:text-water-700"
                       >
                         <Phone className="h-3.5 w-3.5" />
                         {quote.phone}
@@ -110,7 +110,7 @@ async function DemandesContent() {
                     {quote.email ? (
                       <a
                         href={`mailto:${quote.email}`}
-                        className="inline-flex items-center gap-1.5 hover:text-cyan-700"
+                        className="inline-flex items-center gap-1.5 hover:text-water-700"
                       >
                         <Mail className="h-3.5 w-3.5" />
                         {quote.email}
@@ -129,7 +129,7 @@ async function DemandesContent() {
                   </div>
 
                   {quote.message ? (
-                    <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-600">
+                    <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-soil-600">
                       {quote.message}
                     </p>
                   ) : null}
@@ -141,7 +141,7 @@ async function DemandesContent() {
                       href={waLink(quote.phone)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-lg bg-[#1FA855] px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-[#178f47]"
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-whatsapp px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-whatsapp-hover"
                     >
                       <WhatsApp className="h-3.5 w-3.5" />
                       Répondre
@@ -160,7 +160,7 @@ async function DemandesContent() {
                       id={`status-${quote.id}`}
                       name="status"
                       defaultValue={quote.status}
-                      className="rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-xs text-[#0A2540]"
+                      className="rounded-lg border border-soil-300 bg-white px-2 py-1.5 text-xs text-soil-900"
                     >
                       {Object.entries(statusLabels).map(([value, label]) => (
                         <option key={value} value={value}>
@@ -170,7 +170,7 @@ async function DemandesContent() {
                     </select>
                     <button
                       type="submit"
-                      className="rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs font-semibold text-[#0A2540] transition hover:border-cyan-300"
+                      className="rounded-lg border border-soil-300 px-2.5 py-1.5 text-xs font-semibold text-soil-900 transition hover:border-water-300"
                     >
                       OK
                     </button>
@@ -180,7 +180,7 @@ async function DemandesContent() {
                     action={deleteQuoteAction}
                     id={quote.id}
                     message="Supprimer définitivement cette demande ?"
-                    className="rounded-lg p-1.5 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600"
+                    className="rounded-lg p-1.5 text-soil-500 transition hover:bg-danger-50 hover:text-danger-600"
                   >
                     <Trash className="h-4 w-4" />
                   </ConfirmSubmit>

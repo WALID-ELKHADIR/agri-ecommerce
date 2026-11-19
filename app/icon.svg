@@ -1,6 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="16" fill="#0A2540" />
-  <path d="M32 9c0 0 16.5 18.2 16.5 28.4a16.5 16.5 0 1 1-33 0C15.5 27.2 32 9 32 9Z" fill="#ffffff" />
-  <path d="M19 39.5c3.5-3.1 7.2 3.1 10.7 0s7.2 3.1 10.7 0" stroke="#06B6D4" stroke-width="3" stroke-linecap="round" fill="none" />
-  <circle cx="32" cy="47" r="2.7" fill="#06B6D4" />
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img"><title>Saqia</title><g><mask id="saqia-parcelle" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><path d="M64 18H29a7 7 0 0 0 0 14h6a7 7 0 0 1 0 14H0" fill="none" stroke="#000" stroke-width="17"/></mask><clipPath id="saqia-parcelle-clip"><rect width="64" height="64" rx="14"/></clipPath><rect width="64" height="64" rx="14" fill="#3a6631" mask="url(#saqia-parcelle)"/><path d="M64 18H29a7 7 0 0 0 0 14h6a7 7 0 0 1 0 14H0" fill="none" stroke="#177c87" stroke-width="9" clip-path="url(#saqia-parcelle-clip)"/></g></svg>
