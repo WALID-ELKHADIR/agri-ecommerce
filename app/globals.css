@@ -3,15 +3,113 @@
 @source "../components";
 @source "../lib";
 
+/*
+ * Design system « terroir moderne » — tokens de la marque Saqia.
+ * Seules ces couleurs existent : les palettes par défaut de Tailwind sont
+ * désactivées pour qu'aucune teinte hors charte ne s'y glisse.
+ * Contrastes et usages : docs/brand.md et docs/design-system.md.
+ */
 @theme {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* field — vert champ, couleur primaire */
+  --color-field-50: #f2f7f1;
+  --color-field-100: #e0ecdc;
+  --color-field-200: #c1d9ba;
+  --color-field-300: #95bd89;
+  --color-field-400: #6a9c5e;
+  --color-field-500: #4f8044;
+  --color-field-600: #3a6631;
+  --color-field-700: #2f5129;
+  --color-field-800: #253f21;
+  --color-field-900: #1a2c18;
+
+  /* water — irrigation, couleur secondaire */
+  --color-water-50: #effafa;
+  --color-water-100: #d5f1f2;
+  --color-water-200: #abe3e6;
+  --color-water-300: #7fd3d8;
+  --color-water-400: #44b0b8;
+  --color-water-500: #2093a0;
+  --color-water-600: #177c87;
+  --color-water-700: #13646d;
+  --color-water-800: #125058;
+  --color-water-900: #123f46;
+
+  /* harvest — accent ; toujours avec un texte foncé */
+  --color-harvest-50: #fef8ea;
+  --color-harvest-100: #fdf0d2;
+  --color-harvest-200: #fbe0a6;
+  --color-harvest-300: #f6c75f;
+  --color-harvest-500: #e09b1a;
+  --color-harvest-800: #7a4a0c;
+  --color-harvest-900: #5c380d;
+
+  /* soil — neutres chauds (fonds, bordures, textes) */
+  --color-soil-50: #faf8f3;
+  --color-soil-100: #f3efe5;
+  --color-soil-200: #e5ddcb;
+  --color-soil-300: #d2c8b2;
+  --color-soil-400: #a39a85;
+  --color-soil-500: #706855;
+  --color-soil-600: #6b6352;
+  --color-soil-700: #4d473a;
+  --color-soil-800: #35312a;
+  --color-soil-900: #1f1c16;
+
+  /* danger — erreurs et suppressions */
+  --color-danger-50: #fdf2f0;
+  --color-danger-100: #fbe3de;
+  --color-danger-200: #f5c4b9;
+  --color-danger-600: #b93a24;
+  --color-danger-700: #9a2f1d;
+
+  /* WhatsApp — réservé aux boutons de conversion */
+  --color-whatsapp: #0f7a43;
+  --color-whatsapp-hover: #0c6537;
+  --color-whatsapp-brand: #25d366;
+
+  /* Typographie */
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", sans-serif;
-  /* Police de marque : titres et wordmark (classe utilitaire `font-display`). */
   --font-display: var(--font-bricolage), var(--font-geist-sans), ui-sans-serif, sans-serif;
+
+  /* Échelle fluide (390 px → 1440 px) pour les titres */
+  --text-display: clamp(2.5rem, 1.6rem + 3.6vw, 4.75rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.04em;
+  --text-h1: clamp(2rem, 1.45rem + 2.2vw, 3.25rem);
+  --text-h1--line-height: 1.08;
+  --text-h1--letter-spacing: -0.035em;
+  --text-h2: clamp(1.625rem, 1.3rem + 1.3vw, 2.375rem);
+  --text-h2--line-height: 1.12;
+  --text-h2--letter-spacing: -0.03em;
+  --text-h3: clamp(1.25rem, 1.12rem + 0.5vw, 1.5rem);
+  --text-h3--line-height: 1.2;
+  --text-h3--letter-spacing: -0.02em;
+
+  /* Rayons : contrôles < cartes < panneaux */
+  --radius-control: 0.75rem;
+  --radius-card: 1.125rem;
+  --radius-panel: 1.75rem;
+
+  /* Ombres douces, teintées terre */
+  --shadow-soft: 0 1px 2px rgb(31 28 22 / 0.05), 0 2px 8px rgb(31 28 22 / 0.04);
+  --shadow-lifted: 0 2px 4px rgb(31 28 22 / 0.05), 0 12px 32px -8px rgb(31 28 22 / 0.14);
+  --shadow-overlay: 0 24px 64px -12px rgb(31 28 22 / 0.28);
+
+  /* Mouvement */
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root {
   color-scheme: light;
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --duration-reveal: 700ms;
 }
 
 html {
@@ -20,22 +118,28 @@ html {
 }
 
 body {
-  background-color: #f5f8fb;
-  color: #0a2540;
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", sans-serif;
+  background-color: var(--color-soil-50);
+  color: var(--color-soil-900);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background-color: #a5f3fc;
-  color: #0a2540;
+  background-color: var(--color-water-200);
+  color: var(--color-soil-900);
 }
 
+/* Focus clavier visible et cohérent partout */
+:focus-visible {
+  outline: 2px solid var(--color-water-600);
+  outline-offset: 2px;
+}
+
+/* Trame de sillons, pour les fonds foncés */
 .blueprint-grid {
   background-image:
-    linear-gradient(to right, rgba(148, 197, 255, 0.09) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148, 197, 255, 0.09) 1px, transparent 1px);
+    linear-gradient(to right, rgb(127 211 216 / 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(127 211 216 / 0.07) 1px, transparent 1px);
   background-size: 44px 44px;
 }
 
