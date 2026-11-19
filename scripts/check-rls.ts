@@ -6,7 +6,8 @@
 //   RLS_ADMIN_EMAIL / RLS_ADMIN_PASSWORD : un compte présent dans admin_users
 //   RLS_USER_EMAIL / RLS_USER_PASSWORD   : un compte connecté NON admin
 //
-// Le script n'altère aucune donnée durable : les demandes de test
+// Le script s'arrête si la migration manque, et ses sondes d'écriture réécrivent
+// la valeur actuelle d'un seul produit. Les demandes de test
 // (source = "rls-check") sont supprimées à la fin avec le compte admin.
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
@@ -64,8 +65,35 @@ async function isAdmin(supabase: SupabaseClient): Promise<boolean | null> {
 const testPhone = `+2126${String(Date.now()).slice(-8)}`;
 const quote = { name: "Test RLS", phone: testPhone, source: "rls-check" };
 
-// --- Visiteur anonyme
+// --- Vérification préalable : sans la migration, on s'arrête avant toute écriture.
 const anon = client();
+const preflight = await anon.rpc("is_admin");
+if (preflight.error) {
+  console.error(
+    `La fonction is_admin() est introuvable (${preflight.error.message}).\n` +
+      "Appliquez d'abord supabase/migrations/20261119100000_admin_rls.sql, puis relancez.",
+  );
+  process.exit(1);
+}
+
+// Sondes d'écriture inoffensives : on réécrit la valeur actuelle d'un seul
+// produit. Même si une policy était trop permissive, rien ne serait modifié.
+const probe = (await anon.from("products").select("id, position").limit(1).single()).data;
+if (!probe) {
+  console.error("Aucun produit publié : impossible de tester les écritures.");
+  process.exit(1);
+}
+
+async function probeProductWrite(supabase: SupabaseClient): Promise<number> {
+  const { data } = await supabase
+    .from("products")
+    .update({ position: probe?.position })
+    .eq("id", probe?.id)
+    .select("id");
+  return data?.length ?? 0;
+}
+
+// --- Visiteur anonyme
 const categories = await anon.from("categories").select("id");
 check("anonyme : lit les catégories", !categories.error && (categories.data?.length ?? 0) > 0);
 
@@ -83,8 +111,7 @@ check("anonyme : peut envoyer une demande", !anonInsert.error, anonInsert.error?
 const anonQuotes = await anon.from("quote_requests").select("id");
 check("anonyme : ne lit aucune demande", (anonQuotes.data?.length ?? 0) === 0);
 
-const anonUpdate = await anon.from("products").update({ position: 0 }).neq("slug", "").select("id");
-check("anonyme : ne modifie aucun produit", (anonUpdate.data?.length ?? 0) === 0);
+check("anonyme : ne modifie aucun produit", (await probeProductWrite(anon)) === 0);
 
 await anon.from("quote_requests").insert(quote);
 await anon.from("quote_requests").insert(quote);
@@ -102,11 +129,15 @@ check("non-admin : is_admin() = false", (await isAdmin(user)) === false);
 const userQuotes = await user.from("quote_requests").select("id");
 check("non-admin : ne lit aucune demande", (userQuotes.data?.length ?? 0) === 0);
 
-const userUpdate = await user.from("products").update({ position: 0 }).neq("slug", "").select("id");
-check("non-admin : ne modifie aucun produit", (userUpdate.data?.length ?? 0) === 0);
+check("non-admin : ne modifie aucun produit", (await probeProductWrite(user)) === 0);
 
-const userDelete = await user.from("categories").delete().neq("id", "").select("id");
-check("non-admin : ne supprime aucune catégorie", (userDelete.data?.length ?? 0) === 0);
+// Catégorie témoin : si l'insertion passait malgré tout, elle est retirée aussitôt.
+const SENTINEL = { id: "rls-check-sonde", label: "Sonde", short: "Sonde", position: 9999 };
+const userInsert = await user.from("categories").insert(SENTINEL).select("id");
+check("non-admin : ne crée aucune catégorie", Boolean(userInsert.error) && !userInsert.data?.length);
+if (userInsert.data?.length) {
+  await user.from("categories").delete().eq("id", SENTINEL.id);
+}
 
 // --- Administrateur
 const admin = await signedIn(env.RLS_ADMIN_EMAIL, env.RLS_ADMIN_PASSWORD);
@@ -115,15 +146,7 @@ check("admin : is_admin() = true", (await isAdmin(admin)) === true);
 const adminQuotes = await admin.from("quote_requests").select("id").eq("source", "rls-check");
 check("admin : lit les demandes de test", (adminQuotes.data?.length ?? 0) >= 3);
 
-const first = (await admin.from("products").select("id, position").limit(1).single()).data;
-if (first) {
-  const update = await admin
-    .from("products")
-    .update({ position: first.position })
-    .eq("id", first.id)
-    .select("id");
-  check("admin : peut modifier un produit", (update.data?.length ?? 0) === 1, update.error?.message);
-}
+check("admin : peut modifier un produit", (await probeProductWrite(admin)) === 1);
 
 const cleanup = await admin.from("quote_requests").delete().eq("source", "rls-check").select("id");
 check("admin : supprime les demandes de test", !cleanup.error, cleanup.error?.message);
