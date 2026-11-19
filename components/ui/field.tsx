@@ -35,7 +35,7 @@ function FieldShell({
   children,
 }: FieldProps & { id: string; children: ReactNode }) {
   return (
-    <div className="grid gap-1.5">
+    <div className="grid content-start gap-1.5">
       <label htmlFor={id} className={cn("text-sm font-semibold text-soil-800", hideLabel && "sr-only")}>
         {label}
       </label>

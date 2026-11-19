@@ -9,7 +9,7 @@
  * désactivées pour qu'aucune teinte hors charte ne s'y glisse.
  * Contrastes et usages : docs/brand.md et docs/design-system.md.
  */
-@theme {
+@theme static {
   --color-*: initial;
   --color-white: #ffffff;
   --color-black: #000000;
