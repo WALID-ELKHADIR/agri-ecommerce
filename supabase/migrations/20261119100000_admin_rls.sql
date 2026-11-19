@@ -135,6 +135,11 @@ $$;
 -- au total par minute. Au-delà, l'insertion échoue avec le code P0001 et le
 -- message « rate_limited », que le serveur traduit pour le visiteur.
 -- Les comptes administrateurs ne sont pas limités.
+-- Pour les autres, `created_at` et `status` sont imposés par la base : la clé
+-- anon étant publique, un robot pourrait sinon antidater ses demandes pour
+-- échapper au comptage, ou les marquer « gagnées ».
+-- Limite volontairement simple : les comptages ne posent pas de verrou, deux
+-- envois strictement simultanés peuvent donc dépasser la limite d'une unité.
 create index if not exists quote_requests_phone_created_idx
   on public.quote_requests (phone, created_at desc);
 
@@ -148,6 +153,9 @@ begin
   if public.is_admin() then
     return new;
   end if;
+
+  new.created_at := now();
+  new.status := 'new';
 
   if new.phone is not null and (
     select count(*) from public.quote_requests

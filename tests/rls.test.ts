@@ -120,6 +120,20 @@ describe("visiteur anonyme", () => {
     });
   });
 
+  test("ne peut pas contourner la limite en fixant created_at ni choisir le statut", async () => {
+    const forged =
+      "insert into public.quote_requests (phone, created_at, status) values ('0655555555', '2000-01-01', 'won')";
+    await as("anon", null, async () => {
+      for (let i = 0; i < 3; i++) assert.equal(await error(forged), null);
+      assert.match((await error(forged)) ?? "", /rate_limited/);
+    });
+    const stored = await rows<{ status: string; recent: boolean }>(
+      "select status, created_at > now() - interval '1 minute' as recent from public.quote_requests where phone = '0655555555'",
+    );
+    assert.equal(stored.length, 3);
+    assert.ok(stored.every((r) => r.status === "new" && r.recent));
+  });
+
   test("ne peut pas dépasser les tailles maximales ni envoyer des items mal formés", async () => {
     await as("anon", null, async () => {
       assert.notEqual(await error("insert into public.quote_requests (name) values (repeat('a', 121))"), null);
