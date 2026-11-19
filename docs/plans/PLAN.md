@@ -58,7 +58,7 @@
 - Modify : `lib/catalog.ts` (65 lignes mojibake)
 - Create : `tests/encoding.test.ts`
 
-- [ ] Écrire `tests/encoding.test.ts` : il parcourt `app/`, `components/`, `lib/`, `supabase/`, `docs/`, `README.md` (extensions `.ts .tsx .css .sql .md .json`) et vérifie qu'aucun fichier ne contient `Ã` ni `â€`. Le message d'échec liste `fichier:ligne`.
+- [ ] Écrire `tests/encoding.test.ts` : il parcourt `app/`, `components/`, `lib/`, `supabase/`, `docs/`, `README.md` (extensions `.ts .tsx .css .sql .md .json`) et vérifie qu'aucun fichier ne contient de séquence mojibake (« A tilde » ou « a circonflexe + euro », motif défini dans le test). Le message d'échec liste `fichier:ligne`.
 - [ ] Run `npm test` → Expected : FAIL qui liste les lignes de `lib/catalog.ts`.
 - [ ] Ré-encoder `lib/catalog.ts` (décodage latin-1 → UTF-8 des séquences fautives, puis relecture manuelle des 65 lignes : `é è à â ° — – · " ’`).
 - [ ] Run `npm test` → PASS. Run `npm run build` → succès.
