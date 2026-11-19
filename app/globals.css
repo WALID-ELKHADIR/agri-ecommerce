@@ -6,6 +6,8 @@
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", sans-serif;
+  /* Police de marque : titres et wordmark (classe utilitaire `font-display`). */
+  --font-display: var(--font-bricolage), var(--font-geist-sans), ui-sans-serif, sans-serif;
 }
 
 :root {
