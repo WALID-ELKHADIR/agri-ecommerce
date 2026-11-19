@@ -5,7 +5,7 @@ import { Clock, ShieldCheck, Truck } from "@/components/icons";
 import { MobileCta } from "@/components/mobile-cta";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { products } from "@/lib/catalog";
+import { getCatalog } from "@/lib/catalog-data";
 
 export const metadata: Metadata = {
   title: "Catalogue — Pompes, raccords et kits d'irrigation | AgriFlow",
@@ -31,7 +31,9 @@ const trust = [
   },
 ];
 
-export default function ProduitsPage() {
+export default async function ProduitsPage() {
+  const { products, categories } = await getCatalog();
+
   return (
     <>
       <SiteHeader />
@@ -76,7 +78,7 @@ export default function ProduitsPage() {
           </div>
         </section>
 
-        <CatalogBrowser />
+        <CatalogBrowser products={products} categories={categories} />
 
         <section className="border-t border-slate-200 bg-white">
           <div className="mx-auto grid max-w-7xl gap-4 px-4 py-10 sm:grid-cols-3">

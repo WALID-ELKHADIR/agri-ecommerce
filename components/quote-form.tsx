@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { ArrowRight, WhatsApp } from "@/components/icons";
+import { ArrowRight, Check, WhatsApp } from "@/components/icons";
+import { saveQuoteRequest } from "@/lib/actions/quotes";
 import { whatsappLink } from "@/lib/catalog";
 
 const profiles = [
@@ -12,10 +13,14 @@ const profiles = [
   "Autre",
 ];
 
+type Status = "idle" | "saving" | "saved";
+
 export function QuoteForm() {
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [profile, setProfile] = useState(profiles[0]);
   const [need, setNeed] = useState("");
+  const [status, setStatus] = useState<Status>("idle");
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -25,6 +30,7 @@ export function QuoteForm() {
       "Je souhaite un devis pour du matériel d'irrigation / de pompage.",
       "",
       name ? `• Nom : ${name}` : null,
+      phone ? `• Téléphone : ${phone}` : null,
       `• Profil : ${profile}`,
       need ? `• Besoin : ${need}` : null,
       "",
@@ -33,7 +39,20 @@ export function QuoteForm() {
       .filter(Boolean)
       .join("\n");
 
+    // Ouvre WhatsApp tout de suite : le navigateur bloque les fenêtres
+    // ouvertes après un appel réseau.
     window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
+
+    setStatus("saving");
+    void saveQuoteRequest({
+      name,
+      phone,
+      profile,
+      message: need,
+      source: "contact",
+    }).then((result) => {
+      setStatus(result.ok ? "saved" : "idle");
+    });
   }
 
   return (
@@ -45,8 +64,8 @@ export function QuoteForm() {
         Décrivez votre projet
       </h2>
       <p className="mt-1 text-xs text-slate-500">
-        Remplissez ces trois champs : votre demande part directement sur
-        WhatsApp.
+        Remplissez ces champs : votre demande part sur WhatsApp et reste
+        enregistrée pour notre équipe.
       </p>
 
       <div className="mt-4 grid gap-3">
@@ -56,6 +75,20 @@ export function QuoteForm() {
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder="Votre nom ou votre exploitation"
+            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-[#0A2540] placeholder:text-slate-400 focus:border-cyan-500 focus:outline-none"
+          />
+        </label>
+
+        <label className="grid gap-1.5">
+          <span className="text-xs font-semibold text-slate-600">
+            Téléphone (optionnel)
+          </span>
+          <input
+            type="tel"
+            inputMode="tel"
+            value={phone}
+            onChange={(event) => setPhone(event.target.value)}
+            placeholder="+212 6 00 00 00 00"
             className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-[#0A2540] placeholder:text-slate-400 focus:border-cyan-500 focus:outline-none"
           />
         </label>
@@ -93,16 +126,27 @@ export function QuoteForm() {
 
       <button
         type="submit"
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#1FA855] px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-[#178f47]"
+        disabled={status === "saving"}
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#1FA855] px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-[#178f47] disabled:opacity-70"
       >
         <WhatsApp className="h-5 w-5" />
         Envoyer sur WhatsApp
       </button>
 
-      <p className="mt-2 flex items-center justify-center gap-1 text-[11px] text-slate-400">
-        Réponse d’un technicien sous 24h ouvrées
-        <ArrowRight className="h-3 w-3" />
-      </p>
+      {status === "saved" ? (
+        <p
+          role="status"
+          className="mt-2 flex items-center justify-center gap-1.5 text-[11px] font-medium text-emerald-700"
+        >
+          <Check className="h-3.5 w-3.5" />
+          Demande enregistrée — WhatsApp s’est ouvert dans un nouvel onglet.
+        </p>
+      ) : (
+        <p className="mt-2 flex items-center justify-center gap-1 text-[11px] text-slate-400">
+          Réponse d’un technicien sous 24h ouvrées
+          <ArrowRight className="h-3 w-3" />
+        </p>
+      )}
     </form>
   );
 }

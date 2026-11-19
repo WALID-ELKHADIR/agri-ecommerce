@@ -11,7 +11,6 @@ export type ProductSpec = {
 };
 
 export type Product = {
-  id: number;
   slug: string;
   name: string;
   category: string;
@@ -38,12 +37,12 @@ export const BRAND = {
   phoneDisplay: "+212 6 00 00 00 00",
   phoneRaw: "+212600000000",
   email: "contact@agriflow.ma",
-  address: "Casablanca, Maroc — livraison nationale",
-  hours: "Lun – Sam · 8h30 – 18h30",
+  address: "Casablanca, Maroc â€” livraison nationale",
+  hours: "Lun â€“ Sam Â· 8h30 â€“ 18h30",
 };
 
 /**
- * Remplacez ce numéro par le numéro WhatsApp réel de l'entreprise.
+ * Remplacez ce numÃ©ro par le numÃ©ro WhatsApp rÃ©el de l'entreprise.
  * Format international sans "+" ni espaces (ex: 212612345678).
  */
 export const WHATSAPP_NUMBER = "212600000000";
@@ -59,80 +58,76 @@ export const categories: Category[] = [
     id: "pompes",
     label: "Pompes & motopompes",
     short: "Pompes",
-    description: "Centrifuges, immergées, haute pression et motopompes.",
+    description: "Centrifuges, immergÃ©es, haute pression et motopompes.",
   },
   {
     id: "raccords",
     label: "Raccords & fittings",
     short: "Raccords",
-    description: "Compression PE, PVC pression, filetés et pièces de réseau.",
+    description: "Compression PE, PVC pression, filetÃ©s et piÃ¨ces de rÃ©seau.",
   },
   {
     id: "kits",
     label: "Kits complets",
     short: "Kits",
-    description: "Ensembles prêts à installer : pompe, coffret et câble.",
+    description: "Ensembles prÃªts Ã  installer : pompe, coffret et cÃ¢ble.",
   },
 ];
 
 export const products: Product[] = [
   {
-    id: 1,
     slug: "kit-pompe-immergee-4-pouces",
-    name: "Kit pompe immergée 4\" complet",
+    name: "Kit pompe immergÃ©e 4\" complet",
     category: "kits",
     categoryLabel: "Kits complets",
     description:
-      "Ensemble prêt à poser pour forage ou puits : pompe immergée inox, coffret de commande et câble électrique.",
+      "Ensemble prÃªt Ã  poser pour forage ou puits : pompe immergÃ©e inox, coffret de commande et cÃ¢ble Ã©lectrique.",
     image: "/images/products/kit-pompe-immergee.jpg",
-    imageAlt: "Kit de pompe immergée avec coffret de commande et câble",
+    imageAlt: "Kit de pompe immergÃ©e avec coffret de commande et cÃ¢ble",
     badge: "Pack complet",
     specs: [
-      { label: "Puissance", value: "0,37 – 1,5 kW" },
+      { label: "Puissance", value: "0,37 â€“ 1,5 kW" },
       { label: "Alimentation", value: "220 V mono" },
-      { label: "Inclus", value: "Coffret + câble" },
+      { label: "Inclus", value: "Coffret + cÃ¢ble" },
     ],
     stock: "Disponible",
     featured: true,
   },
   {
-    id: 2,
     slug: "pompe-immergee-inox-4-pouces",
-    name: "Pompe immergée inox 4\"",
+    name: "Pompe immergÃ©e inox 4\"",
     category: "pompes",
     categoryLabel: "Pompes & motopompes",
     description:
-      "Pompe de forage en acier inoxydable, conçue pour l'irrigation et l'alimentation en eau sur de longues périodes.",
+      "Pompe de forage en acier inoxydable, conÃ§ue pour l'irrigation et l'alimentation en eau sur de longues pÃ©riodes.",
     image: "/images/products/pompe-immergee-4p.jpg",
-    imageAlt: "Pompe immergée inoxydable 4 pouces",
+    imageAlt: "Pompe immergÃ©e inoxydable 4 pouces",
     specs: [
-      { label: "Puissance", value: "0,5 – 2,2 kW" },
-      { label: "Débit", value: "jusqu'à 8 m³/h" },
-      { label: "Diamètre", value: "4 pouces" },
+      { label: "Puissance", value: "0,5 â€“ 2,2 kW" },
+      { label: "DÃ©bit", value: "jusqu'Ã  8 mÂ³/h" },
+      { label: "DiamÃ¨tre", value: "4 pouces" },
     ],
     stock: "Disponible",
     featured: true,
   },
   {
-    id: 3,
     slug: "pompe-centrifuge-monobloc",
     name: "Pompe centrifuge monobloc",
     category: "pompes",
     categoryLabel: "Pompes & motopompes",
     description:
-      "Pompe de surface robuste pour l'irrigation, le transfert d'eau et les réseaux de distribution agricoles.",
+      "Pompe de surface robuste pour l'irrigation, le transfert d'eau et les rÃ©seaux de distribution agricoles.",
     image: "/images/products/pompe-centrifuge-monobloc.jpg",
     imageAlt: "Pompe centrifuge monobloc bleu acier",
     specs: [
-      { label: "Puissance", value: "0,75 – 7,5 kW" },
+      { label: "Puissance", value: "0,75 â€“ 7,5 kW" },
       { label: "Alimentation", value: "220 / 380 V" },
-      { label: "Débit", value: "6 – 60 m³/h" },
+      { label: "DÃ©bit", value: "6 â€“ 60 mÂ³/h" },
     ],
     stock: "Disponible",
     featured: true,
   },
   {
-    id: 4,
     slug: "motopompe-centrifuge-inox",
     name: "Motopompe centrifuge inox",
     category: "pompes",
@@ -143,7 +138,7 @@ export const products: Product[] = [
     imageAlt: "Motopompe centrifuge avec corps en inox",
     badge: "Inox",
     specs: [
-      { label: "Puissance", value: "1 – 5,5 kW" },
+      { label: "Puissance", value: "1 â€“ 5,5 kW" },
       { label: "Corps", value: "Acier inoxydable" },
       { label: "Usage", value: "Irrigation / transfert" },
     ],
@@ -151,71 +146,67 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 5,
     slug: "pompe-centrifuge-haute-pression",
     name: "Pompe centrifuge haute pression",
     category: "pompes",
     categoryLabel: "Pompes & motopompes",
     description:
-      "Solution de pompage à forte hauteur manométrique pour réseaux sous pression et aspersion.",
+      "Solution de pompage Ã  forte hauteur manomÃ©trique pour rÃ©seaux sous pression et aspersion.",
     image: "/images/products/pompe-haute-pression.jpg",
     imageAlt: "Pompe centrifuge haute pression de grande taille",
     specs: [
-      { label: "Puissance", value: "2 – 15 kW" },
-      { label: "HMT", value: "jusqu'à 90 m" },
+      { label: "Puissance", value: "2 â€“ 15 kW" },
+      { label: "HMT", value: "jusqu'Ã  90 m" },
       { label: "Corps", value: "Fonte / inox" },
     ],
     stock: "Sur commande",
   },
   {
-    id: 6,
     slug: "pompe-centrifuge-fonte",
     name: "Pompe centrifuge fonte",
     category: "pompes",
     categoryLabel: "Pompes & motopompes",
     description:
-      "Modèle économique et endurant pour l'irrigation de plein champ et le transfert d'eau claire.",
+      "ModÃ¨le Ã©conomique et endurant pour l'irrigation de plein champ et le transfert d'eau claire.",
     image: "/images/products/pompe-centrifuge-fonte.jpg",
     imageAlt: "Pompe centrifuge en fonte bleue",
     specs: [
-      { label: "Puissance", value: "0,75 – 4 kW" },
+      { label: "Puissance", value: "0,75 â€“ 4 kW" },
       { label: "Alimentation", value: "220 / 380 V" },
       { label: "Usage", value: "Intensif" },
     ],
     stock: "Disponible",
   },
   {
-    id: 7,
     slug: "gamme-pompes-immergees-inox",
-    name: "Gamme pompes immergées inox",
+    name: "Gamme pompes immergÃ©es inox",
     category: "pompes",
     categoryLabel: "Pompes & motopompes",
     description:
-      "Gamme professionnelle 4\" et 6\" pour forages profonds, avec plusieurs puissances et débits au choix.",
+      "Gamme professionnelle 4\" et 6\" pour forages profonds, avec plusieurs puissances et dÃ©bits au choix.",
     image: "/images/products/pompes-immergees-serie.jpg",
-    imageAlt: "Série de pompes immergées inox en atelier",
+    imageAlt: "SÃ©rie de pompes immergÃ©es inox en atelier",
     badge: "Gamme pro",
     specs: [
-      { label: "Diamètres", value: "4\" et 6\"" },
-      { label: "Puissance", value: "0,5 – 7,5 kW" },
+      { label: "DiamÃ¨tres", value: "4\" et 6\"" },
+      { label: "Puissance", value: "0,5 â€“ 7,5 kW" },
       { label: "Usage", value: "Forages profonds" },
     ],
     stock: "Disponible",
     featured: true,
   },
   {
-    id: 8,
     slug: "coude-pe-compression-90",
-    name: "Coude PE à compression 90°",
+    name: "Coude PE Ã  compression 90Â°",
     category: "raccords",
     categoryLabel: "Raccords & fittings",
     description:
-      "Raccord à compression pour tuyaux PE, étanchéité haute pression et montage sans outil spécifique.",
+      "Raccord Ã  compression pour tuyaux PE, Ã©tanchÃ©itÃ© haute pression et montage sans outil spÃ©cifique.",
     image: "/images/products/raccord-pe-90.jpg",
-    imageAlt: "Coude PE à compression 90 degrés noir et bleu",
+    imageAlt: "Coude PE Ã  compression 90 degrÃ©s noir et bleu",
     badge: "Best-seller",
     specs: [
-      { label: "Diamètre", value: "Ø20 – 63 mm" },
+      { label: "DiamÃ¨tre", value: "Ã˜20 â€“ 63 mm" },
       { label: "Pression", value: "PN16" },
       { label: "Montage", value: "Sans outil" },
     ],
@@ -223,54 +214,51 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 9,
     slug: "coude-pe-filete-male-90",
-    name: "Coude PE fileté mâle 90°",
+    name: "Coude PE filetÃ© mÃ¢le 90Â°",
     category: "raccords",
     categoryLabel: "Raccords & fittings",
     description:
-      "Raccord de transition PE vers filetage mâle, avec inserts laiton pour une étanchéité durable.",
+      "Raccord de transition PE vers filetage mÃ¢le, avec inserts laiton pour une Ã©tanchÃ©itÃ© durable.",
     image: "/images/products/raccord-pe-90-metal.jpg",
-    imageAlt: "Coude PE fileté mâle à compression",
+    imageAlt: "Coude PE filetÃ© mÃ¢le Ã  compression",
     specs: [
-      { label: "Diamètre", value: "Ø20 – 50 mm" },
-      { label: "Filetage", value: "Laiton mâle" },
-      { label: "Étanchéité", value: "Renforcée" },
+      { label: "DiamÃ¨tre", value: "Ã˜20 â€“ 50 mm" },
+      { label: "Filetage", value: "Laiton mÃ¢le" },
+      { label: "Ã‰tanchÃ©itÃ©", value: "RenforcÃ©e" },
     ],
     stock: "Disponible",
   },
   {
-    id: 10,
     slug: "te-pvc-pression",
-    name: "Té PVC pression",
+    name: "TÃ© PVC pression",
     category: "raccords",
     categoryLabel: "Raccords & fittings",
     description:
-      "Té de distribution PVC pour réseaux sous pression, assemblage par collage solvant.",
+      "TÃ© de distribution PVC pour rÃ©seaux sous pression, assemblage par collage solvant.",
     image: "/images/products/te-pvc.jpg",
-    imageAlt: "Té PVC pression gris sur établi",
+    imageAlt: "TÃ© PVC pression gris sur Ã©tabli",
     specs: [
-      { label: "Diamètre", value: "Ø32 – 110 mm" },
+      { label: "DiamÃ¨tre", value: "Ã˜32 â€“ 110 mm" },
       { label: "Pression", value: "PN10 / PN16" },
       { label: "Assemblage", value: "Collage solvant" },
     ],
     stock: "Disponible",
   },
   {
-    id: 11,
     slug: "coude-pe-reseau-enterre",
-    name: "Coude PE pour réseau enterré",
+    name: "Coude PE pour rÃ©seau enterrÃ©",
     category: "raccords",
     categoryLabel: "Raccords & fittings",
     description:
-      "Raccord PE résistant aux UV et à l'enfouissement, pensé pour les réseaux d'irrigation durables.",
+      "Raccord PE rÃ©sistant aux UV et Ã  l'enfouissement, pensÃ© pour les rÃ©seaux d'irrigation durables.",
     image: "/images/products/raccord-pe-terrain.jpg",
-    imageAlt: "Raccord PE installé sur un réseau d'irrigation enterré",
-    badge: "Résistant UV",
+    imageAlt: "Raccord PE installÃ© sur un rÃ©seau d'irrigation enterrÃ©",
+    badge: "RÃ©sistant UV",
     specs: [
-      { label: "Diamètre", value: "Ø25 – 63 mm" },
-      { label: "Usage", value: "Réseau enterré" },
-      { label: "Matériau", value: "PE haute densité" },
+      { label: "DiamÃ¨tre", value: "Ã˜25 â€“ 63 mm" },
+      { label: "Usage", value: "RÃ©seau enterrÃ©" },
+      { label: "MatÃ©riau", value: "PE haute densitÃ©" },
     ],
     stock: "Disponible",
   },
@@ -285,35 +273,35 @@ export const galleryImages: GalleryImage[] = [
   },
   {
     src: "/images/products/raccord-pe-terrain.jpg",
-    alt: "Raccord PE sur réseau d'irrigation",
+    alt: "Raccord PE sur rÃ©seau d'irrigation",
     label: "Raccords PE",
   },
   {
     src: "/images/products/kit-pompe-immergee.jpg",
-    alt: "Kit pompe immergée complet",
+    alt: "Kit pompe immergÃ©e complet",
     label: "Kits de pompage",
     contain: true,
   },
   {
     src: "/images/products/te-pvc.jpg",
-    alt: "Té PVC pression",
+    alt: "TÃ© PVC pression",
     label: "PVC pression",
   },
   {
     src: "/images/products/pompe-immergee-4p.jpg",
-    alt: "Pompe immergée inox 4 pouces",
-    label: "Pompes immergées",
+    alt: "Pompe immergÃ©e inox 4 pouces",
+    label: "Pompes immergÃ©es",
     contain: true,
   },
   {
     src: "/images/products/raccord-pe-90.jpg",
-    alt: "Coude PE à compression",
+    alt: "Coude PE Ã  compression",
     label: "Compression PE",
     contain: true,
   },
   {
     src: "/images/products/pompes-immergees-serie.jpg",
-    alt: "Série de pompes immergées inox",
+    alt: "SÃ©rie de pompes immergÃ©es inox",
     label: "Gamme professionnelle",
   },
   {
@@ -324,8 +312,8 @@ export const galleryImages: GalleryImage[] = [
   },
   {
     src: "/images/products/raccord-pe-90-metal.jpg",
-    alt: "Coude PE fileté",
-    label: "Raccords filetés",
+    alt: "Coude PE filetÃ©",
+    label: "Raccords filetÃ©s",
   },
   {
     src: "/images/products/motopompe-inox.jpg",
@@ -335,7 +323,7 @@ export const galleryImages: GalleryImage[] = [
   },
   {
     src: "/images/products/pompes-stock.jpg",
-    alt: "Stock de pompes immergées",
+    alt: "Stock de pompes immergÃ©es",
     label: "Stock disponible",
   },
   {
@@ -351,20 +339,20 @@ export function whatsappLink(message: string) {
 }
 
 export function generalMessage() {
-  return "Bonjour AgriFlow 👋, je souhaite un devis pour du matériel d'irrigation / de pompage. Pouvez-vous m'aider ?";
+  return "Bonjour AgriFlow ðŸ‘‹, je souhaite un devis pour du matÃ©riel d'irrigation / de pompage. Pouvez-vous m'aider ?";
 }
 
 export function productMessage(product: Product, quantity = 1) {
   return [
-    "Bonjour AgriFlow 👋,",
+    "Bonjour AgriFlow ðŸ‘‹,",
     "Je souhaite un devis pour :",
-    `• ${product.name}${quantity > 1 ? ` — ${quantity} unités` : ""}`,
+    `â€¢ ${product.name}${quantity > 1 ? ` â€” ${quantity} unitÃ©s` : ""}`,
     ...product.specs.slice(0, 2).map((spec) => `  ${spec.label} : ${spec.value}`),
     "",
-    "Merci de me communiquer le prix, la disponibilité et le délai de livraison.",
+    "Merci de me communiquer le prix, la disponibilitÃ© et le dÃ©lai de livraison.",
   ].join("\n");
 }
 
 export function categoryMessage(category: Category) {
-  return `Bonjour AgriFlow 👋, je souhaite un devis pour la gamme « ${category.label} ». Pouvez-vous me conseiller ?`;
+  return `Bonjour AgriFlow ðŸ‘‹, je souhaite un devis pour la gamme Â« ${category.label} Â». Pouvez-vous me conseiller ?`;
 }
