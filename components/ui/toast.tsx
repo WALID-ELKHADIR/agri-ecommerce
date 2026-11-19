@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 export type ToastTone = "success" | "info" | "error";
@@ -8,7 +8,9 @@ export type ToastTone = "success" | "info" | "error";
 type ToastInput = { title: string; description?: string; tone?: ToastTone };
 type ToastItem = ToastInput & { id: number; tone: ToastTone };
 
-const DURATION_MS = 4500;
+/** Durée d'affichage des confirmations ; les erreurs restent jusqu'à fermeture. */
+const DURATION_MS = 5000;
+const MAX_VISIBLE = 3;
 
 const ToastContext = createContext<((toast: ToastInput) => void) | null>(null);
 
@@ -18,9 +20,10 @@ const TONES: Record<ToastTone, { box: string; dot: string }> = {
   error: { box: "border-danger-200", dot: "bg-danger-600" },
 };
 
-/** Fournit `useToast()` et affiche les notifications (zone aria-live). */
+/** Fournit `useToast()` et affiche les notifications. */
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const [announcement, setAnnouncement] = useState("");
   const nextId = useRef(0);
 
   const dismiss = useCallback((id: number) => {
@@ -29,19 +32,19 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   const push = useCallback((toast: ToastInput) => {
     nextId.current += 1;
-    setToasts((current) => [...current.slice(-2), { ...toast, tone: toast.tone ?? "success", id: nextId.current }]);
+    const item: ToastItem = { ...toast, tone: toast.tone ?? "success", id: nextId.current };
+    setToasts((current) => [...current.slice(-(MAX_VISIBLE - 1)), item]);
+    setAnnouncement([toast.title, toast.description].filter(Boolean).join(". "));
   }, []);
 
-  const value = useMemo(() => push, [push]);
-
   return (
-    <ToastContext.Provider value={value}>
+    <ToastContext.Provider value={push}>
       {children}
-      <div
-        role="status"
-        aria-live="polite"
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-[100] flex flex-col items-center gap-2 p-4 sm:items-end sm:p-6"
-      >
+      {/* Annonce pour les lecteurs d'écran, sans les boutons des notifications. */}
+      <p role="status" aria-live="polite" className="sr-only">
+        {announcement}
+      </p>
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[100] flex flex-col items-center gap-2 p-4 sm:items-end sm:p-6">
         {toasts.map((toast) => (
           <Toast key={toast.id} toast={toast} onDismiss={dismiss} />
         ))}
@@ -51,14 +54,23 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 }
 
 function Toast({ toast, onDismiss }: { toast: ToastItem; onDismiss: (id: number) => void }) {
+  // Le minuteur s'arrête tant que la souris ou le focus sont sur la notification.
+  const [paused, setPaused] = useState(false);
+  const persistent = toast.tone === "error";
+
   useEffect(() => {
+    if (persistent || paused) return;
     const timer = window.setTimeout(() => onDismiss(toast.id), DURATION_MS);
     return () => window.clearTimeout(timer);
-  }, [toast.id, onDismiss]);
+  }, [toast.id, onDismiss, persistent, paused]);
 
   const tone = TONES[toast.tone];
   return (
     <div
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
       className={cn(
         "pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-card border bg-white py-3 pl-4 pr-1 shadow-lifted",
         "motion-safe:animate-[toast-in_var(--duration-base)_var(--ease-out-expo)]",

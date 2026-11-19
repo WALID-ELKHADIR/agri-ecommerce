@@ -14,7 +14,7 @@ type FieldProps = {
 
 const CONTROL =
   "w-full rounded-control border bg-white px-3.5 text-[15px] text-soil-900 placeholder:text-soil-500 " +
-  "transition-colors duration-(--duration-fast) focus:outline-none focus-visible:outline-2 " +
+  "transition-colors duration-(--duration-fast) focus-visible:outline-2 focus-visible:outline-solid " +
   "focus-visible:outline-offset-1 focus-visible:outline-water-600 disabled:bg-soil-100 disabled:text-soil-500";
 
 function controlClasses(error: string | undefined, extra: string, className?: string): string {
@@ -54,10 +54,10 @@ function FieldShell({
   );
 }
 
-function describedBy(id: string, hint?: string, error?: string): string | undefined {
-  if (error) return `${id}-error`;
-  if (hint) return `${id}-hint`;
-  return undefined;
+/** Relie le champ à son erreur (ou à son aide) en conservant un aria-describedby fourni. */
+function describedBy(id: string, hint?: string, error?: string, extra?: string): string | undefined {
+  const own = error ? `${id}-error` : hint ? `${id}-hint` : undefined;
+  return [own, extra].filter(Boolean).join(" ") || undefined;
 }
 
 export function Input({
@@ -67,6 +67,7 @@ export function Input({
   hideLabel,
   className,
   id: idProp,
+  "aria-describedby": describedByProp,
   ...props
 }: FieldProps & InputHTMLAttributes<HTMLInputElement>) {
   const generated = useId();
@@ -76,7 +77,7 @@ export function Input({
       <input
         id={id}
         aria-invalid={error ? true : undefined}
-        aria-describedby={describedBy(id, hint, error)}
+        aria-describedby={describedBy(id, hint, error, describedByProp)}
         className={controlClasses(error, "min-h-11 py-2.5", className)}
         {...props}
       />
@@ -91,6 +92,7 @@ export function Textarea({
   hideLabel,
   className,
   id: idProp,
+  "aria-describedby": describedByProp,
   rows = 4,
   ...props
 }: FieldProps & TextareaHTMLAttributes<HTMLTextAreaElement>) {
@@ -102,7 +104,7 @@ export function Textarea({
         id={id}
         rows={rows}
         aria-invalid={error ? true : undefined}
-        aria-describedby={describedBy(id, hint, error)}
+        aria-describedby={describedBy(id, hint, error, describedByProp)}
         className={controlClasses(error, "resize-y py-2.5 leading-relaxed", className)}
         {...props}
       />
@@ -117,6 +119,7 @@ export function Select({
   hideLabel,
   className,
   id: idProp,
+  "aria-describedby": describedByProp,
   children,
   ...props
 }: FieldProps & SelectHTMLAttributes<HTMLSelectElement>) {
@@ -128,7 +131,7 @@ export function Select({
         <select
           id={id}
           aria-invalid={error ? true : undefined}
-          aria-describedby={describedBy(id, hint, error)}
+          aria-describedby={describedBy(id, hint, error, describedByProp)}
           className={controlClasses(error, "min-h-11 appearance-none py-2.5 pr-10", className)}
           {...props}
         >

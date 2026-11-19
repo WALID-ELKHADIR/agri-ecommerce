@@ -67,7 +67,7 @@ Les titres combinent `font-display font-bold` (Bricolage Grotesque). L'interlign
 | `Badge` | `badge.tsx` | Tons `neutral`, `field`, `water`, `harvest`, `danger`, `solid` |
 | `Input`, `Select`, `Textarea` | `field.tsx` | Libellé obligatoire (`hideLabel` pour le masquer visuellement) ; `hint` et `error` sont reliés au champ via `aria-describedby` |
 | `Dialog`, `Sheet` | `dialog.tsx` | Contrôlés (`open`, `onClose`) ; `Sheet` s'ouvre depuis le bas (`side="bottom"`) ou la droite |
-| `ToastProvider`, `useToast()` | `toast.tsx` | Tons `success`, `info`, `error` ; 3 notifications au plus, fermeture automatique après 4,5 s, annoncées aux lecteurs d'écran |
+| `ToastProvider`, `useToast()` | `toast.tsx` | Tons `success`, `info`, `error` ; 3 notifications au plus, fermeture automatique après 5 s, en pause au survol ou au focus ; les erreurs restent jusqu'à fermeture ; annonce séparée pour les lecteurs d'écran |
 | `Skeleton` | `skeleton.tsx` | Taille fixée par `className` pour éviter tout décalage de mise en page |
 | `EmptyState` | `empty-state.tsx` | Toujours avec une action pour en sortir |
 | `SectionHeading` | `section-heading.tsx` | `as="h1" \| "h2" \| "h3"`, `description`, `action` |

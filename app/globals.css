@@ -234,6 +234,8 @@ body {
 /* Pas de défilement de la page derrière une fenêtre modale ouverte. */
 html:has(dialog[open]) {
   overflow: hidden;
+  /* Réserve la place de la barre de défilement : pas de saut de mise en page. */
+  scrollbar-gutter: stable;
 }
 
 @keyframes toast-in {
@@ -251,8 +253,10 @@ html:has(dialog[open]) {
   *,
   ::before,
   ::after {
+    animation-delay: 0ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    transition-delay: 0ms !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
