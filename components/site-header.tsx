@@ -72,7 +72,7 @@ export function SiteHeader() {
 
       <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-[#f5f8fb]/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
-          <Link href="/" aria-label="AgriFlow — accueil">
+          <Link href="/" aria-label="Saqia — accueil">
             <Logo />
           </Link>
 

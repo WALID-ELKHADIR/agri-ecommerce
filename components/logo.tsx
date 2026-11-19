@@ -34,10 +34,7 @@ export function Logo({
             variant === "light" ? "text-white" : "text-[#0A2540]"
           }`}
         >
-          Agri
-          <span className={variant === "light" ? "text-cyan-300" : "text-cyan-600"}>
-            Flow
-          </span>
+          Saqia
         </span>
         {showTagline ? (
           <span

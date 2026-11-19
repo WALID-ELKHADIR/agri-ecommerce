@@ -12,10 +12,10 @@ import { ProductCard } from "@/components/product-card";
 import { QuickView } from "@/components/quick-view";
 import { catalogFilters } from "@/lib/catalog-filters";
 import {
-  categories,
+  BRAND,
   generalMessage,
-  products,
   whatsappLink,
+  type Category,
   type Product,
 } from "@/lib/catalog";
 
@@ -25,7 +25,13 @@ const sortOptions = [
   { value: "category", label: "Par gamme" },
 ];
 
-export function CatalogBrowser() {
+export function CatalogBrowser({
+  products,
+  categories,
+}: {
+  products: Product[];
+  categories: Category[];
+}) {
   const filters = useSyncExternalStore(
     catalogFilters.subscribe,
     catalogFilters.getSnapshot,
@@ -44,7 +50,7 @@ export function CatalogBrowser() {
       map[product.category] = (map[product.category] ?? 0) + 1;
     }
     return map;
-  }, []);
+  }, [products]);
 
   const filtered = useMemo(() => {
     const term = filters.query.trim().toLowerCase();
@@ -73,7 +79,7 @@ export function CatalogBrowser() {
     return [...items].sort(
       (a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)),
     );
-  }, [filters, sort]);
+  }, [filters, sort, products]);
 
   return (
     <div className="mx-auto grid max-w-7xl gap-8 px-4 pb-16 pt-8 lg:grid-cols-[280px_1fr] lg:pb-20">
@@ -228,7 +234,7 @@ export function CatalogBrowser() {
           <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {filtered.map((product) => (
               <ProductCard
-                key={product.id}
+                key={product.slug}
                 product={product}
                 onDetails={setSelected}
               />
@@ -259,7 +265,7 @@ export function CatalogBrowser() {
           </p>
           <a
             href={whatsappLink(
-              "Bonjour AgriFlow 👋, je recherche un produit spécifique qui n'est pas dans le catalogue. Pouvez-vous m'aider ?",
+              `Bonjour ${BRAND.name} 👋, je recherche un produit spécifique qui n'est pas dans le catalogue. Pouvez-vous m'aider ?`,
             )}
             target="_blank"
             rel="noopener noreferrer"
@@ -273,7 +279,7 @@ export function CatalogBrowser() {
 
       {selected ? (
         <QuickView
-          key={selected.id}
+          key={selected.slug}
           product={selected}
           onClose={() => setSelected(null)}
         />

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Minus, Phone, Plus, WhatsApp } from "@/components/icons";
+import { saveQuoteRequest } from "@/lib/actions/quotes";
 import {
   BRAND,
   productMessage,
@@ -48,6 +49,16 @@ export function ProductQuote({ product }: { product: Product }) {
         href={whatsappLink(productMessage(product, quantity))}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => {
+          // Enregistre la demande côté serveur sans bloquer l'ouverture de WhatsApp.
+          void saveQuoteRequest({
+            name: "",
+            productSlug: product.slug,
+            quantity,
+            message: product.name,
+            source: "fiche-produit",
+          });
+        }}
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#1FA855] px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-[#178f47]"
       >
         <WhatsApp className="h-5 w-5" />

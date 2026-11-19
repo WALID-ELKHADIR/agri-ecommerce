@@ -15,9 +15,9 @@ import { SiteHeader } from "@/components/site-header";
 import { BRAND, generalMessage, whatsappLink } from "@/lib/catalog";
 
 export const metadata: Metadata = {
-  title: "Contact & devis — AgriFlow irrigation et pompage",
+  title: "Contact & devis — Saqia, pompes et irrigation",
   description:
-    "Contactez AgriFlow pour un devis de pompes, raccords PE/PVC ou kits d'irrigation. WhatsApp, téléphone et e-mail — réponse sous 24h.",
+    "Contactez Saqia pour un devis de pompes, raccords PE/PVC ou kits d'irrigation. WhatsApp, téléphone et e-mail — réponse sous 24h.",
 };
 
 const channels = [

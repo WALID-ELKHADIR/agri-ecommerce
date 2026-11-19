@@ -1,0 +1,147 @@
+import "server-only";
+
+import { cacheLife, cacheTag } from "next/cache";
+import {
+  categories as fallbackCategories,
+  products as fallbackProducts,
+  type Category,
+  type Product,
+  type ProductSpec,
+} from "@/lib/catalog";
+import { getPublicClient } from "@/lib/supabase/public";
+
+export type Catalog = {
+  categories: Category[];
+  products: Product[];
+};
+
+const ALL_CATEGORY: Category = {
+  id: "all",
+  label: "Tous les produits",
+  short: "Tous",
+  description: "L'ensemble de notre gamme irrigation et pompage.",
+};
+
+type CategoryRow = {
+  id: string;
+  label: string;
+  short: string;
+  description: string;
+};
+
+type ProductRow = {
+  slug: string;
+  name: string;
+  category_id: string;
+  description: string;
+  image_url: string;
+  image_alt: string;
+  badge: string | null;
+  stock: string;
+  specs: ProductSpec[] | null;
+  featured: boolean;
+};
+
+const fallbackCatalog: Catalog = {
+  categories: fallbackCategories,
+  products: fallbackProducts,
+};
+
+function mapProduct(row: ProductRow, labels: Map<string, string>): Product {
+  return {
+    slug: row.slug,
+    name: row.name,
+    category: row.category_id,
+    categoryLabel: labels.get(row.category_id) ?? "Catalogue",
+    description: row.description,
+    image: row.image_url,
+    imageAlt: row.image_alt || row.name,
+    badge: row.badge ?? undefined,
+    specs: Array.isArray(row.specs) ? row.specs : [],
+    stock: row.stock,
+    featured: row.featured,
+  };
+}
+
+async function loadCatalog(): Promise<Catalog> {
+  const supabase = getPublicClient();
+
+  if (!supabase) {
+    return fallbackCatalog;
+  }
+
+  try {
+    const [categoriesResult, productsResult] = await Promise.all([
+      supabase
+        .from("categories")
+        .select("id, label, short, description, position")
+        .order("position", { ascending: true }),
+      supabase
+        .from("products")
+        .select(
+          "slug, name, category_id, description, image_url, image_alt, badge, stock, specs, featured, position",
+        )
+        .eq("published", true)
+        .order("position", { ascending: true })
+        .order("created_at", { ascending: true }),
+    ]);
+
+    if (categoriesResult.error || productsResult.error) {
+      console.error(
+        "[catalog] lecture Supabase impossible, données locales utilisées",
+        categoriesResult.error ?? productsResult.error,
+      );
+      return fallbackCatalog;
+    }
+
+    const categoryRows = (categoriesResult.data ?? []) as CategoryRow[];
+    const productRows = (productsResult.data ?? []) as ProductRow[];
+
+    if (categoryRows.length === 0 || productRows.length === 0) {
+      return fallbackCatalog;
+    }
+
+    const labels = new Map(categoryRows.map((row) => [row.id, row.label]));
+    const categories: Category[] = [
+      ALL_CATEGORY,
+      ...categoryRows.map((row) => ({
+        id: row.id,
+        label: row.label,
+        short: row.short,
+        description: row.description,
+      })),
+    ];
+
+    return {
+      categories,
+      products: productRows.map((row) => mapProduct(row, labels)),
+    };
+  } catch (error) {
+    console.error("[catalog] Supabase injoignable, données locales utilisées", error);
+    return fallbackCatalog;
+  }
+}
+
+/** Catalogue public, mis en cache et invalidé après chaque modification admin. */
+export async function getCatalog(): Promise<Catalog> {
+  "use cache";
+  cacheTag("catalog");
+  cacheLife("minutes");
+
+  return loadCatalog();
+}
+
+export async function getProductBySlug(slug: string): Promise<Product | null> {
+  const { products } = await getCatalog();
+  return products.find((product) => product.slug === slug) ?? null;
+}
+
+export async function getRelatedProducts(
+  product: Product,
+  limit = 3,
+): Promise<Product[]> {
+  const { products } = await getCatalog();
+  return products
+    .filter((item) => item.category === product.category && item.slug !== product.slug)
+    .slice(0, limit);
+}

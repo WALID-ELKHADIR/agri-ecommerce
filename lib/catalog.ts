@@ -1,3 +1,5 @@
+import { siteConfig, whatsappUrl } from "./site-config";
+
 export type Category = {
   id: string;
   label: string;
@@ -11,7 +13,6 @@ export type ProductSpec = {
 };
 
 export type Product = {
-  id: number;
   slug: string;
   name: string;
   category: string;
@@ -32,21 +33,11 @@ export type GalleryImage = {
   contain?: boolean;
 };
 
-export const BRAND = {
-  name: "AgriFlow",
-  tagline: "Irrigation & pompage agricole",
-  phoneDisplay: "+212 6 00 00 00 00",
-  phoneRaw: "+212600000000",
-  email: "contact@agriflow.ma",
-  address: "Casablanca, Maroc — livraison nationale",
-  hours: "Lun – Sam · 8h30 – 18h30",
-};
+/** Coordonnées de l'entreprise : à régler via les variables `NEXT_PUBLIC_*` (voir `.env.example`). */
+export const BRAND = siteConfig;
 
-/**
- * Remplacez ce numéro par le numéro WhatsApp réel de l'entreprise.
- * Format international sans "+" ni espaces (ex: 212612345678).
- */
-export const WHATSAPP_NUMBER = "212600000000";
+/** Numéro WhatsApp au format international, chiffres uniquement. */
+export const WHATSAPP_NUMBER = siteConfig.whatsappNumber;
 
 export const categories: Category[] = [
   {
@@ -77,7 +68,6 @@ export const categories: Category[] = [
 
 export const products: Product[] = [
   {
-    id: 1,
     slug: "kit-pompe-immergee-4-pouces",
     name: "Kit pompe immergée 4\" complet",
     category: "kits",
@@ -96,7 +86,6 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 2,
     slug: "pompe-immergee-inox-4-pouces",
     name: "Pompe immergée inox 4\"",
     category: "pompes",
@@ -114,7 +103,6 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 3,
     slug: "pompe-centrifuge-monobloc",
     name: "Pompe centrifuge monobloc",
     category: "pompes",
@@ -132,7 +120,6 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 4,
     slug: "motopompe-centrifuge-inox",
     name: "Motopompe centrifuge inox",
     category: "pompes",
@@ -151,7 +138,6 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 5,
     slug: "pompe-centrifuge-haute-pression",
     name: "Pompe centrifuge haute pression",
     category: "pompes",
@@ -168,7 +154,6 @@ export const products: Product[] = [
     stock: "Sur commande",
   },
   {
-    id: 6,
     slug: "pompe-centrifuge-fonte",
     name: "Pompe centrifuge fonte",
     category: "pompes",
@@ -185,7 +170,6 @@ export const products: Product[] = [
     stock: "Disponible",
   },
   {
-    id: 7,
     slug: "gamme-pompes-immergees-inox",
     name: "Gamme pompes immergées inox",
     category: "pompes",
@@ -204,7 +188,6 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 8,
     slug: "coude-pe-compression-90",
     name: "Coude PE à compression 90°",
     category: "raccords",
@@ -223,7 +206,6 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 9,
     slug: "coude-pe-filete-male-90",
     name: "Coude PE fileté mâle 90°",
     category: "raccords",
@@ -240,7 +222,6 @@ export const products: Product[] = [
     stock: "Disponible",
   },
   {
-    id: 10,
     slug: "te-pvc-pression",
     name: "Té PVC pression",
     category: "raccords",
@@ -257,7 +238,6 @@ export const products: Product[] = [
     stock: "Disponible",
   },
   {
-    id: 11,
     slug: "coude-pe-reseau-enterre",
     name: "Coude PE pour réseau enterré",
     category: "raccords",
@@ -347,16 +327,16 @@ export const galleryImages: GalleryImage[] = [
 ];
 
 export function whatsappLink(message: string) {
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  return whatsappUrl(message);
 }
 
 export function generalMessage() {
-  return "Bonjour AgriFlow 👋, je souhaite un devis pour du matériel d'irrigation / de pompage. Pouvez-vous m'aider ?";
+  return `Bonjour ${BRAND.name} 👋, je souhaite un devis pour du matériel d'irrigation / de pompage. Pouvez-vous m'aider ?`;
 }
 
 export function productMessage(product: Product, quantity = 1) {
   return [
-    "Bonjour AgriFlow 👋,",
+    `Bonjour ${BRAND.name} 👋,`,
     "Je souhaite un devis pour :",
     `• ${product.name}${quantity > 1 ? ` — ${quantity} unités` : ""}`,
     ...product.specs.slice(0, 2).map((spec) => `  ${spec.label} : ${spec.value}`),
@@ -366,5 +346,5 @@ export function productMessage(product: Product, quantity = 1) {
 }
 
 export function categoryMessage(category: Category) {
-  return `Bonjour AgriFlow 👋, je souhaite un devis pour la gamme « ${category.label} ». Pouvez-vous me conseiller ?`;
+  return `Bonjour ${BRAND.name} 👋, je souhaite un devis pour la gamme « ${category.label} ». Pouvez-vous me conseiller ?`;
 }
