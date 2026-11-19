@@ -17,7 +17,7 @@ const RATE_LIMITED_MESSAGE =
 
 /** Enregistre une demande de devis (accessible sans compte, via RLS insert-only). */
 export async function saveQuoteRequest(input: QuoteRequestInput): Promise<SaveQuoteResult> {
-  const validation = validateQuoteInput(input, Date.now());
+  const validation = validateQuoteInput(input);
 
   if (!validation.ok) {
     // Robot probable : on répond comme si tout allait bien, sans rien enregistrer.

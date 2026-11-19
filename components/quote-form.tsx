@@ -24,10 +24,10 @@ export function QuoteForm() {
   const [notice, setNotice] = useState<string | null>(null);
   // Champ piège (invisible pour un humain) et heure d'affichage du formulaire.
   const [website, setWebsite] = useState("");
-  const startedAt = useRef<number | undefined>(undefined);
+  const mountedAt = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    startedAt.current = Date.now();
+    mountedAt.current = Date.now();
   }, []);
 
   function handleSubmit(event: FormEvent) {
@@ -60,7 +60,8 @@ export function QuoteForm() {
       message: need,
       source: "contact",
       website,
-      startedAt: startedAt.current,
+      // Durée mesurée dans le navigateur : insensible au décalage d'horloge.
+      elapsedMs: mountedAt.current === undefined ? undefined : Date.now() - mountedAt.current,
     }).then((result) => {
       setStatus(result.ok ? "saved" : "idle");
       if (!result.ok && result.reason === "rate-limited") {
