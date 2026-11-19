@@ -18,6 +18,7 @@ const errors: Record<string, string> = {
   missing: "Renseignez votre e-mail et votre mot de passe.",
   invalid: "E-mail ou mot de passe incorrect.",
   config: "Supabase n’est pas encore configuré sur ce projet.",
+  forbidden: "Ce compte n’a pas accès à l’administration.",
 };
 
 export default function LoginPage({ searchParams }: LoginPageProps) {
