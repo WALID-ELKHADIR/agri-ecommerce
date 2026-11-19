@@ -53,7 +53,30 @@ Règle du projet : une migration déjà appliquée n'est jamais modifiée. Tout 
 
 ## Créer un administrateur
 
-Cette section sera complétée en phase 1 (sécurité), qui introduit la table `admin_users`. D'ici là, **tout compte connecté a accès à l'admin** : désactivez les inscriptions publiques dans Supabase (*Authentication → Sign In / Providers → Allow new users to sign up*).
+Seuls les comptes listés dans la table `admin_users` accèdent à l'admin. Un compte connecté qui n'y figure pas est déconnecté automatiquement, et la base refuse aussi ses écritures (RLS).
+
+1. **Fermez les inscriptions publiques** : Supabase → *Authentication → Sign In / Providers* → décochez *Allow new users to sign up*.
+2. **Créez le compte** : *Authentication → Users → Add user → Create new user* (e-mail + mot de passe, cochez *Auto Confirm User*).
+3. **Déclarez-le administrateur** dans le *SQL Editor* :
+   ```sql
+   insert into public.admin_users (user_id)
+   select id from auth.users where email = 'vous@exemple.ma';
+   ```
+4. **Retirer un administrateur** : `delete from public.admin_users where user_id = '<uuid>';`
+
+### Vérifier les droits
+
+- `npm test` vérifie automatiquement les policies dans une base Postgres en mémoire (PGlite), sans Supabase.
+- Sur votre vrai projet, après chaque migration : créez deux comptes **de test** (un admin, un simple utilisateur), renseignez `RLS_*` dans `.env.local`, puis lancez :
+  ```bash
+  node scripts/check-rls.ts
+  ```
+  Chaque ligne doit afficher ✅. Le script supprime les demandes de test qu'il crée.
+
+### Protection anti-spam des demandes
+
+- Le formulaire de contact contient un champ piège invisible et refuse les envois en moins de 3 secondes. Ces demandes reçoivent une réponse positive mais ne sont pas enregistrées.
+- La base limite à 3 demandes par téléphone en 10 minutes, et à 30 demandes par minute au total.
 
 ## Déploiement (Vercel)
 
