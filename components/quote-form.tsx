@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowRight, Check, WhatsApp } from "@/components/icons";
 import { saveQuoteRequest } from "@/lib/actions/quotes";
 import { whatsappLink } from "@/lib/catalog";
@@ -21,6 +21,14 @@ export function QuoteForm() {
   const [profile, setProfile] = useState(profiles[0]);
   const [need, setNeed] = useState("");
   const [status, setStatus] = useState<Status>("idle");
+  const [notice, setNotice] = useState<string | null>(null);
+  // Champ piège (invisible pour un humain) et heure d'affichage du formulaire.
+  const [website, setWebsite] = useState("");
+  const startedAt = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    startedAt.current = Date.now();
+  }, []);
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -44,14 +52,20 @@ export function QuoteForm() {
     window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
 
     setStatus("saving");
+    setNotice(null);
     void saveQuoteRequest({
       name,
       phone,
       profile,
       message: need,
       source: "contact",
+      website,
+      startedAt: startedAt.current,
     }).then((result) => {
       setStatus(result.ok ? "saved" : "idle");
+      if (!result.ok && result.reason === "rate-limited") {
+        setNotice(result.message ?? null);
+      }
     });
   }
 
@@ -124,6 +138,21 @@ export function QuoteForm() {
         </label>
       </div>
 
+      {/* Champ piège : masqué aux humains et aux lecteurs d'écran, rempli par les robots. */}
+      <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
+        <label>
+          Site web
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={website}
+            onChange={(event) => setWebsite(event.target.value)}
+          />
+        </label>
+      </div>
+
       <button
         type="submit"
         disabled={status === "saving"}
@@ -133,7 +162,11 @@ export function QuoteForm() {
         Envoyer sur WhatsApp
       </button>
 
-      {status === "saved" ? (
+      {notice ? (
+        <p role="status" className="mt-2 text-center text-[11px] font-medium text-amber-700">
+          {notice}
+        </p>
+      ) : status === "saved" ? (
         <p
           role="status"
           className="mt-2 flex items-center justify-center gap-1.5 text-[11px] font-medium text-emerald-700"
