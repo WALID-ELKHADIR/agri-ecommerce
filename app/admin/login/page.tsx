@@ -19,6 +19,8 @@ const errors: Record<string, string> = {
   invalid: "E-mail ou mot de passe incorrect.",
   config: "Supabase n’est pas encore configuré sur ce projet.",
   forbidden: "Ce compte n’a pas accès à l’administration.",
+  unavailable:
+    "Impossible de vérifier vos droits pour le moment. Réessayez dans un instant ; si le problème persiste, vérifiez que les migrations Supabase sont appliquées.",
 };
 
 export default function LoginPage({ searchParams }: LoginPageProps) {

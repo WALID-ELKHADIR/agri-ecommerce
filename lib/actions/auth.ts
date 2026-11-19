@@ -1,8 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { FORBIDDEN_ERROR } from "@/lib/admin-access";
-import { isAdminSession } from "@/lib/auth";
+import { enforceAdminRole } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function signInAction(formData: FormData) {
@@ -22,11 +21,7 @@ export async function signInAction(formData: FormData) {
     redirect(`/admin/login?error=invalid&next=${encodeURIComponent(next)}`);
   }
 
-  if (!(await isAdminSession(supabase))) {
-    await supabase.auth.signOut();
-    redirect(`/admin/login?error=${FORBIDDEN_ERROR}`);
-  }
-
+  await enforceAdminRole(supabase);
   redirect(next);
 }
 

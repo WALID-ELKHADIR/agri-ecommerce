@@ -1,6 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { FORBIDDEN_ERROR, resolveAdminAccess } from "@/lib/admin-access";
+import {
+  adminRoleFromRpc,
+  FORBIDDEN_ERROR,
+  resolveAdminAccess,
+  UNAVAILABLE_ERROR,
+  type AdminRole,
+} from "@/lib/admin-access";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -37,11 +43,7 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  let isAdmin = false;
-  if (user) {
-    const { data } = await supabase.rpc("is_admin");
-    isAdmin = data === true;
-  }
+  const role: AdminRole = user ? adminRoleFromRpc(await supabase.rpc("is_admin")) : "unknown";
 
   /** Redirection qui conserve les cookies de session mis à jour par Supabase. */
   const redirectTo = (url: URL) => {
@@ -50,7 +52,7 @@ export async function proxy(request: NextRequest) {
     return redirect;
   };
 
-  switch (resolveAdminAccess({ hasUser: Boolean(user), isAdmin, isLoginPage })) {
+  switch (resolveAdminAccess({ hasUser: Boolean(user), role, isLoginPage })) {
     case "redirect-login": {
       const loginUrl = new URL("/admin/login", request.url);
       loginUrl.searchParams.set("next", request.nextUrl.pathname);
@@ -60,6 +62,11 @@ export async function proxy(request: NextRequest) {
       await supabase.auth.signOut();
       const loginUrl = new URL("/admin/login", request.url);
       loginUrl.searchParams.set("error", FORBIDDEN_ERROR);
+      return redirectTo(loginUrl);
+    }
+    case "redirect-unavailable": {
+      const loginUrl = new URL("/admin/login", request.url);
+      loginUrl.searchParams.set("error", UNAVAILABLE_ERROR);
       return redirectTo(loginUrl);
     }
     case "redirect-admin":

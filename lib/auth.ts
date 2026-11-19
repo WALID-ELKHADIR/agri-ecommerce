@@ -2,13 +2,34 @@ import "server-only";
 
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
-import { FORBIDDEN_ERROR } from "@/lib/admin-access";
+import {
+  adminRoleFromRpc,
+  FORBIDDEN_ERROR,
+  UNAVAILABLE_ERROR,
+  type AdminRole,
+} from "@/lib/admin-access";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-/** Vrai si l'utilisateur de la session figure dans `admin_users` (fonction SQL `is_admin()`). */
-export async function isAdminSession(supabase: SupabaseClient): Promise<boolean> {
-  const { data, error } = await supabase.rpc("is_admin");
-  return !error && data === true;
+/** Rôle de l'utilisateur de la session, d'après la fonction SQL `is_admin()`. */
+export async function getAdminRole(supabase: SupabaseClient): Promise<AdminRole> {
+  return adminRoleFromRpc(await supabase.rpc("is_admin"));
+}
+
+/**
+ * Applique la règle d'accès après une connexion ou dans une garde :
+ * - non-admin : déconnecté, renvoyé vers la connexion avec un message ;
+ * - rôle invérifiable : renvoyé vers la connexion SANS déconnexion.
+ */
+export async function enforceAdminRole(supabase: SupabaseClient): Promise<void> {
+  const role = await getAdminRole(supabase);
+
+  if (role === "not-admin") {
+    await supabase.auth.signOut();
+    redirect(`/admin/login?error=${FORBIDDEN_ERROR}`);
+  }
+  if (role === "unknown") {
+    redirect(`/admin/login?error=${UNAVAILABLE_ERROR}`);
+  }
 }
 
 export async function getAdminUser(): Promise<User | null> {
@@ -19,8 +40,7 @@ export async function getAdminUser(): Promise<User | null> {
 
 /**
  * Garde d'accès pour toutes les pages et actions d'administration.
- * Exige une session ET le rôle administrateur : un compte connecté non-admin
- * est déconnecté puis renvoyé vers la connexion avec un message.
+ * Exige une session ET le rôle administrateur.
  */
 export async function requireAdmin(): Promise<User> {
   const supabase = await createSupabaseServerClient();
@@ -30,10 +50,6 @@ export async function requireAdmin(): Promise<User> {
     redirect("/admin/login");
   }
 
-  if (!(await isAdminSession(supabase))) {
-    await supabase.auth.signOut();
-    redirect(`/admin/login?error=${FORBIDDEN_ERROR}`);
-  }
-
+  await enforceAdminRole(supabase);
   return data.user;
 }
