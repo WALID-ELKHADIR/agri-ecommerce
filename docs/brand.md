@@ -21,8 +21,14 @@ C’est exactement le métier de la marque : fournir les pompes, raccords et kit
 
 ### Messages WhatsApp (exemples)
 
-**Message pré-rempli par le site (FR)**
-> Bonjour Saqia 👋, je souhaite un devis pour : Pompe immergée inox 4" (quantité : 1). Merci de me communiquer le prix, la disponibilité et le délai de livraison.
+**Message pré-rempli par le site depuis une fiche produit (FR)**, généré par `productMessage` dans `lib/catalog.ts` :
+> Bonjour Saqia 👋,
+> Je souhaite un devis pour :
+> • Pompe immergée inox 4" — 2 unités
+>   Puissance : 0,5 – 2,2 kW
+>   Débit : jusqu’à 8 m³/h
+>
+> Merci de me communiquer le prix, la disponibilité et le délai de livraison.
 
 **Première réponse de l’équipe (FR)**
 > Bonjour et merci pour votre demande. Pour vous proposer la bonne pompe, pouvez-vous nous indiquer la profondeur du forage et le débit souhaité (en m³/h) ? Une photo de votre installation nous aide aussi.
@@ -64,7 +70,7 @@ Dans le code, utilisez le composant `components/brand/logo.tsx` :
 ### Versions
 
 - **Couleur** (par défaut) : parcelle field-600, canal water-600, texte soil-900, sur fond clair.
-- **Monochrome** : tout en soil-900, pour l’impression une couleur, les tampons et les gravures.
+- **Monochrome** : tout en soil-900, pour l’impression une couleur, les tampons et les gravures. Dans le composant React, la version mono prend la couleur du texte (`currentColor`).
 - **Inversée** : tout en blanc, sur field-900 ou sur une photo assombrie.
 
 ### Zone de protection et tailles minimales
@@ -110,7 +116,7 @@ La palette complète (nuances 50 à 900) arrive avec le design system, en phase 
 | blanc sur field-900 | 14,8:1 | Tout texte |
 | blanc sur whatsapp | 5,4:1 | Bouton WhatsApp |
 | soil-900 sur harvest-300 | 10,7:1 | Badges |
-| ~~blanc sur harvest-500~~ | 2,4:1 | ❌ Interdit |
+| ~~blanc sur harvest-500 (`#e09b1a`, accent foncé de la phase 2)~~ | 2,4:1 | ❌ Interdit : jamais de texte blanc sur les jaunes |
 
 ## Typographie
 
