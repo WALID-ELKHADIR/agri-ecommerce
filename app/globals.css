@@ -230,3 +230,30 @@ body {
     stroke-dashoffset: 0;
   }
 }
+
+/* Pas de défilement de la page derrière une fenêtre modale ouverte. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/*
+ * Mouvement réduit : garde-fou global. Toute transition ou animation devient
+ * quasi instantanée, y compris celles des composants existants.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
