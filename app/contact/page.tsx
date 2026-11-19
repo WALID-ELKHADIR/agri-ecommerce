@@ -52,30 +52,30 @@ export default function ContactPage() {
       <SiteHeader />
 
       <main className="pb-24 md:pb-0">
-        <section className="relative overflow-hidden bg-[#0A2540]">
+        <section className="relative overflow-hidden bg-field-900">
           <div className="blueprint-grid pointer-events-none absolute inset-0 opacity-70" />
-          <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-cyan-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-water-500/20 blur-3xl" />
 
           <div className="relative mx-auto max-w-7xl px-4 pb-10 pt-8 sm:pb-12 sm:pt-10">
-            <nav aria-label="Fil d'Ariane" className="text-xs text-slate-400">
-              <Link href="/" className="transition hover:text-cyan-300">
+            <nav aria-label="Fil d'Ariane" className="text-xs text-soil-500">
+              <Link href="/" className="transition hover:text-water-300">
                 Accueil
               </Link>
-              <span className="mx-2 text-slate-600">/</span>
-              <span className="text-slate-200">Contact</span>
+              <span className="mx-2 text-soil-600">/</span>
+              <span className="text-soil-200">Contact</span>
             </nav>
 
             <h1 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight text-white sm:text-4xl">
               Un projet d’irrigation ? Parlons-en.
             </h1>
-            <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-300/80 sm:text-base">
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-soil-300/80 sm:text-base">
               Devis, conseil de dimensionnement ou disponibilité d’une
               référence : un technicien vous répond sous 24h ouvrées.
             </p>
           </div>
         </section>
 
-        <section className="bg-[#f5f8fb] py-10 sm:py-12">
+        <section className="bg-soil-50 py-10 sm:py-12">
           <div className="mx-auto grid max-w-7xl gap-6 px-4 lg:grid-cols-[0.95fr_1.05fr] lg:gap-10">
             <div>
               <div className="grid gap-3">
@@ -90,27 +90,27 @@ export default function ContactPage() {
                         : {})}
                       className={`flex items-start gap-3 rounded-2xl border p-4 transition ${
                         channel.accent
-                          ? "border-[#1FA855]/30 bg-white hover:border-[#1FA855]"
-                          : "border-slate-200 bg-white hover:border-cyan-300"
+                          ? "border-whatsapp/30 bg-white hover:border-whatsapp"
+                          : "border-soil-200 bg-white hover:border-water-300"
                       }`}
                     >
                       <span
                         className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
                           channel.accent
-                            ? "bg-[#1FA855]/10 text-[#1FA855]"
-                            : "bg-cyan-50 text-cyan-700"
+                            ? "bg-whatsapp/10 text-whatsapp"
+                            : "bg-water-50 text-water-700"
                         }`}
                       >
                         <Icon className="h-5 w-5" />
                       </span>
                       <div className="min-w-0">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-soil-500">
                           {channel.title}
                         </p>
-                        <p className="truncate text-sm font-semibold text-[#0A2540]">
+                        <p className="truncate text-sm font-semibold text-soil-900">
                           {channel.value}
                         </p>
-                        <p className="mt-0.5 text-xs text-slate-500">
+                        <p className="mt-0.5 text-xs text-soil-500">
                           {channel.text}
                         </p>
                       </div>
@@ -119,38 +119,38 @@ export default function ContactPage() {
                 })}
               </div>
 
-              <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="mt-3 rounded-2xl border border-soil-200 bg-white p-4">
                 <div className="flex items-start gap-3">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-50 text-cyan-700">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-water-50 text-water-700">
                     <MapPin className="h-5 w-5" />
                   </span>
                   <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-soil-500">
                       Adresse & horaires
                     </p>
-                    <p className="text-sm font-semibold text-[#0A2540]">
+                    <p className="text-sm font-semibold text-soil-900">
                       {BRAND.address}
                     </p>
-                    <p className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-500">
-                      <Clock className="h-3.5 w-3.5 text-cyan-600" />
+                    <p className="mt-0.5 flex items-center gap-1.5 text-xs text-soil-500">
+                      <Clock className="h-3.5 w-3.5 text-water-600" />
                       {BRAND.hours}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-3 flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-50 text-cyan-700">
+              <div className="mt-3 flex items-start gap-3 rounded-2xl border border-soil-200 bg-white p-4">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-water-50 text-water-700">
                   <Truck className="h-5 w-5" />
                 </span>
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-soil-500">
                     Livraison
                   </p>
-                  <p className="text-sm font-semibold text-[#0A2540]">
+                  <p className="text-sm font-semibold text-soil-900">
                     Partout au Maroc
                   </p>
-                  <p className="mt-0.5 text-xs text-slate-500">
+                  <p className="mt-0.5 text-xs text-soil-500">
                     Retrait sur place ou expédition selon volume et région.
                   </p>
                 </div>

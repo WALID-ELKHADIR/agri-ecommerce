@@ -37,9 +37,9 @@ const FILES = [
 
 function Section({ title, children, note }: { title: string; note?: string; children: ReactNode }) {
   return (
-    <section className="border-t border-[#e5ddcb] py-10">
-      <h2 className="font-display text-2xl font-bold tracking-[-0.03em] text-[#1f1c16]">{title}</h2>
-      {note ? <p className="mt-2 max-w-prose text-sm leading-relaxed text-[#6b6352]">{note}</p> : null}
+    <section className="border-t border-soil-200 py-10">
+      <h2 className="font-display text-2xl font-bold tracking-[-0.03em] text-soil-900">{title}</h2>
+      {note ? <p className="mt-2 max-w-prose text-sm leading-relaxed text-soil-600">{note}</p> : null}
       <div className="mt-6">{children}</div>
     </section>
   );
@@ -49,7 +49,7 @@ function Tile({ dark = false, className = "", children }: { dark?: boolean; clas
   return (
     <div
       className={`flex items-center justify-center rounded-xl px-6 py-10 ${
-        dark ? "bg-[#1a2c18]" : "bg-[#faf8f3] ring-1 ring-[#e5ddcb]"
+        dark ? "bg-field-900" : "bg-soil-50 ring-1 ring-soil-200"
       } ${className}`}
     >
       {children}
@@ -63,10 +63,10 @@ export default function BrandPage() {
       <div className="mx-auto max-w-5xl">
         <header className="pb-10">
           <Logo animated title={siteConfig.name} className="h-16 w-auto sm:h-20" />
-          <h1 className="mt-8 font-display text-4xl font-bold tracking-[-0.035em] text-[#1f1c16] sm:text-5xl">
+          <h1 className="mt-8 font-display text-4xl font-bold tracking-[-0.035em] text-soil-900 sm:text-5xl">
             Logo et marque
           </h1>
-          <p className="mt-4 max-w-prose text-[17px] leading-relaxed text-[#1f1c16]">
+          <p className="mt-4 max-w-prose text-[17px] leading-relaxed text-soil-900">
             Une parcelle pleine, traversée par un canal en S : la <span lang="ar">ساقية</span> qui amène l’eau
             au bon endroit. Règles complètes dans <code className="text-[15px]">docs/brand.md</code>.
           </p>
@@ -81,7 +81,7 @@ export default function BrandPage() {
               <Logo tone="inverse" title="Saqia, inversé" className="h-14 w-auto" />
             </Tile>
             <Tile>
-              <Logo tone="mono" title="Saqia, monochrome" className="h-14 w-auto text-[#1f1c16]" />
+              <Logo tone="mono" title="Saqia, monochrome" className="h-14 w-auto text-soil-900" />
             </Tile>
             <Tile>
               <Logo lang="ar" title="ساقية" className="h-14 w-auto" />
@@ -97,7 +97,7 @@ export default function BrandPage() {
             {SYMBOL_SIZES.map(({ size, className }) => (
               <figure key={size} className="flex flex-col items-center gap-2">
                 <Logo variant="symbol" small={size <= 32} className={className} />
-                <figcaption className="text-xs tabular-nums text-[#6b6352]">{size} px</figcaption>
+                <figcaption className="text-xs tabular-nums text-soil-600">{size} px</figcaption>
               </figure>
             ))}
           </Tile>
@@ -108,7 +108,7 @@ export default function BrandPage() {
           note="Un quart de la hauteur du symbole sur les quatre côtés. Taille minimale du logo complet : 24 px de haut."
         >
           <Tile>
-            <div className="outline-2 outline-offset-0 outline-dashed outline-[#177c87]/50">
+            <div className="outline-2 outline-offset-0 outline-dashed outline-water-600/50">
               {/* Logo de 56 px de haut : zone de protection de 14 px. */}
               <div className="p-3.5">
                 <Logo className="h-14 w-auto" />
@@ -128,7 +128,7 @@ export default function BrandPage() {
                   height={120}
                   className={file.round ? "rounded-full" : "rounded-[22%]"}
                 />
-                <figcaption className="text-xs text-[#6b6352]">{file.label}</figcaption>
+                <figcaption className="text-xs text-soil-600">{file.label}</figcaption>
               </figure>
             ))}
           </div>
@@ -137,12 +137,12 @@ export default function BrandPage() {
         <Section title="Couleurs">
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {COLORS.map((color) => (
-              <li key={color.name} className="overflow-hidden rounded-xl ring-1 ring-[#e5ddcb]">
+              <li key={color.name} className="overflow-hidden rounded-xl ring-1 ring-soil-200">
                 <div className="h-16" style={{ backgroundColor: color.hex }} />
                 <div className="px-3 py-2">
-                  <p className="text-sm font-semibold text-[#1f1c16]">{color.name}</p>
-                  <p className="text-xs tabular-nums text-[#6b6352]">{color.hex}</p>
-                  <p className="text-xs text-[#6b6352]">{color.role}</p>
+                  <p className="text-sm font-semibold text-soil-900">{color.name}</p>
+                  <p className="text-xs tabular-nums text-soil-600">{color.hex}</p>
+                  <p className="text-xs text-soil-600">{color.role}</p>
                 </div>
               </li>
             ))}
@@ -150,13 +150,13 @@ export default function BrandPage() {
         </Section>
 
         <Section title="Typographie">
-          <p className="font-display text-5xl font-bold tracking-[-0.035em] text-[#1f1c16]">{siteConfig.slogan}</p>
-          <p className="mt-2 text-sm text-[#6b6352]">Bricolage Grotesque, 700 — titres et chiffres clés</p>
-          <p className="mt-6 max-w-prose text-[17px] leading-relaxed text-[#1f1c16]">
+          <p className="font-display text-5xl font-bold tracking-[-0.035em] text-soil-900">{siteConfig.slogan}</p>
+          <p className="mt-2 text-sm text-soil-600">Bricolage Grotesque, 700 — titres et chiffres clés</p>
+          <p className="mt-6 max-w-prose text-[17px] leading-relaxed text-soil-900">
             Pompes immergées, centrifuges et raccords PE : nous vous aidons à choisir le bon débit et la bonne
             hauteur, puis nous vous envoyons le devis sur WhatsApp.
           </p>
-          <p className="mt-2 text-sm text-[#6b6352]">Geist — texte courant</p>
+          <p className="mt-2 text-sm text-soil-600">Geist — texte courant</p>
         </Section>
       </div>
     </main>

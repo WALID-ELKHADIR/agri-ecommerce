@@ -86,8 +86,8 @@ export function CatalogBrowser({
       {/* Sidebar */}
       <aside className="hidden lg:block">
         <div className="sticky top-28 space-y-4">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+          <div className="rounded-2xl border border-soil-200 bg-white p-4">
+            <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-soil-500">
               Filtrer par gamme
             </h2>
             <div className="mt-3 grid gap-1">
@@ -101,14 +101,14 @@ export function CatalogBrowser({
                     aria-pressed={active}
                     className={`flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
                       active
-                        ? "bg-[#0A2540] text-white"
-                        : "text-slate-600 hover:bg-slate-100"
+                        ? "bg-field-900 text-white"
+                        : "text-soil-600 hover:bg-soil-100"
                     }`}
                   >
                     <span>{category.label}</span>
                     <span
                       className={`rounded-md px-1.5 py-0.5 text-[10px] font-semibold ${
-                        active ? "bg-white/15 text-white" : "bg-slate-100 text-slate-500"
+                        active ? "bg-white/15 text-white" : "bg-soil-100 text-soil-500"
                       }`}
                     >
                       {counts[category.id] ?? 0}
@@ -119,9 +119,9 @@ export function CatalogBrowser({
             </div>
           </div>
 
-          <div className="rounded-2xl bg-gradient-to-br from-[#0A2540] to-[#0E7490] p-5 text-white">
+          <div className="rounded-2xl bg-gradient-to-br from-field-900 to-water-600 p-5 text-white">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
-              <Headset className="h-5 w-5 text-cyan-300" />
+              <Headset className="h-5 w-5 text-water-300" />
             </span>
             <p className="mt-3 text-sm font-semibold">
               Un doute sur le dimensionnement ?
@@ -134,9 +134,9 @@ export function CatalogBrowser({
               href={whatsappLink(generalMessage())}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-xs font-semibold text-[#0A2540] transition hover:bg-cyan-50"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-xs font-semibold text-soil-900 transition hover:bg-water-50"
             >
-              <WhatsApp className="h-3.5 w-3.5 text-[#1FA855]" />
+              <WhatsApp className="h-3.5 w-3.5 text-whatsapp" />
               Parler à un technicien
             </a>
           </div>
@@ -146,20 +146,20 @@ export function CatalogBrowser({
       {/* Main */}
       <div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <label className="flex flex-1 items-center gap-2 rounded-xl border border-slate-300/80 bg-white px-3.5 py-2.5">
-            <Search className="h-4 w-4 text-slate-400" />
+          <label className="flex flex-1 items-center gap-2 rounded-xl border border-soil-300/80 bg-white px-3.5 py-2.5">
+            <Search className="h-4 w-4 text-soil-500" />
             <span className="sr-only">Rechercher un produit</span>
             <input
               value={filters.query}
               onChange={(event) => catalogFilters.setQuery(event.target.value)}
               placeholder='Rechercher : pompe 4", raccord PE, PVC…'
-              className="w-full bg-transparent text-sm text-[#0A2540] placeholder:text-slate-400 focus:outline-none"
+              className="w-full bg-transparent text-sm text-soil-900 placeholder:text-soil-500 focus:outline-none"
             />
             {filters.query ? (
               <button
                 type="button"
                 onClick={() => catalogFilters.setQuery("")}
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-soil-500 transition hover:bg-soil-100 hover:text-soil-600"
                 aria-label="Effacer la recherche"
               >
                 <X className="h-3.5 w-3.5" />
@@ -175,7 +175,7 @@ export function CatalogBrowser({
               id="sort"
               value={sort}
               onChange={(event) => setSort(event.target.value)}
-              className="w-full appearance-none rounded-xl border border-slate-300/80 bg-white py-2.5 pl-3.5 pr-9 text-sm font-medium text-[#0A2540] focus:outline-none sm:w-44"
+              className="w-full appearance-none rounded-xl border border-soil-300/80 bg-white py-2.5 pl-3.5 pr-9 text-sm font-medium text-soil-900 focus:outline-none sm:w-44"
             >
               {sortOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -183,7 +183,7 @@ export function CatalogBrowser({
                 </option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-soil-500" />
           </div>
         </div>
 
@@ -199,14 +199,14 @@ export function CatalogBrowser({
                 aria-pressed={active}
                 className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-sm font-medium transition ${
                   active
-                    ? "border-[#0A2540] bg-[#0A2540] text-white"
-                    : "border-slate-300/80 bg-white text-slate-600 hover:bg-slate-50"
+                    ? "border-soil-900 bg-field-900 text-white"
+                    : "border-soil-300/80 bg-white text-soil-600 hover:bg-soil-50"
                 }`}
               >
                 {category.short}
                 <span
                   className={`text-[10px] font-semibold ${
-                    active ? "text-white/60" : "text-slate-400"
+                    active ? "text-white/60" : "text-soil-500"
                   }`}
                 >
                   {counts[category.id] ?? 0}
@@ -218,14 +218,14 @@ export function CatalogBrowser({
 
         <div className="mt-5 flex items-baseline justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-[#0A2540]">
+            <h2 className="text-lg font-semibold text-soil-900">
               {activeCategory.label}
             </h2>
-            <p className="mt-0.5 text-xs text-slate-500">
+            <p className="mt-0.5 text-xs text-soil-500">
               {activeCategory.description}
             </p>
           </div>
-          <p className="shrink-0 text-xs text-slate-500">
+          <p className="shrink-0 text-xs text-soil-500">
             {filtered.length} référence{filtered.length > 1 ? "s" : ""}
           </p>
         </div>
@@ -241,25 +241,25 @@ export function CatalogBrowser({
             ))}
           </div>
         ) : (
-          <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
-            <p className="text-sm font-semibold text-[#0A2540]">
+          <div className="mt-4 rounded-2xl border border-dashed border-soil-300 bg-white p-10 text-center">
+            <p className="text-sm font-semibold text-soil-900">
               Aucune référence ne correspond à votre recherche.
             </p>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-soil-500">
               Essayez un autre terme ou affichez toutes les gammes.
             </p>
             <button
               type="button"
               onClick={() => catalogFilters.reset()}
-              className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#0A2540] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0F3557]"
+              className="mt-4 inline-flex items-center gap-2 rounded-full bg-field-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-field-800"
             >
               Réinitialiser les filtres
             </button>
           </div>
         )}
 
-        <div className="mt-8 flex flex-col items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-center sm:flex-row sm:text-left">
-          <p className="text-sm text-slate-600">
+        <div className="mt-8 flex flex-col items-center justify-between gap-3 rounded-2xl border border-soil-200 bg-white px-5 py-4 text-center sm:flex-row sm:text-left">
+          <p className="text-sm text-soil-600">
             Un produit absent du catalogue ? Nous pouvons le commander pour
             vous.
           </p>
@@ -269,7 +269,7 @@ export function CatalogBrowser({
             )}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#1FA855] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#178f47]"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
           >
             <WhatsApp className="h-4 w-4" />
             Demander un produit

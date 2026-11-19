@@ -73,29 +73,29 @@ export function QuoteForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
+      className="rounded-2xl border border-soil-200 bg-white p-5 shadow-sm sm:p-6"
     >
-      <h2 className="text-lg font-semibold text-[#0A2540]">
+      <h2 className="text-lg font-semibold text-soil-900">
         Décrivez votre projet
       </h2>
-      <p className="mt-1 text-xs text-slate-500">
+      <p className="mt-1 text-xs text-soil-500">
         Remplissez ces champs : votre demande part sur WhatsApp et reste
         enregistrée pour notre équipe.
       </p>
 
       <div className="mt-4 grid gap-3">
         <label className="grid gap-1.5">
-          <span className="text-xs font-semibold text-slate-600">Nom</span>
+          <span className="text-xs font-semibold text-soil-600">Nom</span>
           <input
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder="Votre nom ou votre exploitation"
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-[#0A2540] placeholder:text-slate-400 focus:border-cyan-500 focus:outline-none"
+            className="w-full rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 placeholder:text-soil-500 focus:border-water-500 focus:outline-none"
           />
         </label>
 
         <label className="grid gap-1.5">
-          <span className="text-xs font-semibold text-slate-600">
+          <span className="text-xs font-semibold text-soil-600">
             Téléphone (optionnel)
           </span>
           <input
@@ -104,18 +104,18 @@ export function QuoteForm() {
             value={phone}
             onChange={(event) => setPhone(event.target.value)}
             placeholder="+212 6 00 00 00 00"
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-[#0A2540] placeholder:text-slate-400 focus:border-cyan-500 focus:outline-none"
+            className="w-full rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 placeholder:text-soil-500 focus:border-water-500 focus:outline-none"
           />
         </label>
 
         <label className="grid gap-1.5">
-          <span className="text-xs font-semibold text-slate-600">
+          <span className="text-xs font-semibold text-soil-600">
             Votre profil
           </span>
           <select
             value={profile}
             onChange={(event) => setProfile(event.target.value)}
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-[#0A2540] focus:border-cyan-500 focus:outline-none"
+            className="w-full rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 focus:border-water-500 focus:outline-none"
           >
             {profiles.map((item) => (
               <option key={item} value={item}>
@@ -126,7 +126,7 @@ export function QuoteForm() {
         </label>
 
         <label className="grid gap-1.5">
-          <span className="text-xs font-semibold text-slate-600">
+          <span className="text-xs font-semibold text-soil-600">
             Votre besoin
           </span>
           <textarea
@@ -134,7 +134,7 @@ export function QuoteForm() {
             onChange={(event) => setNeed(event.target.value)}
             rows={4}
             placeholder="Ex : pompe immergée pour un forage de 40 m, irrigation de 2 ha…"
-            className="w-full resize-none rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-[#0A2540] placeholder:text-slate-400 focus:border-cyan-500 focus:outline-none"
+            className="w-full resize-none rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 placeholder:text-soil-500 focus:border-water-500 focus:outline-none"
           />
         </label>
       </div>
@@ -157,26 +157,26 @@ export function QuoteForm() {
       <button
         type="submit"
         disabled={status === "saving"}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#1FA855] px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-[#178f47] disabled:opacity-70"
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-whatsapp-hover disabled:opacity-70"
       >
         <WhatsApp className="h-5 w-5" />
         Envoyer sur WhatsApp
       </button>
 
       {notice ? (
-        <p role="status" className="mt-2 text-center text-[11px] font-medium text-amber-700">
+        <p role="status" className="mt-2 text-center text-[11px] font-medium text-harvest-800">
           {notice}
         </p>
       ) : status === "saved" ? (
         <p
           role="status"
-          className="mt-2 flex items-center justify-center gap-1.5 text-[11px] font-medium text-emerald-700"
+          className="mt-2 flex items-center justify-center gap-1.5 text-[11px] font-medium text-field-700"
         >
           <Check className="h-3.5 w-3.5" />
           Demande enregistrée — WhatsApp s’est ouvert dans un nouvel onglet.
         </p>
       ) : (
-        <p className="mt-2 flex items-center justify-center gap-1 text-[11px] text-slate-400">
+        <p className="mt-2 flex items-center justify-center gap-1 text-[11px] text-soil-500">
           Réponse d’un technicien sous 24h ouvrées
           <ArrowRight className="h-3 w-3" />
         </p>

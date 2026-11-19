@@ -53,7 +53,7 @@ async function ProduitsContent({
       {success ? (
         <p
           role="status"
-          className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800"
+          className="flex items-center gap-2 rounded-xl border border-field-200 bg-field-50 px-4 py-3 text-sm font-medium text-field-800"
         >
           <Check className="h-4 w-4" />
           {success}
@@ -63,14 +63,14 @@ async function ProduitsContent({
       {error ? (
         <p
           role="alert"
-          className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700"
+          className="rounded-xl border border-danger-200 bg-danger-50 px-4 py-3 text-sm font-medium text-danger-700"
         >
           {error}
         </p>
       ) : null}
 
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-        <div className="hidden grid-cols-[1fr_140px_110px_90px_150px] gap-3 border-b border-slate-100 bg-slate-50/70 px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 lg:grid">
+      <div className="overflow-hidden rounded-2xl border border-soil-200 bg-white">
+        <div className="hidden grid-cols-[1fr_140px_110px_90px_150px] gap-3 border-b border-soil-100 bg-soil-50/70 px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-soil-500 lg:grid">
           <span>Produit</span>
           <span>Gamme</span>
           <span>Stock</span>
@@ -80,25 +80,25 @@ async function ProduitsContent({
 
         {products.length === 0 ? (
           <div className="px-5 py-10 text-center">
-            <p className="text-sm font-medium text-[#0A2540]">
+            <p className="text-sm font-medium text-soil-900">
               Aucun produit pour le moment.
             </p>
             <Link
               href="/admin/produits/nouveau"
-              className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-[#0A2540] px-4 py-2.5 text-sm font-semibold text-white"
+              className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-field-900 px-4 py-2.5 text-sm font-semibold text-white"
             >
               Créer le premier produit
             </Link>
           </div>
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-soil-100">
             {products.map((product) => (
               <li
                 key={product.id}
                 className="grid gap-3 px-4 py-3.5 sm:px-5 lg:grid-cols-[1fr_140px_110px_90px_150px] lg:items-center"
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+                  <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-soil-200 bg-soil-50">
                     <Image
                       src={product.image}
                       alt=""
@@ -108,35 +108,35 @@ async function ProduitsContent({
                     />
                   </div>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-[#0A2540]">
+                    <p className="truncate text-sm font-semibold text-soil-900">
                       {product.name}
                     </p>
-                    <p className="truncate text-[11px] text-slate-400">
+                    <p className="truncate text-[11px] text-soil-500">
                       /{product.slug}
                     </p>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-500 lg:text-sm">
+                <p className="text-xs text-soil-500 lg:text-sm">
                   <span className="lg:hidden">Gamme : </span>
                   {product.category}
                 </p>
 
-                <p className="text-xs text-slate-500 lg:text-sm">{product.stock}</p>
+                <p className="text-xs text-soil-500 lg:text-sm">{product.stock}</p>
 
                 <div className="flex flex-wrap items-center gap-1.5">
                   {product.published ? (
-                    <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-field-50 px-2 py-0.5 text-[10px] font-semibold text-field-700">
                       En ligne
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-soil-100 px-2 py-0.5 text-[10px] font-semibold text-soil-500">
                       <X className="h-3 w-3" />
                       Masqué
                     </span>
                   )}
                   {product.featured ? (
-                    <span className="rounded-md bg-cyan-50 px-2 py-0.5 text-[10px] font-semibold text-cyan-700">
+                    <span className="rounded-md bg-water-50 px-2 py-0.5 text-[10px] font-semibold text-water-700">
                       Mis en avant
                     </span>
                   ) : null}
@@ -145,14 +145,14 @@ async function ProduitsContent({
                 <div className="flex items-center gap-2 lg:justify-end">
                   <Link
                     href={`/admin/produits/${product.id}`}
-                    className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-[#0A2540] transition hover:border-cyan-300 hover:bg-cyan-50/50"
+                    className="rounded-lg border border-soil-300 px-3 py-1.5 text-xs font-semibold text-soil-900 transition hover:border-water-300 hover:bg-water-50/50"
                   >
                     Modifier
                   </Link>
                   <Link
                     href={`/produits/${product.slug}`}
                     target="_blank"
-                    className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium text-slate-500 transition hover:text-cyan-700"
+                    className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium text-soil-500 transition hover:text-water-700"
                   >
                     Voir
                     <ArrowUpRight className="h-3.5 w-3.5" />
@@ -170,7 +170,7 @@ async function ProduitsContent({
 function TableSkeleton() {
   return (
     <div aria-busy="true" className="space-y-4">
-      <div className="h-9 w-48 animate-pulse rounded-lg bg-slate-200" />
+      <div className="h-9 w-48 animate-pulse rounded-lg bg-soil-200" />
       <div className="h-72 animate-pulse rounded-2xl bg-white" />
       <span className="sr-only">Chargement des produits…</span>
     </div>

@@ -32,16 +32,16 @@ async function EditContenu({ id, error }: { id: string; error: string | null }) 
 
   if (!product) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center">
-        <p className="text-sm font-semibold text-[#0A2540]">
+      <div className="rounded-2xl border border-soil-200 bg-white p-8 text-center">
+        <p className="text-sm font-semibold text-soil-900">
           Produit introuvable.
         </p>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-soil-500">
           Il a peut-être été supprimé entre-temps.
         </p>
         <Link
           href="/admin/produits"
-          className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-[#0A2540] px-4 py-2.5 text-sm font-semibold text-white"
+          className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-field-900 px-4 py-2.5 text-sm font-semibold text-white"
         >
           <ArrowLeft className="h-4 w-4" />
           Retour à la liste
@@ -59,7 +59,7 @@ async function EditContenu({ id, error }: { id: string; error: string | null }) 
 
       <Link
         href="/admin/produits"
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-cyan-700"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-soil-500 transition hover:text-water-700"
       >
         <ArrowLeft className="h-4 w-4" />
         Retour aux produits
