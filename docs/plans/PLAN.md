@@ -206,6 +206,16 @@ Assertions affichées en ✅ / ❌, code de sortie 1 au premier échec :
 - **Fichiers** : `app/admin/(dashboard)/categories/*`, `…/produits/*` (recherche, filtres, tri, actions rapides), `…/demandes/*` (liste + kanban, export CSV, bouton WhatsApp, lecture de `items`), `…/reglages/*`, `components/admin/image-uploader.tsx` (glisser-déposer, recadrage 1:1, WebP via canvas, max 1600 px, réordonnable), `next.config.ts` (`images.remotePatterns` Supabase), KPIs SVG du tableau de bord.
 - **Acceptation** : suppression d'une catégorie bloquée si elle contient des produits ; retirer une image supprime le fichier Storage ; états chargement / erreur / vide partout.
 
+**Tâches (détaillées au démarrage de la phase, 2026-11-21)**
+- [ ] 3.1 Migration `20261121100000_admin_complet.sql` : `categories.image_url`, table `product_images` (RLS : lecture si produit publié, écriture admin), bucket `product-images` + policies `storage.objects` (lecture publique, écriture `is_admin()`), table `settings` (lecture publique, écriture admin). Test PGlite avec un schéma `storage` simulé.
+- [ ] 3.2 Modules purs testés : `lib/slugify.ts`, `lib/admin/product-filters.ts` (recherche, gamme, publié, tri), `lib/admin/quote-stats.ts` (7 j / 30 j, taux de gain, top produits, sources), `lib/admin/csv.ts` (point-virgule, BOM, échappement), `lib/admin/whatsapp-reply.ts` (lien de réponse au client).
+- [ ] 3.3 Catégories : liste ordonnable, création / édition (image), suppression refusée si la gamme contient des produits (contrainte de clé étrangère + message clair).
+- [ ] 3.4 Produits : liste avec recherche / filtres / tri (searchParams), actions rapides (publier, mettre en avant, dupliquer), vignettes.
+- [ ] 3.5 Images produit : `components/admin/image-manager.tsx` — glisser-déposer, recadrage 1:1, compression WebP (canvas, 1600 px max), envoi direct dans Storage avec la session admin, galerie réordonnable (glisser + boutons clavier), image principale, suppression du fichier ; enregistrement dans `product_images` et `products.image_url`.
+- [ ] 3.6 Demandes : vue liste et vue kanban (`?vue=kanban`), filtres statut / source / période / recherche, lecture de `items`, bouton « Répondre sur WhatsApp », export CSV (route protégée).
+- [ ] 3.7 Tableau de bord : KPIs et petits graphiques SVG. Réglages : coordonnées et numéros WhatsApp (défaut + par région, préparé), lus côté serveur avec repli sur les variables d'env.
+- [ ] 3.8 États chargement / erreur / vide sur chaque page admin, notifications après chaque action.
+
 ### Phase 4 — Vitrine mobile · `feat/vitrine-mobile`
 - **Fichiers** : `components/home-page.tsx` et ses sections, `app/produits/page.tsx` (filtres searchParams, Sheet mobile), `app/produits/[slug]/page.tsx` (galerie swipe + zoom, barre WhatsApp sticky), `lib/whatsapp.ts` (message multi-produits FR, routage par région préparé), `components/quote-list/*` (liste de devis, stockage local dans un try/catch, enregistrement avec `items`), cartes produits.
 - **Acceptation** : Lighthouse mobile ≥ 95 sur les 4 axes, LCP < 2,5 s, CLS < 0,05 ; `next/image` avec `sizes` exacts partout ; `priority` uniquement sur l'image LCP ; aucun faux témoignage.
