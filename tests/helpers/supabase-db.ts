@@ -27,6 +27,24 @@ export async function createSupabaseDb(): Promise<PGlite> {
     alter default privileges in schema public grant all on functions to anon, authenticated;
     alter default privileges in schema public grant all on sequences to anon, authenticated;
     insert into auth.users values ('${ADMIN_ID}', 'admin@test'), ('${USER_ID}', 'user@test');
+
+    -- Schéma storage minimal, comme sur Supabase (RLS activée sur les objets).
+    create schema storage;
+    create table storage.buckets (
+      id text primary key, name text not null, public boolean default false,
+      file_size_limit bigint, allowed_mime_types text[]
+    );
+    create table storage.objects (
+      id uuid primary key default gen_random_uuid(),
+      bucket_id text references storage.buckets (id),
+      name text not null,
+      owner uuid,
+      created_at timestamptz default now(),
+      metadata jsonb
+    );
+    alter table storage.objects enable row level security;
+    grant usage on schema storage to anon, authenticated;
+    grant all on storage.objects, storage.buckets to anon, authenticated;
   `);
 
   const files = readdirSync(MIGRATIONS).filter((f) => f.endsWith(".sql")).sort();
