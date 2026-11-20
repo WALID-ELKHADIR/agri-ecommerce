@@ -11,6 +11,7 @@ import {
 import { Logo } from "@/components/brand/logo";
 import { BRAND, generalMessage } from "@/lib/catalog";
 import { whatsappUrl, type SiteConfig } from "@/lib/site-config";
+import { WhatsAppLink } from "@/components/whatsapp-link";
 
 const rangeLinks = [
   { href: "/produits", label: "Pompes & motopompes" },
@@ -58,15 +59,15 @@ export function SiteFooter({ brand = BRAND }: { brand?: SiteConfig }) {
               </span>
             </div>
 
-            <a
-              href={whatsappUrl(generalMessage(), brand.whatsappNumber)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
-            >
+            <WhatsAppLink
+ href={whatsappUrl(generalMessage(), brand.whatsappNumber)}
+ source="footer"
+ message={generalMessage()}
+ className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
+ >
               <WhatsApp className="h-4 w-4" />
               Discuter sur WhatsApp
-            </a>
+            </WhatsAppLink>
           </div>
 
           <div>

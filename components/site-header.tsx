@@ -16,6 +16,7 @@ import {
 import { Logo } from "@/components/brand/logo";
 import { catalogFilters } from "@/lib/catalog-filters";
 import { BRAND, generalMessage, whatsappLink } from "@/lib/catalog";
+import { WhatsAppLink } from "@/components/whatsapp-link";
 
 const links = [
   { href: "/", label: "Accueil" },
@@ -128,15 +129,15 @@ export function SiteHeader() {
               </button>
             </form>
 
-            <a
-              href={whatsappLink(generalMessage())}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-whatsapp-hover sm:inline-flex"
-            >
+            <WhatsAppLink
+ href={whatsappLink(generalMessage())}
+ source="header"
+ message={generalMessage()}
+ className="hidden items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-whatsapp-hover sm:inline-flex"
+ >
               <WhatsApp className="h-4 w-4" />
               Devis WhatsApp
-            </a>
+            </WhatsAppLink>
 
             <button
               type="button"
@@ -195,15 +196,15 @@ export function SiteHeader() {
             </nav>
 
             <div className="mt-3 grid gap-2">
-              <a
-                href={whatsappLink(generalMessage())}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-3 text-sm font-semibold text-white"
-              >
+              <WhatsAppLink
+ href={whatsappLink(generalMessage())}
+ source="header"
+ message={generalMessage()}
+ className="flex items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-3 text-sm font-semibold text-white"
+ >
                 <WhatsApp className="h-4 w-4" />
                 Demander un devis
-              </a>
+              </WhatsAppLink>
               <a
                 href={`tel:${BRAND.phoneRaw}`}
                 className="flex items-center justify-center gap-2 rounded-xl border border-soil-300 bg-white px-4 py-3 text-sm font-semibold text-soil-900"

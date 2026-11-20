@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Espace de travail local des plans (non versionné).
+    ".superpowers/**",
   ]),
 ]);
 

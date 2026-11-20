@@ -1,0 +1,38 @@
+"use client";
+
+import type { ReactNode } from "react";
+import { saveQuoteRequest } from "@/lib/actions/quotes";
+import { clickRecord, type QuoteSource } from "@/lib/quote-sources";
+
+type WhatsAppLinkProps = {
+  href: string;
+  source: QuoteSource;
+  /** Texte envoyé sur WhatsApp, enregistré comme contenu de la demande. */
+  message: string;
+  product?: { slug: string; quantity: number };
+  className?: string;
+  children: ReactNode;
+  "aria-label"?: string;
+};
+
+/**
+ * Lien WhatsApp qui enregistre chaque clic dans `quote_requests`.
+ * L'enregistrement part en arrière-plan : le lien s'ouvre toujours, sans
+ * attendre le serveur (réseau lent, hors ligne, limite de débit).
+ */
+export function WhatsAppLink({ href, source, message, product, className, children, ...rest }: WhatsAppLinkProps) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={className}
+      aria-label={rest["aria-label"]}
+      onClick={() => {
+        void saveQuoteRequest(clickRecord(source, message, product)).catch(() => {});
+      }}
+    >
+      {children}
+    </a>
+  );
+}
