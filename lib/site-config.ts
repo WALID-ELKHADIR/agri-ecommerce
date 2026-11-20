@@ -59,7 +59,7 @@ const MOROCCO_COUNTRY_CODE = "212";
  * Accepte « +212 6… », « 00212 6… », « +212 (0)6… » et le format national
  * marocain « 06 12 34 56 78 ».
  */
-function phoneDigits(value: string | undefined): string | undefined {
+export function phoneDigits(value: string | undefined): string | undefined {
   const raw = text(value)?.replace(/\(0\)/g, "");
   let digits = raw?.replace(/\D/g, "");
   if (!digits) return undefined;
