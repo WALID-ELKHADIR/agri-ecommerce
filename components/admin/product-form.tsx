@@ -139,7 +139,7 @@ export function ProductForm({ product, categories, error }: ProductFormProps) {
                 name="image"
                 required
                 defaultValue={product?.image ?? ""}
-                placeholder="/images/products/mon-produit.jpg"
+                placeholder="/images/products/mon-produit/main.webp"
                 className={inputClass}
               />
               <span className="text-[10px] font-normal text-soil-500">

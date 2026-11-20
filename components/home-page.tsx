@@ -182,7 +182,7 @@ export function HomePage({ products }: { products: Product[] }) {
 
                 <div className="relative h-52 overflow-hidden rounded-2xl bg-gradient-to-br from-soil-50 via-white to-water-50/60 sm:h-60">
                   <Image
-                    src="/images/products/pompe-centrifuge-monobloc.jpg"
+                    src="/images/products/pompe-centrifuge-monobloc/main.webp"
                     alt="Pompe centrifuge monobloc"
                     fill
                     priority
@@ -228,7 +228,7 @@ export function HomePage({ products }: { products: Product[] }) {
                 <div className="flex items-center gap-2.5">
                   <div className="relative h-12 w-12 overflow-hidden rounded-lg bg-soil-50">
                     <Image
-                      src="/images/products/raccord-pe-90.jpg"
+                      src="/images/products/coude-pe-compression-90/main.webp"
                       alt="Raccord PE à compression"
                       fill
                       sizes="48px"

@@ -80,6 +80,20 @@ Seuls les comptes listés dans la table `admin_users` accèdent à l'admin. Un c
 - Le formulaire de contact contient un champ piège invisible et refuse les envois en moins de 3 secondes. Ces demandes reçoivent une réponse positive mais ne sont pas enregistrées.
 - La base limite à 3 demandes par téléphone en 10 minutes, et à 30 demandes par minute au total.
 
+## Images produits
+
+Les photos d'origine (stock réel) sont dans `public/images/_archive/` et ne sont jamais modifiées. Les images du site en sont **générées** :
+
+| Fichier | Rôle |
+|---|---|
+| `scripts/images/sources.ts` | Quelle photo pour quel produit, traitement (détourage ou recadrage), texte alternatif |
+| `scripts/images/process-images.ts` | Génère `public/images/products/<slug>/main.webp` et `gallery-N.webp` (1200 × 1200, < 150 Ko) et `lib/images-manifest.ts` |
+| `scripts/images/contact-sheet.ts` | Planche de contrôle `docs/images-contact-sheet.png` |
+| `scripts/images/check-images.ts` | Lancé avant chaque build : signale les produits sans image, les images provisoires et les points à confirmer |
+| `scripts/images/sync-images.ts` | Envoie les images dans Supabase Storage (simulation par défaut, `--apply` pour envoyer) |
+
+Pour remplacer une photo : ajoutez-la dans `public/images/_archive/`, mettez à jour `sources.ts`, relancez `process-images.ts` (instructions d'installation de l'outil de détourage en tête du fichier), puis vérifiez la planche contact. Les images ajoutées depuis l'admin (phase 3) iront directement dans Supabase Storage.
+
 ## Déploiement (Vercel)
 
 1. Importez le dépôt GitHub dans Vercel (framework détecté automatiquement).
