@@ -1,5 +1,10 @@
 import { resolveProductImages, type ProductImage } from "./product-images";
-import { siteConfig, whatsappUrl } from "./site-config";
+import { siteConfig } from "./site-config";
+import {
+  generalMessage as buildGeneralMessage,
+  productMessage as buildProductMessage,
+  whatsappLink as buildWhatsappLink,
+} from "./whatsapp";
 
 export type Category = {
   id: string;
@@ -438,23 +443,17 @@ export const galleryImages: GalleryImage[] = [
   showcase("coffret-commande-pompe", "Coffrets de commande"),
 ];
 
+// Adaptateurs provisoires vers lib/whatsapp.ts (retirés une fois les appels migrés).
 export function whatsappLink(message: string) {
-  return whatsappUrl(message);
+  return buildWhatsappLink(message, BRAND.whatsappNumber);
 }
 
 export function generalMessage() {
-  return `Bonjour ${BRAND.name} 👋, je souhaite un devis pour du matériel d'irrigation / de pompage. Pouvez-vous m'aider ?`;
+  return buildGeneralMessage(BRAND.name);
 }
 
 export function productMessage(product: Product, quantity = 1) {
-  return [
-    `Bonjour ${BRAND.name} 👋,`,
-    "Je souhaite un devis pour :",
-    `• ${product.name}${quantity > 1 ? ` — ${quantity} unités` : ""}`,
-    ...product.specs.slice(0, 2).map((spec) => `  ${spec.label} : ${spec.value}`),
-    "",
-    "Merci de me communiquer le prix, la disponibilité et le délai de livraison.",
-  ].join("\n");
+  return buildProductMessage(product, quantity, BRAND.siteUrl);
 }
 
 export function categoryMessage(category: Category) {
