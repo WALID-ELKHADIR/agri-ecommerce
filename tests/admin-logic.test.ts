@@ -87,13 +87,15 @@ test("statistiques : taux de gain nul s'il n'y a rien de conclu", () => {
 test("CSV : BOM, point-virgule, échappement et protection contre les formules", () => {
   const csv = toCsv(["Nom", "Message"], [
     ["Ali; Ben", 'Il a dit "oui"\nEnvoyez'],
-    ["=HYPERLINK(\"x\")", "+212 6"],
+    ["=HYPERLINK(\"x\")", "+212 6 12 34 56 78"],
+    ["+SUM(A1)", "-2+3"],
   ]);
   assert.ok(csv.startsWith("﻿"));
   const lines = csv.slice(1).split("\r\n");
   assert.equal(lines[0], "Nom;Message");
   assert.equal(lines[1], '"Ali; Ben";"Il a dit ""oui""\nEnvoyez"');
-  assert.equal(lines[2], `"'=HYPERLINK(""x"")";'+212 6`);
+  assert.equal(lines[2], `"'=HYPERLINK(""x"")";+212 6 12 34 56 78`);
+  assert.equal(lines[3], "'+SUM(A1);'-2+3");
 });
 
 test("réponse WhatsApp : numéro du client normalisé et message prérempli", () => {

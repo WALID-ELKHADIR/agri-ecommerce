@@ -108,7 +108,7 @@ export async function saveProductAction(formData: FormData) {
 
   if (!name || !slug || !category) fail(failurePath, "Nom et catégorie sont obligatoires.");
 
-  const images = parseImageList(String(formData.get("images") ?? "[]"));
+  const images = parseImageList(String(formData.get("images") ?? "[]"), process.env.NEXT_PUBLIC_SUPABASE_URL ?? null);
   if (!images) fail(failurePath, "Liste d'images invalide : rechargez la page et réessayez.");
   if (published && images.length === 0) {
     fail(failurePath, "Ajoutez au moins une photo avant de publier ce produit.");

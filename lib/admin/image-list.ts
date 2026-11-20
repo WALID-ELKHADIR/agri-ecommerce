@@ -5,10 +5,12 @@ export type ImageEntry = { url: string; storagePath: string | null; alt: string 
 const MAX_IMAGES = 20;
 const SAFE_PATH = /^[a-z0-9][a-z0-9/_.-]{0,240}\.webp$/;
 
-function isSafeUrl(url: string): boolean {
+function isSafeUrl(url: string, allowedOrigin: string | null): boolean {
   if (url.startsWith("/") && !url.startsWith("//")) return true;
+  if (!allowedOrigin) return false;
   try {
-    return new URL(url).protocol === "https:";
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" && parsed.origin === new URL(allowedOrigin).origin;
   } catch {
     return false;
   }
@@ -17,8 +19,9 @@ function isSafeUrl(url: string): boolean {
 /**
  * Valide la liste reçue d'un formulaire (champ caché JSON). Renvoie null si elle
  * est mal formée : URL non sûre, chemin Storage invalide, trop d'images.
+ * Une URL absolue n'est acceptée que sur `allowedOrigin` (le projet Supabase).
  */
-export function parseImageList(raw: string): ImageEntry[] | null {
+export function parseImageList(raw: string, allowedOrigin: string | null = null): ImageEntry[] | null {
   let value: unknown;
   try {
     value = JSON.parse(raw);
@@ -31,7 +34,7 @@ export function parseImageList(raw: string): ImageEntry[] | null {
   for (const item of value as unknown[]) {
     if (typeof item !== "object" || item === null) return null;
     const { url, storagePath, alt } = item as Record<string, unknown>;
-    if (typeof url !== "string" || url.length > 1000 || !isSafeUrl(url)) return null;
+    if (typeof url !== "string" || url.length > 1000 || !isSafeUrl(url, allowedOrigin)) return null;
     if (storagePath !== null && (typeof storagePath !== "string" || !SAFE_PATH.test(storagePath) || storagePath.includes(".."))) {
       return null;
     }

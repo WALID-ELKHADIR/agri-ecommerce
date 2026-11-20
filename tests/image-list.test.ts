@@ -27,8 +27,12 @@ test("liste d'images : seules des entrées bien formées sont acceptées", () =>
       { url: "https://x.supabase.co/storage/v1/object/public/product-images/produits/a.webp", storagePath: "produits/a.webp", alt: "A" },
       { url: "/images/products/te-pvc-pression/main.webp", storagePath: null, alt: "" },
     ]),
+    "https://x.supabase.co",
   );
   assert.equal(ok?.length, 2);
+  const foreign = JSON.stringify([{ url: "https://pirate.example/a.webp", storagePath: null, alt: "" }]);
+  assert.equal(parseImageList(foreign, "https://x.supabase.co"), null, "hôte étranger refusé");
+  assert.equal(parseImageList(foreign), null, "sans origine autorisée, aucune URL absolue");
   assert.equal(parseImageList("pas du json"), null);
   assert.equal(parseImageList(JSON.stringify({ url: "x" })), null);
   assert.equal(parseImageList(JSON.stringify([{ url: "javascript:alert(1)", storagePath: null, alt: "" }])), null);

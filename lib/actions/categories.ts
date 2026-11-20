@@ -34,7 +34,7 @@ export async function saveCategoryAction(formData: FormData) {
 
   if (!label) fail(failurePath, "Donnez un nom à la catégorie.");
 
-  const images = parseImageList(String(formData.get("images") ?? "[]"));
+  const images = parseImageList(String(formData.get("images") ?? "[]"), process.env.NEXT_PUBLIC_SUPABASE_URL ?? null);
   if (!images) fail(failurePath, "Image invalide : rechargez la page et réessayez.");
   const imageUrl = images[0]?.url ?? null;
 
@@ -91,12 +91,14 @@ export async function moveCategoryAction(formData: FormData) {
     // Positions renumérotées 1..n pour éviter les égalités héritées.
     const order = rows.map((row) => row.id);
     [order[index], order[neighborIndex]] = [order[neighborIndex], order[index]];
-    await Promise.all(
+    const results = await Promise.all(
       order.map((categoryId, position) =>
         supabase.from("categories").update({ position: position + 1 }).eq("id", categoryId),
       ),
     );
     refresh();
+    const failed = results.find((result) => result.error);
+    if (failed?.error) fail("/admin/categories", `Ordre non enregistré : ${failed.error.message}`);
   }
   redirect("/admin/categories");
 }
