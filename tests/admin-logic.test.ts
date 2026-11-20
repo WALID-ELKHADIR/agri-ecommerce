@@ -106,3 +106,24 @@ test("réponse WhatsApp : numéro du client normalisé et message prérempli", (
   assert.equal(whatsappReplyUrl({ phone: "abc", name: null, product: null }), null);
   assert.equal(whatsappReplyUrl({ phone: null, name: "Ali", product: null }), null);
 });
+
+test("filtres des demandes : statut, source, période, recherche sans accents", async () => {
+  const { filterQuotes } = await import("../lib/admin/quote-filters.ts");
+  const now = new Date("2026-11-21T12:00:00Z");
+  const quote = (over: Record<string, unknown>) => ({
+    name: null, phone: null, email: null, message: null, productSlug: null, items: null,
+    status: "new", source: "site", createdAt: "2026-11-20T10:00:00Z", ...over,
+  });
+  const list = [
+    quote({ name: "Hélène", status: "won", source: "contact" }),
+    quote({ phone: "0612345678", message: "Pompe immergée", createdAt: "2026-10-01T10:00:00Z" }),
+    quote({ items: [{ slug: "coude-pe", name: "Coude PE", quantity: 2 }] }),
+  ];
+  assert.equal(filterQuotes(list, { status: "won" }, now).length, 1);
+  assert.equal(filterQuotes(list, { source: "contact" }, now).length, 1);
+  assert.equal(filterQuotes(list, { period: "7" }, now).length, 2);
+  assert.equal(filterQuotes(list, { q: "helene" }, now).length, 1);
+  assert.equal(filterQuotes(list, { q: "immergee" }, now).length, 1);
+  assert.equal(filterQuotes(list, { q: "0612" }, now).length, 1);
+  assert.equal(filterQuotes(list, { q: "coude" }, now).length, 1, "recherche dans les produits de la liste");
+});
