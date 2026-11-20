@@ -20,15 +20,12 @@ export function SetupNotice({ error }: { error?: string | null }) {
           Ouvrez votre projet Supabase → <strong>SQL Editor</strong>.
         </li>
         <li>
-          Collez le contenu de{" "}
-          <code className="rounded bg-harvest-100 px-1">
-            supabase/migrations/20261118000000_init.sql
-          </code>{" "}
-          puis exécutez-le.
+          Exécutez, dans l&apos;ordre, les fichiers de{" "}
+          <code className="rounded bg-harvest-100 px-1">supabase/migrations/</code> (voir le README).
         </li>
         <li>
-          Créez un utilisateur dans <strong>Authentication → Users</strong> pour
-          vous connecter à cet espace.
+          Créez votre compte dans <strong>Authentication → Users</strong>, puis déclarez-le dans{" "}
+          <code className="rounded bg-harvest-100 px-1">admin_users</code>.
         </li>
       </ol>
       {error ? (
