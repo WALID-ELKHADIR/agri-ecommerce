@@ -77,10 +77,30 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
   const current = queue[0] ?? null;
   const remaining = max - images.length;
 
+  // Aperçus locaux encore en attente : libérés au démontage du composant.
+  const queueRef = useRef<Pending[]>([]);
   useEffect(() => {
-    // Libère les aperçus locaux devenus inutiles.
-    return () => queue.forEach((pending) => URL.revokeObjectURL(pending.previewUrl));
+    queueRef.current = queue;
   }, [queue]);
+  useEffect(() => () => queueRef.current.forEach((pending) => URL.revokeObjectURL(pending.previewUrl)), []);
+
+  // Pas d'enregistrement du formulaire pendant un envoi : l'image serait perdue.
+  const root = useRef<HTMLDivElement>(null);
+  const uploadingRef = useRef(false);
+  useEffect(() => {
+    uploadingRef.current = uploading || queue.length > 0;
+  }, [uploading, queue]);
+  useEffect(() => {
+    const form = root.current?.closest("form");
+    if (!form) return;
+    const guard = (event: SubmitEvent) => {
+      if (!uploadingRef.current) return;
+      event.preventDefault();
+      toast({ title: "Envoi de photo en cours", description: "Attendez la fin du recadrage et de l'envoi avant d'enregistrer." });
+    };
+    form.addEventListener("submit", guard);
+    return () => form.removeEventListener("submit", guard);
+  }, [toast]);
 
   async function addFiles(files: FileList | File[]) {
     const accepted = [...files].filter((file) => file.type.startsWith("image/"));
@@ -93,7 +113,18 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
       toast({ tone: "error", title: `${max} image${max > 1 ? "s" : ""} au maximum`, description: "Retirez une image avant d'en ajouter." });
       return;
     }
-    const loaded = await Promise.all(accepted.slice(0, room).map(loadPending));
+    const results = await Promise.allSettled(accepted.slice(0, room).map(loadPending));
+    const loaded = results.flatMap((result) => (result.status === "fulfilled" ? [result.value] : []));
+    results.forEach((result, index) => {
+      if (result.status === "rejected") {
+        toast({
+          tone: "error",
+          title: `Photo illisible : ${accepted[index].name}`,
+          description: "Enregistrez-la en JPEG ou PNG (les photos HEIC d'iPhone ne sont pas lues par tous les navigateurs).",
+        });
+      }
+    });
+    if (loaded.length === 0) return;
     setSettings({ zoom: 1, x: 0, y: 0 });
     setQueue((existing) => [...existing, ...loaded]);
   }
@@ -130,7 +161,10 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
 
   function skipCurrent() {
     setSettings({ zoom: 1, x: 0, y: 0 });
-    setQueue((existing) => existing.slice(1));
+    setQueue((existing) => {
+      if (existing[0]) URL.revokeObjectURL(existing[0].previewUrl);
+      return existing.slice(1);
+    });
   }
 
   async function remove(index: number) {
@@ -163,7 +197,7 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
   const serialized = JSON.stringify(images.map(({ url, storagePath, alt }) => ({ url, storagePath, alt })));
 
   return (
-    <div className="grid gap-3">
+    <div ref={root} className="grid gap-3">
       <input type="hidden" name={name} value={serialized} />
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-sm font-semibold text-soil-800">{label}</p>
@@ -179,6 +213,7 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
               key={image.key}
               draggable={max > 1}
               onDragStart={() => setDragIndex(index)}
+              onDragEnd={() => setDragIndex(null)}
               onDragOver={(event) => event.preventDefault()}
               onDrop={(event) => {
                 event.preventDefault();
@@ -270,7 +305,7 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
             ref={fileInput}
             id={inputId}
             type="file"
-            accept="image/jpeg,image/png,image/webp,image/heic"
+            accept="image/jpeg,image/png,image/webp"
             multiple={max > 1}
             className="sr-only"
             onChange={(event) => {
@@ -288,7 +323,10 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
 
       <Dialog
         open={current !== null}
-        onClose={skipCurrent}
+        // Pendant l'envoi, Échap ne ferme pas : la photo suivante serait sautée.
+        onClose={() => {
+          if (!uploading) skipCurrent();
+        }}
         title="Recadrer la photo"
         description="Centrez le produit dans le carré : c'est ce cadrage qui apparaîtra sur le site."
         footer={
