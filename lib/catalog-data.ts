@@ -7,6 +7,7 @@ import {
   type Category,
   type Product,
   type ProductSpec,
+  withImages,
 } from "@/lib/catalog";
 import { getPublicClient } from "@/lib/supabase/public";
 
@@ -48,19 +49,22 @@ const fallbackCatalog: Catalog = {
 };
 
 function mapProduct(row: ProductRow, labels: Map<string, string>): Product {
-  return {
-    slug: row.slug,
-    name: row.name,
-    category: row.category_id,
-    categoryLabel: labels.get(row.category_id) ?? "Catalogue",
-    description: row.description,
-    image: row.image_url,
-    imageAlt: row.image_alt || row.name,
-    badge: row.badge ?? undefined,
-    specs: Array.isArray(row.specs) ? row.specs : [],
-    stock: row.stock,
-    featured: row.featured,
-  };
+  // Images : celle choisie dans l'admin, sinon celle du manifest (un ancien
+  // chemin .jpg encore en base est remplacé par l'image du manifest).
+  return withImages(
+    {
+      slug: row.slug,
+      name: row.name,
+      category: row.category_id,
+      categoryLabel: labels.get(row.category_id) ?? "Catalogue",
+      description: row.description,
+      badge: row.badge ?? undefined,
+      specs: Array.isArray(row.specs) ? row.specs : [],
+      stock: row.stock,
+      featured: row.featured,
+    },
+    { src: row.image_url, alt: row.image_alt || row.name },
+  );
 }
 
 async function loadCatalog(): Promise<Catalog> {

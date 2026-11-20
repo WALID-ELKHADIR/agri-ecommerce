@@ -1,3 +1,4 @@
+import { resolveProductImages, type ProductImage } from "./product-images";
 import { siteConfig, whatsappUrl } from "./site-config";
 
 export type Category = {
@@ -20,6 +21,12 @@ export type Product = {
   description: string;
   image: string;
   imageAlt: string;
+  /** Aperçu flou de l'image principale (chargement sans saut). */
+  imageBlurDataURL?: string;
+  /** Image provisoire : la photo du produit reste à fournir. */
+  imagePlaceholder: boolean;
+  /** Vues secondaires (mise en situation, détails). */
+  gallery: ProductImage[];
   badge?: string;
   specs: ProductSpec[];
   stock: string;
@@ -64,9 +71,42 @@ export const categories: Category[] = [
     short: "Kits",
     description: "Ensembles prêts à installer : pompe, coffret et câble.",
   },
+  {
+    id: "accessoires-pompage",
+    label: "Accessoires de pompage",
+    short: "Accessoires",
+    description: "Coffrets de commande, clapets et crépines pour vos installations de pompage.",
+  },
+  {
+    id: "arrosage",
+    label: "Arrosage & goutte-à-goutte",
+    short: "Arrosage",
+    description: "Asperseurs, mini-vannes, raccords de gaine et accessoires de micro-irrigation.",
+  },
+  {
+    id: "outillage",
+    label: "Motoculture & outillage",
+    short: "Outillage",
+    description: "Matériel d'entretien des parcelles et des abords.",
+  },
 ];
 
-export const products: Product[] = [
+type ProductData = Omit<Product, "image" | "imageAlt" | "imageBlurDataURL" | "imagePlaceholder" | "gallery">;
+
+/** Complète un produit avec ses images (manifest, ou image enregistrée en base). */
+export function withImages(product: ProductData, stored?: { src: string; alt: string }): Product {
+  const { image, gallery } = resolveProductImages(product.slug, stored);
+  return {
+    ...product,
+    image: image.src,
+    imageAlt: image.alt || product.name,
+    imageBlurDataURL: image.blurDataURL,
+    imagePlaceholder: image.placeholder,
+    gallery,
+  };
+}
+
+const productData: ProductData[] = [
   {
     slug: "kit-pompe-immergee-4-pouces",
     name: "Kit pompe immergée 4\" complet",
@@ -74,8 +114,6 @@ export const products: Product[] = [
     categoryLabel: "Kits complets",
     description:
       "Ensemble prêt à poser pour forage ou puits : pompe immergée inox, coffret de commande et câble électrique.",
-    image: "/images/products/kit-pompe-immergee.jpg",
-    imageAlt: "Kit de pompe immergée avec coffret de commande et câble",
     badge: "Pack complet",
     specs: [
       { label: "Puissance", value: "0,37 – 1,5 kW" },
@@ -92,8 +130,6 @@ export const products: Product[] = [
     categoryLabel: "Pompes & motopompes",
     description:
       "Pompe de forage en acier inoxydable, conçue pour l'irrigation et l'alimentation en eau sur de longues périodes.",
-    image: "/images/products/pompe-immergee-4p.jpg",
-    imageAlt: "Pompe immergée inoxydable 4 pouces",
     specs: [
       { label: "Puissance", value: "0,5 – 2,2 kW" },
       { label: "Débit", value: "jusqu'à 8 m³/h" },
@@ -109,8 +145,6 @@ export const products: Product[] = [
     categoryLabel: "Pompes & motopompes",
     description:
       "Pompe de surface robuste pour l'irrigation, le transfert d'eau et les réseaux de distribution agricoles.",
-    image: "/images/products/pompe-centrifuge-monobloc.jpg",
-    imageAlt: "Pompe centrifuge monobloc bleu acier",
     specs: [
       { label: "Puissance", value: "0,75 – 7,5 kW" },
       { label: "Alimentation", value: "220 / 380 V" },
@@ -126,8 +160,6 @@ export const products: Product[] = [
     categoryLabel: "Pompes & motopompes",
     description:
       "Corps de pompe en inox pour les eaux claires et les usages intensifs : serres, aspersion, transfert.",
-    image: "/images/products/motopompe-inox.jpg",
-    imageAlt: "Motopompe centrifuge avec corps en inox",
     badge: "Inox",
     specs: [
       { label: "Puissance", value: "1 – 5,5 kW" },
@@ -144,8 +176,6 @@ export const products: Product[] = [
     categoryLabel: "Pompes & motopompes",
     description:
       "Solution de pompage à forte hauteur manométrique pour réseaux sous pression et aspersion.",
-    image: "/images/products/pompe-haute-pression.jpg",
-    imageAlt: "Pompe centrifuge haute pression de grande taille",
     specs: [
       { label: "Puissance", value: "2 – 15 kW" },
       { label: "HMT", value: "jusqu'à 90 m" },
@@ -160,8 +190,6 @@ export const products: Product[] = [
     categoryLabel: "Pompes & motopompes",
     description:
       "Modèle économique et endurant pour l'irrigation de plein champ et le transfert d'eau claire.",
-    image: "/images/products/pompe-centrifuge-fonte.jpg",
-    imageAlt: "Pompe centrifuge en fonte bleue",
     specs: [
       { label: "Puissance", value: "0,75 – 4 kW" },
       { label: "Alimentation", value: "220 / 380 V" },
@@ -176,8 +204,6 @@ export const products: Product[] = [
     categoryLabel: "Pompes & motopompes",
     description:
       "Gamme professionnelle 4\" et 6\" pour forages profonds, avec plusieurs puissances et débits au choix.",
-    image: "/images/products/pompes-immergees-serie.jpg",
-    imageAlt: "Série de pompes immergées inox en atelier",
     badge: "Gamme pro",
     specs: [
       { label: "Diamètres", value: "4\" et 6\"" },
@@ -194,8 +220,6 @@ export const products: Product[] = [
     categoryLabel: "Raccords & fittings",
     description:
       "Raccord à compression pour tuyaux PE, étanchéité haute pression et montage sans outil spécifique.",
-    image: "/images/products/raccord-pe-90.jpg",
-    imageAlt: "Coude PE à compression 90 degrés noir et bleu",
     badge: "Best-seller",
     specs: [
       { label: "Diamètre", value: "Ø20 – 63 mm" },
@@ -212,8 +236,6 @@ export const products: Product[] = [
     categoryLabel: "Raccords & fittings",
     description:
       "Raccord de transition PE vers filetage mâle, avec inserts laiton pour une étanchéité durable.",
-    image: "/images/products/raccord-pe-90-metal.jpg",
-    imageAlt: "Coude PE fileté mâle à compression",
     specs: [
       { label: "Diamètre", value: "Ø20 – 50 mm" },
       { label: "Filetage", value: "Laiton mâle" },
@@ -228,8 +250,6 @@ export const products: Product[] = [
     categoryLabel: "Raccords & fittings",
     description:
       "Té de distribution PVC pour réseaux sous pression, assemblage par collage solvant.",
-    image: "/images/products/te-pvc.jpg",
-    imageAlt: "Té PVC pression gris sur établi",
     specs: [
       { label: "Diamètre", value: "Ø32 – 110 mm" },
       { label: "Pression", value: "PN10 / PN16" },
@@ -244,8 +264,6 @@ export const products: Product[] = [
     categoryLabel: "Raccords & fittings",
     description:
       "Raccord PE résistant aux UV et à l'enfouissement, pensé pour les réseaux d'irrigation durables.",
-    image: "/images/products/raccord-pe-terrain.jpg",
-    imageAlt: "Raccord PE installé sur un réseau d'irrigation enterré",
     badge: "Résistant UV",
     specs: [
       { label: "Diamètre", value: "Ø25 – 63 mm" },
@@ -254,76 +272,170 @@ export const products: Product[] = [
     ],
     stock: "Disponible",
   },
+  {
+    slug: "asperseur-impact",
+    name: "Asperseur à impact",
+    category: "arrosage",
+    categoryLabel: "Arrosage & goutte-à-goutte",
+    description:
+      "Asperseur rotatif à impact pour l'arrosage par aspersion des grandes surfaces.",
+    specs: [],
+    stock: "Sur demande",
+  },
+  {
+    slug: "asperseur-impact-orange",
+    name: "Asperseur à impact (modèle orange)",
+    category: "arrosage",
+    categoryLabel: "Arrosage & goutte-à-goutte",
+    description:
+      "Asperseur rotatif à impact en matière plastique, pour l'arrosage par aspersion.",
+    specs: [],
+    stock: "Sur demande",
+  },
+  {
+    slug: "micro-asperseur-piquet",
+    name: "Micro-asperseur rotatif sur piquet",
+    category: "arrosage",
+    categoryLabel: "Arrosage & goutte-à-goutte",
+    description:
+      "Micro-asperseur rotatif à planter, pour l'arrosage localisé des cultures.",
+    specs: [],
+    stock: "Sur demande",
+  },
+  {
+    slug: "mini-asperseur-piquet",
+    name: "Mini-asperseur sur piquet",
+    category: "arrosage",
+    categoryLabel: "Arrosage & goutte-à-goutte",
+    description:
+      "Mini-asperseur monté sur piquet, à raccorder sur une ligne d'irrigation.",
+    specs: [],
+    stock: "Sur demande",
+  },
+  {
+    slug: "mini-vanne-16-ecrous",
+    name: "Mini-vanne goutte-à-goutte 16 mm à écrous",
+    category: "arrosage",
+    categoryLabel: "Arrosage & goutte-à-goutte",
+    description:
+      "Mini-vanne d'arrêt pour tuyau goutte-à-goutte de 16 mm, raccordement par écrous.",
+    specs: [],
+    stock: "Sur demande",
+  },
+  {
+    slug: "mini-vanne-16-cannelee",
+    name: "Mini-vanne goutte-à-goutte 16 mm cannelée",
+    category: "arrosage",
+    categoryLabel: "Arrosage & goutte-à-goutte",
+    description:
+      "Mini-vanne d'arrêt pour tuyau goutte-à-goutte de 16 mm, embouts cannelés.",
+    specs: [],
+    stock: "Sur demande",
+  },
+  {
+    slug: "raccord-depart-gaine",
+    name: "Raccord de départ pour gaine",
+    category: "arrosage",
+    categoryLabel: "Arrosage & goutte-à-goutte",
+    description:
+      "Raccord de départ pour relier une gaine ou un tuyau goutte-à-goutte à la conduite principale.",
+    specs: [],
+    stock: "Sur demande",
+  },
+  {
+    slug: "raccord-gaine",
+    name: "Raccord pour gaine goutte-à-goutte",
+    category: "arrosage",
+    categoryLabel: "Arrosage & goutte-à-goutte",
+    description:
+      "Raccord pour gaine et tuyau de goutte-à-goutte.",
+    specs: [],
+    stock: "Sur demande",
+  },
+  {
+    slug: "poincon-goutte-a-goutte",
+    name: "Poinçon pour tuyau goutte-à-goutte",
+    category: "arrosage",
+    categoryLabel: "Arrosage & goutte-à-goutte",
+    description:
+      "Outil à poignée pour percer proprement les tuyaux avant la pose des raccords et goutteurs.",
+    specs: [],
+    stock: "Sur demande",
+  },
+  {
+    slug: "injecteur-venturi",
+    name: "Injecteur d'engrais Venturi",
+    category: "arrosage",
+    categoryLabel: "Arrosage & goutte-à-goutte",
+    description:
+      "Injecteur Venturi pour incorporer les engrais à l'eau d'irrigation (fertigation).",
+    specs: [],
+    stock: "Sur demande",
+  },
+  {
+    slug: "clapet-crepine-pvc",
+    name: "Clapet crépine PVC",
+    category: "accessoires-pompage",
+    categoryLabel: "Accessoires de pompage",
+    description:
+      "Clapet crépine à placer en bout d'aspiration : filtre l'eau et maintient la pompe amorcée.",
+    specs: [],
+    stock: "Sur demande",
+  },
+  {
+    slug: "coffret-commande-pompe",
+    name: "Coffret de commande pour pompe immergée",
+    category: "accessoires-pompage",
+    categoryLabel: "Accessoires de pompage",
+    description:
+      "Coffret électrique de démarrage et de protection pour pompe immergée monophasée.",
+    specs: [],
+    stock: "Sur demande",
+  },
+  {
+    slug: "debroussailleuse-thermique",
+    name: "Débroussailleuse thermique",
+    category: "outillage",
+    categoryLabel: "Motoculture & outillage",
+    description:
+      "Débroussailleuse à moteur thermique, livrée avec ses accessoires de coupe.",
+    specs: [],
+    stock: "Sur demande",
+  },
+  {
+    slug: "colle-pvc",
+    name: "Colle PVC",
+    category: "raccords",
+    categoryLabel: "Raccords & fittings",
+    description:
+      "Colle pour l'assemblage des tubes et raccords en PVC pression.",
+    specs: [],
+    stock: "Sur demande",
+  },
 ];
 
+export const products: Product[] = productData.map((product) => withImages(product));
+
+/** Image du manifest pour la galerie de l'accueil (principale ou 1re vue de galerie). */
+function showcase(slug: string, label: string, kind: "main" | "gallery" = "main"): GalleryImage {
+  const { image, gallery } = resolveProductImages(slug);
+  const picked = kind === "gallery" && gallery[0] ? gallery[0] : image;
+  return { src: picked.src, alt: picked.alt, label, contain: kind === "main" };
+}
+
 export const galleryImages: GalleryImage[] = [
-  {
-    src: "/images/products/pompe-centrifuge-monobloc.jpg",
-    alt: "Pompe centrifuge monobloc",
-    label: "Pompes centrifuges",
-    contain: true,
-  },
-  {
-    src: "/images/products/raccord-pe-terrain.jpg",
-    alt: "Raccord PE sur réseau d'irrigation",
-    label: "Raccords PE",
-  },
-  {
-    src: "/images/products/kit-pompe-immergee.jpg",
-    alt: "Kit pompe immergée complet",
-    label: "Kits de pompage",
-    contain: true,
-  },
-  {
-    src: "/images/products/te-pvc.jpg",
-    alt: "Té PVC pression",
-    label: "PVC pression",
-  },
-  {
-    src: "/images/products/pompe-immergee-4p.jpg",
-    alt: "Pompe immergée inox 4 pouces",
-    label: "Pompes immergées",
-    contain: true,
-  },
-  {
-    src: "/images/products/raccord-pe-90.jpg",
-    alt: "Coude PE à compression",
-    label: "Compression PE",
-    contain: true,
-  },
-  {
-    src: "/images/products/pompes-immergees-serie.jpg",
-    alt: "Série de pompes immergées inox",
-    label: "Gamme professionnelle",
-  },
-  {
-    src: "/images/products/pompe-haute-pression.jpg",
-    alt: "Pompe haute pression",
-    label: "Haute pression",
-    contain: true,
-  },
-  {
-    src: "/images/products/raccord-pe-90-metal.jpg",
-    alt: "Coude PE fileté",
-    label: "Raccords filetés",
-  },
-  {
-    src: "/images/products/motopompe-inox.jpg",
-    alt: "Motopompe inox",
-    label: "Motopompes inox",
-    contain: true,
-  },
-  {
-    src: "/images/products/pompes-stock.jpg",
-    alt: "Stock de pompes immergées",
-    label: "Stock disponible",
-  },
-  {
-    src: "/images/products/pompe-zenith.jpg",
-    alt: "Pompe centrifuge de marque",
-    label: "Marques pro",
-    contain: true,
-  },
+  showcase("pompe-centrifuge-monobloc", "Pompes centrifuges"),
+  showcase("coude-pe-reseau-enterre", "Raccords PE", "gallery"),
+  showcase("kit-pompe-immergee-4-pouces", "Kits de pompage"),
+  showcase("te-pvc-pression", "PVC pression", "gallery"),
+  showcase("asperseur-impact", "Aspersion"),
+  showcase("coude-pe-compression-90", "Compression PE"),
+  showcase("gamme-pompes-immergees-inox", "Pompes immergées"),
+  showcase("mini-vanne-16-ecrous", "Goutte-à-goutte"),
+  showcase("pompe-centrifuge-fonte", "Pompes à brides"),
+  showcase("clapet-crepine-pvc", "Accessoires de pompage"),
+  showcase("injecteur-venturi", "Fertigation"),
+  showcase("coffret-commande-pompe", "Coffrets de commande"),
 ];
 
 export function whatsappLink(message: string) {
