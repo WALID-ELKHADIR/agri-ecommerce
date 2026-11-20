@@ -118,3 +118,28 @@ describe("catégories", () => {
     assert.match(message ?? "", /foreign key|violates/i);
   });
 });
+
+describe("remplacement de galerie (séquence de lib/actions/products.ts)", () => {
+  test("insérer, retirer les anciennes lignes puis désigner la principale respecte l'index unique", async () => {
+    await as("authenticated", ADMIN_ID, async () => {
+      const { rows: product } = await db.query<{ id: string }>("select id from public.products where slug = 'clapet-crepine-pvc'");
+      const id = product[0].id;
+      await db.query("insert into public.product_images (product_id, url, position, is_main) values ($1, '/ancienne.webp', 0, true)", [id]);
+      const { rows: inserted } = await db.query<{ id: string }>(
+        "insert into public.product_images (product_id, url, position, is_main) values ($1, '/n1.webp', 0, false), ($1, '/n2.webp', 1, false) returning id",
+        [id],
+      );
+      assert.equal(inserted.length, 2, "insertion possible tant que l'ancienne principale existe");
+      await db.query("delete from public.product_images where product_id = $1 and url = '/ancienne.webp'", [id]);
+      await db.query("update public.product_images set is_main = true where id = $1", [inserted[0].id]);
+      const { rows } = await db.query<{ url: string; is_main: boolean }>(
+        "select url, is_main from public.product_images where product_id = $1 order by position",
+        [id],
+      );
+      assert.deepEqual(rows, [
+        { url: "/n1.webp", is_main: true },
+        { url: "/n2.webp", is_main: false },
+      ]);
+    });
+  });
+});

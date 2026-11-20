@@ -68,9 +68,10 @@ function mapProduct(row: ProductRow, labels: Map<string, string>, gallery: Galle
     },
     { src: row.image_url, alt: row.image_alt || row.name },
   );
-  // Galerie gérée depuis l'admin : remplace celle du manifest dès qu'elle existe.
+  // Galerie gérée depuis l'admin : dès qu'elle existe, elle remplace celle du
+  // manifest, même si elle ne contient que l'image principale.
+  if (gallery.length === 0) return product;
   const extra = gallery.filter((image) => !image.is_main);
-  if (extra.length === 0) return product;
   return {
     ...product,
     gallery: extra.map((image) => ({

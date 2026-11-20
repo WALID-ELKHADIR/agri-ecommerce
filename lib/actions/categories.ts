@@ -3,11 +3,10 @@
 import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { parseImageList, storagePathFromUrl } from "@/lib/admin/image-list";
+import { removeUnreferencedFiles } from "@/lib/admin/storage-cleanup";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/slugify";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-
-const BUCKET = "product-images";
 
 function refresh() {
   updateTag("catalog");
@@ -52,7 +51,7 @@ export async function saveCategoryAction(formData: FormData) {
     // Ancienne image remplacée ou retirée : le fichier Storage est supprimé.
     const oldPath = storagePathFromUrl((previous as { image_url: string | null } | null)?.image_url ?? null);
     if (oldPath && oldPath !== storagePathFromUrl(imageUrl)) {
-      await supabase.storage.from(BUCKET).remove([oldPath]);
+      await removeUnreferencedFiles(supabase, [oldPath]);
     }
   } else {
     const id = slugify(field(formData, "id", 80) || label);
@@ -123,7 +122,7 @@ export async function deleteCategoryAction(formData: FormData) {
   }
 
   const path = storagePathFromUrl((previous as { image_url: string | null } | null)?.image_url ?? null);
-  if (path) await supabase.storage.from(BUCKET).remove([path]);
+  if (path) await removeUnreferencedFiles(supabase, [path]);
 
   refresh();
   redirect(`/admin/categories?ok=${encodeURIComponent("Catégorie supprimée.")}`);

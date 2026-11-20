@@ -3,12 +3,11 @@
 import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { parseImageList, removedStoragePaths, type ImageEntry } from "@/lib/admin/image-list";
+import { removeUnreferencedFiles } from "@/lib/admin/storage-cleanup";
 import { requireAdmin } from "@/lib/auth";
 import type { ProductSpec } from "@/lib/catalog";
 import { slugify } from "@/lib/slugify";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-
-const BUCKET = "product-images";
 
 type Supabase = Awaited<ReturnType<typeof createSupabaseServerClient>>;
 
@@ -41,25 +40,52 @@ async function storedImages(supabase: Supabase, productId: string): Promise<{ st
   return ((data ?? []) as { storage_path: string | null }[]).map((row) => ({ storagePath: row.storage_path }));
 }
 
-/** Remplace la galerie du produit ; la première image devient l'image principale. */
+/**
+ * Remplace la galerie du produit ; la première image devient l'image principale.
+ * Les nouvelles lignes sont insérées avant de retirer les anciennes : si
+ * l'insertion échoue, la galerie précédente reste intacte.
+ */
 async function replaceGallery(supabase: Supabase, productId: string, images: ImageEntry[], fallbackAlt: string) {
-  const before = await storedImages(supabase, productId);
-  await supabase.from("product_images").delete().eq("product_id", productId);
+  const { data: oldRows, error: readError } = await supabase
+    .from("product_images")
+    .select("id, storage_path")
+    .eq("product_id", productId);
+  if (readError) throw new Error(readError.message);
+  const before = ((oldRows ?? []) as { id: string; storage_path: string | null }[]);
+
+  let newIds: string[] = [];
   if (images.length > 0) {
-    const { error } = await supabase.from("product_images").insert(
-      images.map((image, position) => ({
-        product_id: productId,
-        url: image.url,
-        storage_path: image.storagePath,
-        alt: image.alt || fallbackAlt,
-        position,
-        is_main: position === 0,
-      })),
-    );
+    // Principale posée à la fin : l'index unique n'autorise qu'une principale à la fois.
+    const { data, error } = await supabase
+      .from("product_images")
+      .insert(
+        images.map((image, position) => ({
+          product_id: productId,
+          url: image.url,
+          storage_path: image.storagePath,
+          alt: image.alt || fallbackAlt,
+          position,
+          is_main: false,
+        })),
+      )
+      .select("id, position");
+    if (error) throw new Error(error.message);
+    newIds = ((data ?? []) as { id: string; position: number }[]).sort((a, b) => a.position - b.position).map((row) => row.id);
+  }
+
+  if (before.length > 0) {
+    const { error } = await supabase.from("product_images").delete().in("id", before.map((row) => row.id));
     if (error) throw new Error(error.message);
   }
-  const removed = removedStoragePaths(before, images);
-  if (removed.length > 0) await supabase.storage.from(BUCKET).remove(removed);
+  if (newIds.length > 0) {
+    const { error } = await supabase.from("product_images").update({ is_main: true }).eq("id", newIds[0]);
+    if (error) throw new Error(error.message);
+  }
+
+  await removeUnreferencedFiles(
+    supabase,
+    removedStoragePaths(before.map((row) => ({ storagePath: row.storage_path })), images),
+  );
 }
 
 export async function saveProductAction(formData: FormData) {
@@ -179,17 +205,17 @@ export async function duplicateProductAction(formData: FormData) {
   const { data: created, error } = await supabase.from("products").insert(copy).select("id").single();
   if (error || !created) fail("/admin/produits", error?.message ?? "Copie impossible.");
 
-  // La copie référence les mêmes images, sans chemin Storage : la retirer de la
-  // copie ne supprimera jamais le fichier de l'original.
+  // La copie partage les mêmes fichiers : ils ne sont supprimés de Storage que
+  // lorsque plus aucun produit ne les utilise (voir removeUnreferencedFiles).
   const { data: gallery } = await supabase
     .from("product_images")
-    .select("url, alt, position, is_main")
+    .select("url, storage_path, alt, position, is_main")
     .eq("product_id", id);
-  const rows = (gallery ?? []) as { url: string; alt: string; position: number; is_main: boolean }[];
+  const rows = (gallery ?? []) as { url: string; storage_path: string | null; alt: string; position: number; is_main: boolean }[];
   if (rows.length > 0) {
     await supabase
       .from("product_images")
-      .insert(rows.map((row) => ({ ...row, product_id: (created as { id: string }).id, storage_path: null })));
+      .insert(rows.map((row) => ({ ...row, product_id: (created as { id: string }).id })));
   }
 
   refreshCatalog();
@@ -206,13 +232,8 @@ export async function deleteProductAction(formData: FormData) {
   const { error } = await supabase.from("products").delete().eq("id", id);
   if (error) fail("/admin/produits", error.message);
 
-  // Fichiers encore utilisés par une copie : conservés.
-  if (files.length > 0) {
-    const { data: shared } = await supabase.from("product_images").select("storage_path").in("storage_path", files);
-    const stillUsed = new Set(((shared ?? []) as { storage_path: string }[]).map((row) => row.storage_path));
-    const orphans = files.filter((path) => !stillUsed.has(path));
-    if (orphans.length > 0) await supabase.storage.from(BUCKET).remove(orphans);
-  }
+  // Fichiers encore utilisés par une copie ou une catégorie : conservés.
+  await removeUnreferencedFiles(supabase, files);
 
   refreshCatalog();
   redirect(`/admin/produits?ok=${encodeURIComponent("Produit supprimé.")}`);
