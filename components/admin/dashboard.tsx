@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Database, Plus } from "@/components/icons";
+import type { ReactNode } from "react";
+import { ArrowRight, Database, Plus } from "@/components/icons";
+import { DailyBars, RankBars } from "@/components/admin/dashboard-charts";
+import { computeQuoteStats } from "@/lib/admin/quote-stats";
 import { requireAdmin } from "@/lib/auth";
-import { getAdminStats, listQuoteRequests } from "@/lib/admin-data";
+import { getAdminStats, listAdminProducts, listQuoteRequests } from "@/lib/admin-data";
 import { isSupabaseConfigured } from "@/lib/supabase/public";
 
 export function SetupNotice({ error }: { error?: string | null }) {
@@ -79,12 +82,8 @@ export function StatCard({
 }) {
   const content = (
     <>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-soil-500">
-        {label}
-      </p>
-      <p className="mt-2 text-3xl font-semibold tracking-tight text-soil-900">
-        {value}
-      </p>
+      <p className="text-sm font-medium text-soil-600">{label}</p>
+      <p className="mt-1 font-display text-h2 font-bold tabular-nums text-soil-900">{value}</p>
       <p className="mt-1 text-xs text-soil-500">{hint}</p>
     </>
   );
@@ -93,113 +92,114 @@ export function StatCard({
     return (
       <Link
         href={href}
-        className="group rounded-2xl border border-soil-200 bg-white p-5 transition hover:-translate-y-0.5 hover:border-water-200 hover:shadow-md"
+        className="group rounded-card border border-soil-200 bg-white p-5 shadow-soft transition hover:border-field-300 hover:shadow-lifted"
       >
         {content}
-        <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-water-700">
-          Ouvrir
-          <ArrowUpRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
-        </span>
       </Link>
     );
   }
+  return <div className="rounded-card border border-soil-200 bg-white p-5 shadow-soft">{content}</div>;
+}
 
+function Panel({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
   return (
-    <div className="rounded-2xl border border-soil-200 bg-white p-5">{content}</div>
+    <section className="rounded-card border border-soil-200 bg-white p-5 shadow-soft">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h2 className="font-semibold text-soil-900">{title}</h2>
+        {action}
+      </div>
+      {children}
+    </section>
   );
 }
+
+const percent = new Intl.NumberFormat("fr-FR", { style: "percent", maximumFractionDigits: 0 });
+const dateTime = new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Africa/Casablanca" });
 
 export async function DashboardContent() {
   await requireAdmin();
 
-  const [stats, quotes] = await Promise.all([
+  const [stats, { quotes, error }, { products }] = await Promise.all([
     getAdminStats(),
     listQuoteRequests(),
+    listAdminProducts(),
   ]);
+  const kpis = computeQuoteStats(quotes);
+  const names = new Map(products.map((product) => [product.slug, product.name]));
+  const toComplete = products.filter((product) => product.specs.length === 0).length;
 
   return (
     <div className="space-y-5">
-      <SetupNotice error={quotes.error} />
+      <SetupNotice error={error} />
 
       <AdminHeader
         title="Tableau de bord"
-        description="Vue d’ensemble du catalogue et des demandes de devis."
+        description="Les demandes de devis et l'état du catalogue, en un coup d'œil."
         action={{ href: "/admin/produits/nouveau", label: "Nouveau produit" }}
       />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard label="À traiter" value={stats.pending} hint="Nouvelles demandes" href="/admin/demandes?statut=new" />
+        <StatCard label="Demandes, 7 jours" value={kpis.last7} hint={`${kpis.last30} sur 30 jours`} href="/admin/demandes?periode=7" />
         <StatCard
-          label="Produits"
-          value={stats.products}
-          hint="Références au total"
+          label="Taux de gain, 30 jours"
+          value={kpis.winRate === null ? "—" : percent.format(kpis.winRate)}
+          hint="Gagnées ÷ (gagnées + perdues)"
+        />
+        <StatCard
+          label="Produits en ligne"
+          value={`${stats.published} / ${stats.products}`}
+          hint={toComplete > 0 ? `${toComplete} fiche${toComplete > 1 ? "s" : ""} à compléter` : "Toutes les fiches sont complètes"}
           href="/admin/produits"
-        />
-        <StatCard
-          label="En ligne"
-          value={stats.published}
-          hint="Visibles sur le site"
-          href="/admin/produits"
-        />
-        <StatCard
-          label="Demandes"
-          value={stats.quotes}
-          hint="Depuis le lancement"
-          href="/admin/demandes"
-        />
-        <StatCard
-          label="À traiter"
-          value={stats.pending}
-          hint="Nouvelles demandes"
-          href="/admin/demandes"
         />
       </div>
 
-      <section className="rounded-2xl border border-soil-200 bg-white">
-        <div className="flex items-center justify-between gap-3 border-b border-soil-100 px-5 py-4">
-          <h2 className="text-sm font-semibold text-soil-900">
-            Dernières demandes
-          </h2>
-          <Link
-            href="/admin/demandes"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-water-700 hover:text-water-800"
-          >
-            Tout voir
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
+      <div className="grid gap-4 lg:grid-cols-3">
+        <Panel title="Demandes, 14 derniers jours">
+          <DailyBars data={kpis.daily} />
+        </Panel>
+        <Panel title="Produits les plus demandés">
+          <RankBars
+            data={kpis.topProducts.map((item) => ({ label: names.get(item.slug) ?? item.slug, count: item.count }))}
+            empty="Aucun produit demandé sur 30 jours."
+          />
+        </Panel>
+        <Panel title="Origine des demandes">
+          <RankBars data={kpis.sources.map((item) => ({ label: item.source, count: item.count }))} empty="Aucune demande sur 30 jours." />
+        </Panel>
+      </div>
 
-        {quotes.quotes.length === 0 ? (
-          <p className="px-5 py-8 text-center text-sm text-soil-500">
-            Aucune demande enregistrée pour le moment.
-          </p>
+      <Panel
+        title="Dernières demandes"
+        action={
+          <Link href="/admin/demandes" className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-water-700 hover:text-water-800 sm:min-h-0">
+            Tout voir
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        }
+      >
+        {quotes.length === 0 ? (
+          <p className="py-6 text-center text-sm text-soil-500">Aucune demande enregistrée pour le moment.</p>
         ) : (
-          <ul className="divide-y divide-soil-100">
-            {quotes.quotes.slice(0, 5).map((quote) => (
-              <li
-                key={quote.id}
-                className="flex flex-col gap-1 px-5 py-3.5 sm:flex-row sm:items-center sm:justify-between"
-              >
+          <ul className="-mx-5 divide-y divide-soil-100">
+            {quotes.slice(0, 5).map((quote) => (
+              <li key={quote.id} className="flex flex-col gap-1 px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-soil-900">
-                    {quote.name || quote.phone || quote.email || "Visiteur"}
-                  </p>
+                  <p className="truncate text-sm font-medium text-soil-900">{quote.name || quote.phone || quote.email || "Visiteur"}</p>
                   <p className="truncate text-xs text-soil-500">
-                    {quote.productSlug ?? quote.profile ?? quote.source}
+                    {quote.items?.length
+                      ? quote.items.map((item) => item.name).join(", ")
+                      : quote.productSlug
+                        ? (names.get(quote.productSlug) ?? quote.productSlug)
+                        : quote.source}
                   </p>
                 </div>
-                <span className="shrink-0 text-[11px] text-soil-500">
-                  {new Date(quote.createdAt).toLocaleDateString("fr-FR", {
-                    day: "2-digit",
-                    month: "short",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
+                <span className="shrink-0 text-xs text-soil-500">{dateTime.format(new Date(quote.createdAt))}</span>
               </li>
             ))}
           </ul>
         )}
-      </section>
+      </Panel>
     </div>
   );
 }
