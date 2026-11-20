@@ -4,7 +4,7 @@ import { AdminHeader } from "@/components/admin/dashboard";
 import { ProductForm } from "@/components/admin/product-form";
 import { ArrowLeft } from "@/components/icons";
 import { FormSkeleton } from "@/components/admin/skeletons";
-import { getAdminProduct, listAdminCategories } from "@/lib/admin-data";
+import { getAdminProduct, getProductImages, listAdminCategories } from "@/lib/admin-data";
 import { requireAdmin } from "@/lib/auth";
 
 type EditProps = {
@@ -50,6 +50,8 @@ async function EditContenu({ id, error }: { id: string; error: string | null }) 
     );
   }
 
+  const images = await getProductImages(product);
+
   return (
     <div className="space-y-4">
       <AdminHeader
@@ -71,6 +73,7 @@ async function EditContenu({ id, error }: { id: string; error: string | null }) 
           id: category.id as string,
           label: category.label as string,
         }))}
+        images={images}
         error={error}
       />
     </div>

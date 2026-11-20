@@ -1,13 +1,15 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check } from "@/components/icons";
 import { DeleteProductButton } from "@/components/admin/delete-product-button";
+import { ImageManager } from "@/components/admin/image-manager";
 import { saveProductAction } from "@/lib/actions/products";
-import type { AdminProduct } from "@/lib/admin-data";
+import type { AdminImage, AdminProduct } from "@/lib/admin-data";
 
 type ProductFormProps = {
   product?: AdminProduct;
   categories: { id: string; label: string }[];
+  /** Galerie actuelle (image principale en premier). */
+  images: AdminImage[];
   error?: string | null;
 };
 
@@ -15,7 +17,7 @@ const inputClass =
   "min-h-11 w-full rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 placeholder:text-soil-500 focus:border-water-500";
 const labelClass = "grid gap-1.5 text-xs font-semibold text-soil-600";
 
-export function ProductForm({ product, categories, error }: ProductFormProps) {
+export function ProductForm({ product, categories, images, error }: ProductFormProps) {
   const isEdit = Boolean(product);
   const specs = (product?.specs ?? [])
     .map((spec) => `${spec.label}: ${spec.value}`)
@@ -130,49 +132,7 @@ export function ProductForm({ product, categories, error }: ProductFormProps) {
         </section>
 
         <section className="rounded-2xl border border-soil-200 bg-white p-5">
-          <h2 className="text-sm font-semibold text-soil-900">Image</h2>
-
-          <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_96px]">
-            <label className={labelClass}>
-              URL de l’image
-              <input
-                name="image"
-                required
-                defaultValue={product?.image ?? ""}
-                placeholder="/images/products/mon-produit/main.webp"
-                className={inputClass}
-              />
-              <span className="text-[10px] font-normal text-soil-500">
-                Chemin local (<code>/images/products/…</code>) ou URL complète.
-              </span>
-            </label>
-
-            <div className="relative h-24 w-24 overflow-hidden rounded-xl border border-soil-200 bg-soil-50">
-              {product?.image ? (
-                <Image
-                  src={product.image}
-                  alt=""
-                  fill
-                  sizes="96px"
-                  className="object-contain p-1.5"
-                />
-              ) : (
-                <span className="flex h-full items-center justify-center text-[10px] text-soil-500">
-                  Aperçu
-                </span>
-              )}
-            </div>
-          </div>
-
-          <label className={`${labelClass} mt-3`}>
-            Texte alternatif (SEO / accessibilité)
-            <input
-              name="image_alt"
-              defaultValue={product?.imageAlt ?? ""}
-              placeholder="Pompe immergée inoxydable 4 pouces"
-              className={inputClass}
-            />
-          </label>
+          <ImageManager name="images" folder="produits" initial={images} label="Photos du produit" />
         </section>
       </div>
 
