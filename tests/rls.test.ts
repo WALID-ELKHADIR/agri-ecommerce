@@ -2,19 +2,14 @@
 // (PGlite, en mémoire), sans projet Supabase. Le schéma `auth`, les rôles
 // `anon` / `authenticated` et les droits par défaut de Supabase sont simulés.
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
 import { after, before, describe, test } from "node:test";
-import { PGlite } from "@electric-sql/pglite";
-import { pgcrypto } from "@electric-sql/pglite/contrib/pgcrypto";
+import type { PGlite } from "@electric-sql/pglite";
+import { ADMIN_ID as ADMIN, createSupabaseDb, USER_ID as USER } from "./helpers/supabase-db.ts";
 
-const MIGRATIONS = join("supabase", "migrations");
-const ADMIN = "00000000-0000-0000-0000-00000000000a";
-const USER = "00000000-0000-0000-0000-00000000000b";
 const INSERT_QUOTE =
   "insert into public.quote_requests (name, phone, source) values ('Test', $1, 'rls-test')";
 
-const db = new PGlite({ extensions: { pgcrypto } });
+let db: PGlite;
 
 type Role = "anon" | "authenticated";
 
@@ -52,30 +47,7 @@ async function isAdmin(): Promise<boolean> {
 }
 
 before(async () => {
-  await db.exec(`
-    create role anon nologin;
-    create role authenticated nologin;
-    create schema auth;
-    create table auth.users (id uuid primary key, email text);
-    create function auth.uid() returns uuid language sql stable as
-      $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
-    grant usage on schema auth to anon, authenticated;
-    grant execute on function auth.uid() to anon, authenticated;
-    grant usage on schema public to anon, authenticated;
-    alter default privileges in schema public grant all on tables to anon, authenticated;
-    alter default privileges in schema public grant all on functions to anon, authenticated;
-    alter default privileges in schema public grant all on sequences to anon, authenticated;
-    insert into auth.users values ('${ADMIN}', 'admin@test'), ('${USER}', 'user@test');
-  `);
-
-  const files = readdirSync(MIGRATIONS).filter((f) => f.endsWith(".sql")).sort();
-  // Deux passes : chaque migration doit pouvoir être relancée sans erreur.
-  for (let pass = 0; pass < 2; pass++) {
-    for (const file of files) {
-      await db.exec(readFileSync(join(MIGRATIONS, file), "utf8"));
-    }
-  }
-
+  db = await createSupabaseDb();
   await db.exec(`
     insert into public.admin_users (user_id) values ('${ADMIN}');
     insert into public.products (slug, name, category_id, image_url, published)
