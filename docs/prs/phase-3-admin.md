@@ -31,12 +31,13 @@ Gérer tout le catalogue et les demandes depuis l'admin, sans toucher au code : 
   - Une photo illisible (HEIC d'iPhone…) affiche un message sans bloquer les autres ; l'enregistrement du formulaire et Échap sont bloqués pendant un envoi.
   - Seules les images du projet Supabase sont acceptées par le serveur.
   - Export CSV : les numéros « +212 … » restent lisibles, les formules restent neutralisées.
+- **Corrigé pendant le test connecté**
+  - Le bouton « Supprimer ce produit » était dans un formulaire imbriqué : le navigateur l'ignorait et le clic **enregistrait** le produit au lieu de le supprimer (et provoquait une erreur d'hydratation).
+  - Erreur `Date.now()` sur toutes les pages admin en développement : le rendu attend désormais la requête (`connection()`).
 - **Confort** : notification après chaque action, page d'erreur avec bouton « Réessayer », états vides avec une action pour en sortir.
 
 ## Captures
-`docs/screenshots/3-admin/` : connexion et page contact.
-
-⚠️ Les écrans de l'admin connecté n'ont pas pu être capturés : je n'ai pas de compte admin de test (voir ci-dessous).
+`docs/screenshots/3-admin/` (mobile 390×844 et desktop 1440×900) : tableau de bord, produits, formulaire produit, catégories, formulaire catégorie, demandes (liste et kanban), réglages, connexion et page contact.
 
 ## Checklist
 - [x] `npm run lint`
@@ -44,7 +45,7 @@ Gérer tout le catalogue et les demandes depuis l'admin, sans toucher au code : 
 - [x] `npx tsc --noEmit`
 - [x] `npm run build`
 - [x] Sur votre base : migrations présentes, bucket lisible publiquement, envoi anonyme refusé, toutes les pages admin (y compris l'export CSV) redirigées vers la connexion sans session
-- [ ] Parcours admin connecté (envoi de photos, catégories, réglages) : à faire avec un compte admin de test
+- [x] Parcours admin connecté, testé de bout en bout sur votre base avec le compte de test (Playwright) : connexion, catégorie avec image (création, ordre, suppression), produit avec photo, publication refusée sans photo, masquer / publier, duplication, suppression (photo partagée conservée, puis supprimée avec la dernière copie), demandes, export CSV, réglages, aucune erreur JavaScript. Les données de test ont été supprimées.
 - [ ] Lighthouse : à partir de la phase 4
 
 ## Dépendances ajoutées
