@@ -27,6 +27,8 @@ const SIZE = 1200;
 const FILL = 0.7;
 const MAX_BYTES = 150 * 1024;
 const SOIL_50 = { r: 250, g: 248, b: 243, alpha: 1 };
+const MODEL = "medium";
+const TIMEOUT_MS = 120_000;
 
 const args = process.argv.slice(2);
 const only = args.includes("--only") ? args[args.indexOf("--only") + 1] : null;
@@ -44,7 +46,7 @@ const chunks = [];
 for await (const chunk of process.stdin) chunks.push(chunk);
 const blob = await removeBackground(new Blob([Buffer.concat(chunks)], { type: "image/jpeg" }), {
   publicPath: pathToFileURL(dirname(entry)).href + "/",
-  model: "medium",
+  model: process.argv[1] ?? "medium",
   output: { format: "image/png" },
 });
 process.stdout.write(Buffer.from(await blob.arrayBuffer()));
@@ -54,7 +56,7 @@ function removeBackground(input: Buffer): Promise<Buffer> {
   const dir = process.env.BG_REMOVAL_DIR;
   if (!dir) throw new Error("Définissez BG_REMOVAL_DIR (voir l'en-tête du script).");
   return new Promise((resolvePromise, reject) => {
-    const child = spawn(process.execPath, ["--input-type=module", "-e", WORKER], {
+    const child = spawn(process.execPath, ["--input-type=module", "-e", WORKER, MODEL], {
       cwd: resolve(dir),
       stdio: ["pipe", "pipe", "pipe"],
     });
@@ -69,11 +71,12 @@ function removeBackground(input: Buffer): Promise<Buffer> {
       if (code === 0) resolvePromise(Buffer.concat(out));
       else reject(new Error(`Détourage impossible (code ${code}) : ${errors.slice(0, 900)}`));
     });
+    const timer = setTimeout(() => child.kill(), TIMEOUT_MS);
+    child.on("close", () => clearTimeout(timer));
     child.stdin.end(input);
   });
 }
 
-/** Photo d'origine, éventuellement recadrée. */
 /** Photo d'origine : zones effacées (coordonnées d'origine) puis recadrage éventuel. */
 async function source(spec: ImageSpec): Promise<Buffer> {
   const file = join(ARCHIVE, `photo-${String(spec.photo).padStart(2, "0")}.jpg`);
@@ -101,7 +104,8 @@ async function source(spec: ImageSpec): Promise<Buffer> {
 
 async function cachedCutout(input: Buffer): Promise<Buffer> {
   await mkdir(CACHE, { recursive: true });
-  const key = join(CACHE, `${createHash("sha1").update(input).digest("hex")}.png`);
+  // Clé : contenu (après masquage et recadrage) + modèle de détourage.
+  const key = join(CACHE, `${createHash("sha1").update(MODEL).update(input).digest("hex")}.png`);
   if (existsSync(key)) return readFile(key);
   const cut = await removeBackground(input);
   await writeFile(key, cut);
@@ -152,7 +156,11 @@ async function webp(image: Sharp): Promise<Buffer> {
   const png = await image.png().toBuffer();
   for (const quality of [82, 76, 70, 64, 58]) {
     const out = await sharp(png).webp({ quality, effort: 6 }).toBuffer();
-    if (out.length <= MAX_BYTES || quality === 58) return out;
+    if (out.length <= MAX_BYTES) return out;
+    if (quality === 58) {
+      console.warn(`⚠ image de ${Math.round(out.length / 1024)} Ko malgré la compression maximale`);
+      return out;
+    }
   }
   throw new Error("inaccessible");
 }
@@ -167,6 +175,7 @@ type ManifestImage = {
   blurDataURL: string;
   dominantColor: string;
   bytes: number;
+  hash: string;
 };
 
 async function describe(file: string, data: Buffer, alt: string, spec: ImageSpec | null): Promise<ManifestImage> {
@@ -183,6 +192,7 @@ async function describe(file: string, data: Buffer, alt: string, spec: ImageSpec
     blurDataURL: `data:image/webp;base64,${blur.toString("base64")}`,
     dominantColor: `#${hex(dominant.r)}${hex(dominant.g)}${hex(dominant.b)}`,
     bytes: data.length,
+    hash: createHash("sha256").update(data).digest("hex").slice(0, 10),
   };
 }
 
@@ -233,6 +243,8 @@ export type ManifestImage = {
   blurDataURL: string;
   dominantColor: string;
   bytes: number;
+  /** Empreinte du contenu (versionne les copies dans Supabase Storage). */
+  hash: string;
 };
 
 export type ProductImages = {

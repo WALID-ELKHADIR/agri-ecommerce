@@ -200,7 +200,8 @@ export const PRODUCT_IMAGES: ProductImageSpec[] = [
   {
     slug: "debroussailleuse-thermique",
     main: { photo: 37, mode: "cutout", alt: "Débroussailleuse thermique avec guidon et harnais" },
-    gallery: [{ photo: 34, mode: "cutout", alt: "Débroussailleuse livrée avec ses accessoires : lames, bobines, protections" }],
+    // Fond blanc d'origine conservé : le détourage laissait un rectangle blanc.
+    gallery: [{ photo: 34, mode: "crop", alt: "Débroussailleuse livrée avec ses accessoires : lames, bobines, protections" }],
   },
   {
     slug: "colle-pvc",

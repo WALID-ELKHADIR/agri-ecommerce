@@ -70,3 +70,31 @@ test("chaque produit du catalogue de secours a ses images", async () => {
     "pompe-immergee-inox-4-pouces",
   ]);
 });
+
+test("après la migration, le chemin du manifest stocké en base garde aperçu flou et statut provisoire", () => {
+  const placeholder = resolveProductImages("motopompe-centrifuge-inox", {
+    src: "/images/products/motopompe-centrifuge-inox/main.webp",
+    alt: "Photo du produit à venir",
+  });
+  assert.equal(placeholder.image.placeholder, true);
+  assert.ok(placeholder.image.blurDataURL);
+
+  const photo = resolveProductImages("te-pvc-pression", { src: "/images/products/te-pvc-pression/main.webp", alt: "x" });
+  assert.equal(photo.image.placeholder, false);
+  assert.ok(photo.image.blurDataURL);
+});
+
+test("la copie Supabase Storage de l'image du manifest est reconnue (même empreinte)", () => {
+  const { main } = PRODUCT_IMAGES["te-pvc-pression"];
+  const storage = `https://abc.supabase.co/storage/v1/object/public/product-images/te-pvc-pression/main-${main.hash}.webp`;
+  const images = resolveProductImages("te-pvc-pression", { src: storage, alt: "Té" });
+  assert.equal(images.image.src, storage);
+  assert.equal(images.image.alt, "Té");
+  assert.equal(images.image.blurDataURL, main.blurDataURL);
+
+  const stale = resolveProductImages("te-pvc-pression", {
+    src: "https://abc.supabase.co/storage/v1/object/public/product-images/te-pvc-pression/main-0000000000.webp",
+    alt: "Té",
+  });
+  assert.equal(stale.image.blurDataURL, undefined, "ancienne version : pas d'aperçu du manifest");
+});
