@@ -48,7 +48,7 @@ Remplacer les anciennes images, minuscules ou absentes, par les photos de votre 
 
 ## Checklist
 - [x] `npm run lint`
-- [x] `npm test` (54/54)
+- [x] `npm test` (56/56)
 - [x] `npx tsc --noEmit`
 - [x] `npm run build`, avec l'avertissement `check-images` attendu
 - [x] Revue de code. Corrections appliquées :
@@ -57,14 +57,22 @@ Remplacer les anciennes images, minuscules ou absentes, par les photos de votre 
   - **Envoi Storage :** versionné par empreinte, sans les images provisoires.
   - **Migration :** elle respecte les textes alternatifs modifiés.
   - **Débroussailleuse :** rectangle blanc résiduel supprimé.
-- [ ] Photos d'ambiance : hero, catégories, sections (voir ci-dessous)
+- [x] Photos d'ambiance : 5 photos Unsplash validées par vous, crédits archivés
 - [ ] Lighthouse : à partir de la phase 4
 
 ## Dépendances ajoutées
 Aucune. L'outil de détourage (`@imgly/background-removal-node`, environ 360 Mo) s'installe à part, uniquement pour régénérer les images. Il n'est pas livré avec le site (voir l'en-tête de `process-images.ts`).
 
+## Photos d'ambiance
+- Les 5 photos Unsplash que vous avez validées (licence Unsplash, usage commercial gratuit) sont archivées dans `public/images/_archive/2026-11-stock-unsplash/`, avec l'auteur et la source de chacune.
+- Elles donnent 6 images, générées par `scripts/images/process-ambiance.ts` :
+  - `hero/home.webp` (16:9) et `hero/home-mobile.webp` (4:5, cadrage manuel) ;
+  - `sections/goutte-a-goutte`, `vergers` et `serres` ;
+  - `categories/arrosage`.
+  - Toutes pèsent moins de 200 Ko, et leur manifest est `lib/ambiance-images.ts`.
+- Elles seront intégrées aux pages lors de la refonte de la vitrine (Phase 4), et sont à remplacer par vos photos de terrain.
+
 ## Pas encore fait
-- **Photos d'ambiance libres de droits** (hero, catégories, sections) : il faut votre accord pour les télécharger.
 - **Affichage soigné :** aperçu flou, cadrage et galerie avec swipe arrivent avec la refonte de la vitrine (Phase 4).
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
