@@ -41,7 +41,7 @@
 
 ---
 
-### Tâche 1 : `lib/whatsapp.ts`, seul constructeur de messages et de liens
+### Task 1: `lib/whatsapp.ts`, seul constructeur de messages et de liens
 
 **Fichiers :**
 - Créer : `lib/whatsapp.ts`, `tests/whatsapp.test.ts`
@@ -71,7 +71,7 @@ export function whatsappLink(message: string, number: string, region?: string): 
 - [ ] **Étape 4 :** `npm test` → SUCCÈS. Puis `npx tsc --noEmit -p .` : les anciens appels compilent grâce aux ré-exports.
 - [ ] **Étape 5 : commit** `feat(whatsapp): centralise les messages et liens WhatsApp (multi-produits, prêt pour les régions)`.
 
-### Tâche 2 : `WhatsAppLink`, chaque clic enregistré
+### Task 2: `WhatsAppLink`, chaque clic enregistré
 
 **Fichiers :**
 - Créer : `components/whatsapp-link.tsx` (client), `lib/quote-sources.ts`, `tests/quote-sources.test.ts`
@@ -99,7 +99,7 @@ export function WhatsAppLink(props: { href: string; source: QuoteSource; message
 - [ ] **Étape 4 : remplacer les liens `wa.me`** du header (`header`), du pied de page (`footer`), de `MobileCta` (`barre-mobile`) et de la page contact (`contact`). Le numéro vient des réglages (`brand.whatsappNumber` ou `getSiteSettings`), comme aujourd'hui.
 - [ ] **Étape 5 :** `npm test`, `npm run lint`, `npx tsc --noEmit -p .` → SUCCÈS. **Commit** `feat(whatsapp): enregistre chaque clic WhatsApp comme demande avec sa source`.
 
-### Tâche 3 : store de la liste de devis
+### Task 3: store de la liste de devis
 
 **Fichiers :**
 - Créer : `lib/quote-list-store.ts`, `tests/quote-list-store.test.ts`
@@ -138,7 +138,7 @@ export const quoteList: ReturnType<typeof createQuoteListStore>; // instance nav
 - [ ] **Étape 3 : implémenter.** Valider la forme des lignes relues : on écarte celles qui sont invalides.
 - [ ] **Étape 4 :** `npm test` → SUCCÈS. **Commit** `feat(devis): stockage local de la liste de devis, robuste aux erreurs`.
 
-### Tâche 4 : interface de la liste de devis
+### Task 4: interface de la liste de devis
 
 **Fichiers :**
 - Créer :
@@ -179,7 +179,7 @@ export function openQuoteDrawer(): void; // événement DOM « saqia:open-devis 
 - [ ] **Étape 4 : brancher** le compteur dans le header, le tiroir dans `app/layout.tsx` (un seul exemplaire, numéro issu des réglages) et le bouton « Ma liste » dans `MobileCta`.
 - [ ] **Étape 5 :** `npm test`, lint, tsc → SUCCÈS. **Commit** `feat(devis): liste de devis multi-produits avec tiroir et envoi WhatsApp`.
 
-### Tâche 5 : requête du catalogue (filtrage pur)
+### Task 5: requête du catalogue (filtrage pur)
 
 **Fichiers :**
 - Créer : `lib/catalog-query.ts`, `tests/catalog-query.test.ts`
@@ -208,7 +208,7 @@ export function catalogHref(query: Partial<CatalogQuery>): string; // « /produi
 - [ ] **Étape 3 : implémenter.** Réutiliser la normalisation sans accents de `lib/admin/product-filters.ts` en l'extrayant dans `lib/normalize.ts`, et mettre l'admin à jour pour l'importer.
 - [ ] **Étape 4 :** `npm test` → SUCCÈS. **Commit** `feat(catalogue): filtrage et tri du catalogue par l'URL (module pur testé)`.
 
-### Tâche 6 : carte produit serveur
+### Task 6: carte produit serveur
 
 **Fichiers :**
 - Modifier : `components/product-card.tsx` (devient un composant serveur)
@@ -228,7 +228,7 @@ export function catalogHref(query: Partial<CatalogQuery>): string; // « /produi
     - carrousel : `(min-width:768px) 280px, 72vw`.
 - [ ] **Étape 2 :** `npx tsc --noEmit -p .` et `npm run lint` → SUCCÈS. Vérification visuelle à la tâche 10. **Commit** `feat(ui): carte produit rendue par le serveur, survol et pression`.
 
-### Tâche 7 : page catalogue
+### Task 7: page catalogue
 
 **Fichiers :**
 - Modifier : `app/produits/page.tsx`, `components/site-header.tsx` (la recherche du header navigue vers `/produits?q=`)
@@ -252,7 +252,7 @@ export function catalogHref(query: Partial<CatalogQuery>): string; // « /produi
 - [ ] **Étape 3 : supprimer** les fichiers listés et vérifier qu'aucun import ne reste (`grep -rn "catalog-browser\|quick-view\|catalog-filters" app components lib`, sortie vide).
 - [ ] **Étape 4 :** lint, tsc, tests, `npm run build` → SUCCÈS. **Commit** `feat(catalogue): filtres dans l'URL, chips mobiles et panneau de filtres`.
 
-### Tâche 8 : page d'accueil en sections serveur
+### Task 8: page d'accueil en sections serveur
 
 **Fichiers :**
 - Créer dans `components/home/` : `hero.tsx`, `reassurance.tsx`, `category-cards.tsx`, `featured-carousel.tsx`, `how-it-works.tsx`, `showcase.tsx`, `faq.tsx`, `final-cta.tsx`, `testimonials.tsx` (exporte un composant qui renvoie `null` tant que `TESTIMONIALS` est vide).
@@ -278,7 +278,7 @@ export function catalogHref(query: Partial<CatalogQuery>): string; // « /produi
 - [ ] **Étape 3 : `app/page.tsx`** compose les sections, avec header et pied de page. Vérifier qu'aucun fichier de `components/home/` ne commence par `"use client"`, sauf si c'est indispensable.
 - [ ] **Étape 4 :** lint, tsc, tests, build → SUCCÈS. **Commit** `feat(accueil): page d'accueil en sections serveur (hero, catégories, carrousel, FAQ)`.
 
-### Tâche 9 : fiche produit
+### Task 9: fiche produit
 
 **Fichiers :**
 - Modifier : `app/produits/[slug]/page.tsx`, `components/product-quote.tsx`
@@ -302,7 +302,7 @@ export function catalogHref(query: Partial<CatalogQuery>): string; // « /produi
 - [ ] **Étape 3 : barre collante mobile** (`md:hidden fixed bottom-0`, `pb-[env(safe-area-inset-bottom)]`) : « Ajouter au devis » et WhatsApp (source `barre-mobile`). `MobileCta` n'est pas rendu sur cette page.
 - [ ] **Étape 4 :** lint, tsc, tests, build → SUCCÈS. **Commit** `feat(fiche): galerie à balayer avec zoom, caractéristiques et barre WhatsApp collante`.
 
-### Tâche 10 : vérification, captures, Lighthouse, PR
+### Task 10: vérification, captures, Lighthouse, PR
 
 **Fichiers :**
 - Créer : `docs/prs/phase-4-vitrine.md`, `docs/screenshots/4-vitrine/*`
