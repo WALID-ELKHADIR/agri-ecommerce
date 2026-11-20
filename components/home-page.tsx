@@ -30,6 +30,7 @@ import {
   type GalleryImage,
   type Product,
 } from "@/lib/catalog";
+import type { SiteConfig } from "@/lib/site-config";
 
 function buildFamilies(products: Product[]) {
   return [
@@ -90,7 +91,7 @@ const heroFamilies = [
   "Kits & accessoires",
 ];
 
-export function HomePage({ products }: { products: Product[] }) {
+export function HomePage({ products, settings }: { products: Product[]; settings: SiteConfig }) {
   const featured = products.filter((product) => product.featured).slice(0, 4);
   const families = buildFamilies(products);
 
@@ -530,7 +531,7 @@ export function HomePage({ products }: { products: Product[] }) {
         </section>
       </main>
 
-      <SiteFooter />
+      <SiteFooter brand={settings} />
       <MobileCta />
     </>
   );

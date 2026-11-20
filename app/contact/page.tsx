@@ -10,9 +10,11 @@ import {
 } from "@/components/icons";
 import { MobileCta } from "@/components/mobile-cta";
 import { QuoteForm } from "@/components/quote-form";
-import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { BRAND, generalMessage, whatsappLink } from "@/lib/catalog";
+import { SiteFooterWithSettings } from "@/components/site-footer-server";
+import { generalMessage } from "@/lib/catalog";
+import { whatsappUrl, type SiteConfig } from "@/lib/site-config";
+import { getSiteSettings } from "@/lib/site-settings";
 
 export const metadata: Metadata = {
   title: "Contact & devis — Saqia, pompes et irrigation",
@@ -20,13 +22,14 @@ export const metadata: Metadata = {
     "Contactez Saqia pour un devis de pompes, raccords PE/PVC ou kits d'irrigation. WhatsApp, téléphone et e-mail — réponse sous 24h.",
 };
 
-const channels = [
+/** Canaux de contact, avec les coordonnées des réglages de l'admin. */
+const channelsFor = (BRAND: SiteConfig) => [
   {
     icon: WhatsApp,
     title: "WhatsApp",
     value: BRAND.phoneDisplay,
     text: "Le plus rapide : photos, schémas et devis direct.",
-    href: whatsappLink(generalMessage()),
+    href: whatsappUrl(generalMessage(), BRAND.whatsappNumber),
     external: true,
     accent: true,
   },
@@ -46,7 +49,10 @@ const channels = [
   },
 ];
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const BRAND = await getSiteSettings();
+  const channels = channelsFor(BRAND);
+
   return (
     <>
       <SiteHeader />
@@ -162,7 +168,7 @@ export default function ContactPage() {
         </section>
       </main>
 
-      <SiteFooter />
+      <SiteFooterWithSettings />
       <MobileCta />
     </>
   );
