@@ -45,3 +45,13 @@ test("fichiers à supprimer : ceux qui ne sont plus utilisés", () => {
     ["produits/a.webp"],
   );
 });
+
+test("chemin Storage retrouvé depuis une URL publique du bucket", async () => {
+  const { storagePathFromUrl } = await import("../lib/admin/image-list.ts");
+  assert.equal(
+    storagePathFromUrl("https://abc.supabase.co/storage/v1/object/public/product-images/categories/x.webp"),
+    "categories/x.webp",
+  );
+  assert.equal(storagePathFromUrl("/images/categories/arrosage.webp"), null);
+  assert.equal(storagePathFromUrl(null), null);
+});

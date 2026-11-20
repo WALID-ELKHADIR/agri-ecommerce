@@ -51,3 +51,14 @@ export function removedStoragePaths(
     .map((image) => image.storagePath)
     .filter((path): path is string => Boolean(path) && !kept.has(path));
 }
+
+const BUCKET_MARKER = "/storage/v1/object/public/product-images/";
+
+/** Chemin dans le bucket product-images d'une URL publique ; null sinon. */
+export function storagePathFromUrl(url: string | null): string | null {
+  if (!url) return null;
+  const index = url.indexOf(BUCKET_MARKER);
+  if (index < 0) return null;
+  const path = decodeURIComponent(url.slice(index + BUCKET_MARKER.length));
+  return SAFE_PATH.test(path) && !path.includes("..") ? path : null;
+}
