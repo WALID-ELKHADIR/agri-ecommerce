@@ -2,6 +2,7 @@ import "server-only";
 
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -14,6 +15,9 @@ export async function createSupabaseServerClient() {
   // Lire les cookies en premier marque la page comme dynamique : sans cela,
   // l'erreur de configuration ci-dessous ferait échouer le pré-rendu au build.
   const cookieStore = await cookies();
+  // La vérification de session compare l'expiration du jeton à l'heure
+  // actuelle (Date.now) : le rendu doit donc avoir lieu à la requête.
+  await connection();
 
   if (!url || !anonKey) {
     throw new Error(

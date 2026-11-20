@@ -214,7 +214,7 @@ export function ProductForm({ product, categories, images, error }: ProductFormP
               La suppression est définitive. Pour masquer un produit
               temporairement, décochez plutôt « Visible sur le site ».
             </p>
-            <DeleteProductButton id={product.id} name={product.name} />
+            <DeleteProductButton name={product.name} />
           </section>
         ) : null}
       </div>
