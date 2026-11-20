@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Droplet, Search } from "@/components/icons";
 import { MobileCta } from "@/components/mobile-cta";
-import { SiteFooter } from "@/components/site-footer";
+import { SiteFooterWithSettings } from "@/components/site-footer-server";
 import { SiteHeader } from "@/components/site-header";
 
 export default function NotFound() {
@@ -45,7 +45,7 @@ export default function NotFound() {
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooterWithSettings />
       <MobileCta />
     </>
   );

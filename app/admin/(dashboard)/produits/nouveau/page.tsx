@@ -37,6 +37,7 @@ async function NouveauContenu({ error }: { error: string | null }) {
           id: category.id as string,
           label: category.label as string,
         }))}
+        images={[]}
         error={error}
       />
     </div>

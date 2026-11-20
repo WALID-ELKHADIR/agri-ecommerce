@@ -9,11 +9,8 @@ import {
   WhatsApp,
 } from "@/components/icons";
 import { Logo } from "@/components/brand/logo";
-import {
-  BRAND,
-  generalMessage,
-  whatsappLink,
-} from "@/lib/catalog";
+import { BRAND, generalMessage } from "@/lib/catalog";
+import { whatsappUrl, type SiteConfig } from "@/lib/site-config";
 
 const rangeLinks = [
   { href: "/produits", label: "Pompes & motopompes" },
@@ -31,7 +28,11 @@ const infoLinks = [
 
 const YEAR = 2026;
 
-export function SiteFooter() {
+/**
+ * Pied de page. `brand` : coordonnées issues des réglages de l'admin (voir
+ * SiteFooterWithSettings) ; à défaut, celles des variables d'environnement.
+ */
+export function SiteFooter({ brand = BRAND }: { brand?: SiteConfig }) {
   return (
     <footer id="contact" className="border-t border-soil-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 pb-24 pt-12 sm:pb-14 sm:pt-14">
@@ -58,7 +59,7 @@ export function SiteFooter() {
             </div>
 
             <a
-              href={whatsappLink(generalMessage())}
+              href={whatsappUrl(generalMessage(), brand.whatsappNumber)}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
@@ -111,36 +112,36 @@ export function SiteFooter() {
             <ul className="mt-4 space-y-3 text-sm text-soil-600">
               <li>
                 <a
-                  href={`tel:${BRAND.phoneRaw}`}
+                  href={`tel:${brand.phoneRaw}`}
                   className="flex min-h-11 items-start gap-2.5 py-1 transition hover:text-water-700 lg:min-h-0"
                 >
                   <Phone className="mt-0.5 h-4 w-4 shrink-0 text-water-600" />
-                  {BRAND.phoneDisplay}
+                  {brand.phoneDisplay}
                 </a>
               </li>
               <li>
                 <a
-                  href={`mailto:${BRAND.email}`}
+                  href={`mailto:${brand.email}`}
                   className="flex min-h-11 items-start gap-2.5 py-1 transition hover:text-water-700 lg:min-h-0"
                 >
                   <Mail className="mt-0.5 h-4 w-4 shrink-0 text-water-600" />
-                  {BRAND.email}
+                  {brand.email}
                 </a>
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-water-600" />
-                {BRAND.address}
+                {brand.address}
               </li>
               <li className="flex items-start gap-2.5">
                 <Clock className="mt-0.5 h-4 w-4 shrink-0 text-water-600" />
-                {BRAND.hours}
+                {brand.hours}
               </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-soil-200 pt-6 text-center text-xs text-soil-500 sm:flex-row sm:text-left">
-          <p>© {YEAR} {BRAND.name}. Tous droits réservés.</p>
+          <p>© {YEAR} {brand.name}. Tous droits réservés.</p>
           <p>Matériel professionnel · Devis et conseil technique inclus</p>
         </div>
       </div>

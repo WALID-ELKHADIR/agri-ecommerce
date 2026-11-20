@@ -31,6 +31,7 @@ type CategoryRow = {
 };
 
 type ProductRow = {
+  id: string;
   slug: string;
   name: string;
   category_id: string;
@@ -48,10 +49,12 @@ const fallbackCatalog: Catalog = {
   products: fallbackProducts,
 };
 
-function mapProduct(row: ProductRow, labels: Map<string, string>): Product {
+type GalleryRow = { product_id: string; url: string; alt: string; is_main: boolean; position: number };
+
+function mapProduct(row: ProductRow, labels: Map<string, string>, gallery: GalleryRow[] = []): Product {
   // Images : celle choisie dans l'admin, sinon celle du manifest (un ancien
   // chemin .jpg encore en base est remplacé par l'image du manifest).
-  return withImages(
+  const product = withImages(
     {
       slug: row.slug,
       name: row.name,
@@ -65,6 +68,20 @@ function mapProduct(row: ProductRow, labels: Map<string, string>): Product {
     },
     { src: row.image_url, alt: row.image_alt || row.name },
   );
+  // Galerie gérée depuis l'admin : dès qu'elle existe, elle remplace celle du
+  // manifest, même si elle ne contient que l'image principale.
+  if (gallery.length === 0) return product;
+  const extra = gallery.filter((image) => !image.is_main);
+  return {
+    ...product,
+    gallery: extra.map((image) => ({
+      src: image.url,
+      alt: image.alt || row.name,
+      width: 1200,
+      height: 1200,
+      placeholder: false,
+    })),
+  };
 }
 
 async function loadCatalog(): Promise<Catalog> {
@@ -75,7 +92,7 @@ async function loadCatalog(): Promise<Catalog> {
   }
 
   try {
-    const [categoriesResult, productsResult] = await Promise.all([
+    const [categoriesResult, productsResult, galleryResult] = await Promise.all([
       supabase
         .from("categories")
         .select("id, label, short, description, position")
@@ -83,11 +100,13 @@ async function loadCatalog(): Promise<Catalog> {
       supabase
         .from("products")
         .select(
-          "slug, name, category_id, description, image_url, image_alt, badge, stock, specs, featured, position",
+          "id, slug, name, category_id, description, image_url, image_alt, badge, stock, specs, featured, position",
         )
         .eq("published", true)
         .order("position", { ascending: true })
         .order("created_at", { ascending: true }),
+      // Galeries des produits publiés (la RLS masque les autres).
+      supabase.from("product_images").select("product_id, url, alt, is_main, position").order("position"),
     ]);
 
     if (categoriesResult.error || productsResult.error) {
@@ -118,7 +137,13 @@ async function loadCatalog(): Promise<Catalog> {
 
     return {
       categories,
-      products: productRows.map((row) => mapProduct(row, labels)),
+      products: productRows.map((row) =>
+        mapProduct(
+          row,
+          labels,
+          ((galleryResult.data ?? []) as GalleryRow[]).filter((image) => image.product_id === row.id),
+        ),
+      ),
     };
   } catch (error) {
     console.error("[catalog] Supabase injoignable, données locales utilisées", error);

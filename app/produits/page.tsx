@@ -3,7 +3,7 @@ import Link from "next/link";
 import { CatalogBrowser } from "@/components/catalog-browser";
 import { Clock, ShieldCheck, Truck } from "@/components/icons";
 import { MobileCta } from "@/components/mobile-cta";
-import { SiteFooter } from "@/components/site-footer";
+import { SiteFooterWithSettings } from "@/components/site-footer-server";
 import { SiteHeader } from "@/components/site-header";
 import { getCatalog } from "@/lib/catalog-data";
 
@@ -102,7 +102,7 @@ export default async function ProduitsPage() {
         </section>
       </main>
 
-      <SiteFooter />
+      <SiteFooterWithSettings />
       <MobileCta />
     </>
   );

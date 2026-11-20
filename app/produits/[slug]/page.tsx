@@ -16,7 +16,7 @@ import {
 import { MobileCta } from "@/components/mobile-cta";
 import { ProductCard } from "@/components/product-card";
 import { ProductQuote } from "@/components/product-quote";
-import { SiteFooter } from "@/components/site-footer";
+import { SiteFooterWithSettings } from "@/components/site-footer-server";
 import { SiteHeader } from "@/components/site-header";
 import { generalMessage, whatsappLink } from "@/lib/catalog";
 import {
@@ -92,7 +92,7 @@ export default function ProduitPage({ params }: ProductPageProps) {
         </Suspense>
       </main>
 
-      <SiteFooter />
+      <SiteFooterWithSettings />
       <MobileCta />
     </>
   );

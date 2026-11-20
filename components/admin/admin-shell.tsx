@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import {
   ArrowUpRight,
   Gauge,
@@ -10,14 +10,20 @@ import {
   Layers,
   LogOut,
   Menu,
+  Settings,
+  Tag,
 } from "@/components/icons";
+import { FlashToast } from "@/components/admin/flash-toast";
+import { ToastProvider } from "@/components/ui/toast";
 import { Logo } from "@/components/brand/logo";
 import { signOutAction } from "@/lib/actions/auth";
 
 const links = [
   { href: "/admin", label: "Tableau de bord", icon: Gauge },
   { href: "/admin/produits", label: "Produits", icon: Layers },
+  { href: "/admin/categories", label: "Catégories", icon: Tag },
   { href: "/admin/demandes", label: "Demandes de devis", icon: Headset },
+  { href: "/admin/reglages", label: "Réglages", icon: Settings },
 ];
 
 export function AdminShell({ children }: { children: ReactNode }) {
@@ -116,7 +122,14 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">{children}</main>
+        <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+          <ToastProvider>
+            {children}
+            <Suspense fallback={null}>
+              <FlashToast />
+            </Suspense>
+          </ToastProvider>
+        </main>
       </div>
     </div>
   );
