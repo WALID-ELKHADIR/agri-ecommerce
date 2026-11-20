@@ -1,6 +1,15 @@
-# Inventaire des photos produits — à valider
+# Inventaire des photos produits
 
-_Phase 2bis · 2026-11-20 · 38 photos dans `public/images/products/`, numérotées par ordre de nom de fichier (planche numérotée jointe à la PR)._
+_Phase 2bis · 2026-11-20 · 38 photos, désormais dans `public/images/_archive/2026-11-photos-fournisseur/photo-NN.jpg` (même numérotation ; planche `docs/images-inventaire-planche.jpg`)._
+
+> **Validé le 2026-11-20** (« valide tes choix »). Décisions appliquées, telles que codées dans `scripts/images/sources.ts` :
+> - Pompes à brides : n° 8 (+ 9 en galerie) → pompe fonte ; n° 10 (+ 13) → haute pression. **À confirmer.**
+> - Coudes : deux fiches conservées, n° 4 pour le réseau enterré. **À confirmer.**
+> - Asperseurs n° 14 / 27 et n° 20 / 22 : produits distincts.
+> - Rejetées : n° 6, 17, 18, 24, 29, 31, 33, 38 (motifs dans `REJECTED_PHOTOS`). La n° 24 est remplacée par la n° 34 en galerie de la débroussailleuse.
+> - **Asperseur orange (n° 14)** et **colle PVC (n° 16)** : le détourage n'a pas donné un résultat propre (main, sol strié) ; photos recadrées, **à refaire sur fond uni**.
+> - **Pompe immergée inox, motopompe, coude fileté** : image provisoire, **photo à fournir**.
+> - Les scènes du fournisseur ne servent qu'à des photos détourées ; aucune n'est utilisée en galerie.
 
 **Comment lire ce tableau :**
 - **Rôle**
@@ -47,7 +56,7 @@ Les **caractéristiques des nouveaux produits restent vides** : je ne les invent
 | **23** | Injecteur d'engrais Venturi (`injecteur-venturi`) | Arrosage & goutte-à-goutte | Principale | Logo Moyza supprimé |
 | **21** | Clapet crépine PVC (`clapet-crepine-pvc`) | Accessoires de pompage | Principale | ✅ Détourage testé : propre. Logo Moyza supprimé |
 | **32** | Coffret de commande pour pompe immergée (`coffret-commande-pompe`) | Accessoires de pompage | Principale | ✅ Détourage testé : propre. Galerie : **26** recadrée |
-| **37** | Débroussailleuse thermique (`debroussailleuse-thermique`) | Motoculture & outillage | Principale | ✅ Fond blanc. Galerie : **34** (kit complet), **24** (sans le logo) |
+| **37** | Débroussailleuse thermique (`debroussailleuse-thermique`) | Motoculture & outillage | Principale | ✅ Fond blanc. Galerie : **34** (kit complet) |
 | **16** | Colle PVC (`colle-pvc`) | Raccords & fittings | Principale | Flacon posé au sol, détourage à tester |
 
 ## 3. Photos écartées ou à éclaircir
