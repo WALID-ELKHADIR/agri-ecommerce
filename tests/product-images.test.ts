@@ -55,3 +55,18 @@ test("chaque image du manifest existe, fait 1200 × 1200 et pèse moins de 150 K
     }
   }
 });
+
+test("chaque produit du catalogue de secours a ses images", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { catalogSlugs, checkImages } = await import("../scripts/images/check-images.ts");
+  const slugs = catalogSlugs(readFileSync("lib/catalog.ts", "utf8"));
+  assert.equal(slugs.length, 25);
+  const report = checkImages(slugs);
+  assert.deepEqual(report.missingEntries, []);
+  assert.deepEqual(report.missingFiles, []);
+  assert.deepEqual(report.placeholders.sort(), [
+    "coude-pe-filete-male-90",
+    "motopompe-centrifuge-inox",
+    "pompe-immergee-inox-4-pouces",
+  ]);
+});
