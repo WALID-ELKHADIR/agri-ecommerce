@@ -60,11 +60,11 @@ export function SiteFooter({ brand = BRAND }: { brand?: SiteConfig }) {
             </div>
 
             <WhatsAppLink
- href={whatsappUrl(generalMessage(), brand.whatsappNumber)}
- source="footer"
- message={generalMessage()}
- className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
- >
+              href={whatsappUrl(generalMessage(), brand.whatsappNumber)}
+              source="footer"
+              message={generalMessage()}
+              className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
+            >
               <WhatsApp className="h-4 w-4" />
               Discuter sur WhatsApp
             </WhatsAppLink>

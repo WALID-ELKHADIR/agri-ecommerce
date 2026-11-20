@@ -91,3 +91,17 @@ test("source par défaut : site", () => {
   assert.ok(result.ok);
   assert.equal(result.data.source, "site");
 });
+
+test("liste de devis : produits, nom et ville (dans le message) acceptés avec la source", () => {
+  const result = validateQuoteInput({
+    source: "liste-devis",
+    name: "Ali",
+    message: "Bonjour…\nVille : Agadir",
+    items: [{ slug: "a", name: "A", quantity: 2 }],
+  });
+  assert.equal(result.ok, true);
+  if (result.ok) {
+    assert.equal(result.data.source, "liste-devis");
+    assert.deepEqual(result.data.items, [{ slug: "a", name: "A", quantity: 2 }]);
+  }
+});

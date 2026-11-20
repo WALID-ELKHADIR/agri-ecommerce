@@ -261,3 +261,22 @@ html:has(dialog[open]) {
     scroll-behavior: auto !important;
   }
 }
+
+/* Compteur de la liste de devis : rebond bref à chaque ajout. */
+@keyframes quote-bump {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .quote-bump {
+    animation: quote-bump 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}

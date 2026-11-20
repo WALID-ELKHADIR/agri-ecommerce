@@ -16,6 +16,8 @@ import {
 import { Logo } from "@/components/brand/logo";
 import { catalogFilters } from "@/lib/catalog-filters";
 import { BRAND, generalMessage, whatsappLink } from "@/lib/catalog";
+import { QuoteCounter } from "@/components/quote-list/quote-counter";
+import { QuoteDrawer } from "@/components/quote-list/quote-drawer";
 import { WhatsAppLink } from "@/components/whatsapp-link";
 
 const links = [
@@ -130,14 +132,16 @@ export function SiteHeader() {
             </form>
 
             <WhatsAppLink
- href={whatsappLink(generalMessage())}
- source="header"
- message={generalMessage()}
- className="hidden items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-whatsapp-hover sm:inline-flex"
- >
+              href={whatsappLink(generalMessage())}
+              source="header"
+              message={generalMessage()}
+              className="hidden items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-whatsapp-hover sm:inline-flex"
+            >
               <WhatsApp className="h-4 w-4" />
               Devis WhatsApp
             </WhatsAppLink>
+
+            <QuoteCounter />
 
             <button
               type="button"
@@ -197,11 +201,11 @@ export function SiteHeader() {
 
             <div className="mt-3 grid gap-2">
               <WhatsAppLink
- href={whatsappLink(generalMessage())}
- source="header"
- message={generalMessage()}
- className="flex items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-3 text-sm font-semibold text-white"
- >
+                href={whatsappLink(generalMessage())}
+                source="header"
+                message={generalMessage()}
+                className="flex items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-3 text-sm font-semibold text-white"
+              >
                 <WhatsApp className="h-4 w-4" />
                 Demander un devis
               </WhatsAppLink>
@@ -216,6 +220,7 @@ export function SiteHeader() {
           </div>
         ) : null}
       </header>
+      <QuoteDrawer whatsappNumber={BRAND.whatsappNumber} brandName={BRAND.name} />
     </>
   );
 }
