@@ -4,7 +4,8 @@
 // - fichier d'image manquant ;
 // - images provisoires et correspondances à confirmer (rappel).
 import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { PRODUCT_IMAGES } from "../../lib/images-manifest.ts";
 
 export type ImageReport = { missingEntries: string[]; missingFiles: string[]; placeholders: string[]; toConfirm: string[] };
@@ -31,7 +32,9 @@ export function checkImages(slugs: string[]): ImageReport {
   return report;
 }
 
-if (import.meta.url === `file:///${process.argv[1]?.replaceAll("\\", "/").replace(/^\//, "")}`) {
+// Exécuté directement (et non importé par un test) : comparaison de chemins
+// normalisés, fiable avec des espaces ou des accents dans le dossier.
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   const report = checkImages(catalogSlugs(readFileSync(join("lib", "catalog.ts"), "utf8")));
   const warn = (title: string, items: string[]) => {
     if (items.length) console.warn(`⚠ [images] ${title} :\n  - ${items.join("\n  - ")}`);

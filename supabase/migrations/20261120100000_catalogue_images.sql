@@ -1,7 +1,8 @@
 -- Catalogue : nouvelles catégories, nouveaux produits et nouvelles images
 -- ---------------------------------------------------------------------------
 -- Phase 2bis. Les photos du stock réel remplacent les anciennes images.
--- Fichier généré à partir de lib/catalog.ts et lib/images-manifest.ts.
+-- Construit à partir de lib/catalog.ts et lib/images-manifest.ts (phase 2bis).
+-- Migration figée une fois appliquée : pour corriger, créez-en une nouvelle.
 --
 -- À exécuter dans Supabase → SQL Editor, après 20261119100000_admin_rls.sql.
 -- Idempotent ; ne remplace jamais une image ou un produit modifié depuis l'admin.
@@ -15,27 +16,39 @@ on conflict (id) do nothing;
 
 -- 2. Nouvelles images des produits existants
 -- Seulement si l'image en base est encore un ancien chemin (/images/products/*.jpg).
-update public.products set image_url = '/images/products/kit-pompe-immergee-4-pouces/main.webp', image_alt = 'Kit pompe immergée : pompe inox, coffret de commande et câble'
+-- Le texte alternatif n'est remplacé que s'il est encore celui d'origine.
+update public.products set image_url = '/images/products/kit-pompe-immergee-4-pouces/main.webp',
+    image_alt = case when image_alt in ('', 'Kit de pompe immergée avec coffret de commande et câble') then 'Kit pompe immergée : pompe inox, coffret de commande et câble' else image_alt end
   where slug = 'kit-pompe-immergee-4-pouces' and image_url ~* '^/images/products/[^/]+\.(jpe?g|png)$';
-update public.products set image_url = '/images/products/pompe-immergee-inox-4-pouces/main.webp', image_alt = 'Photo du produit à venir'
+update public.products set image_url = '/images/products/pompe-immergee-inox-4-pouces/main.webp',
+    image_alt = case when image_alt in ('', 'Pompe immergée inoxydable 4 pouces') then 'Photo du produit à venir' else image_alt end
   where slug = 'pompe-immergee-inox-4-pouces' and image_url ~* '^/images/products/[^/]+\.(jpe?g|png)$';
-update public.products set image_url = '/images/products/pompe-centrifuge-monobloc/main.webp', image_alt = 'Pompe centrifuge monobloc à grand orifice d''aspiration'
+update public.products set image_url = '/images/products/pompe-centrifuge-monobloc/main.webp',
+    image_alt = case when image_alt in ('', 'Pompe centrifuge monobloc bleu acier') then 'Pompe centrifuge monobloc à grand orifice d''aspiration' else image_alt end
   where slug = 'pompe-centrifuge-monobloc' and image_url ~* '^/images/products/[^/]+\.(jpe?g|png)$';
-update public.products set image_url = '/images/products/motopompe-centrifuge-inox/main.webp', image_alt = 'Photo du produit à venir'
+update public.products set image_url = '/images/products/motopompe-centrifuge-inox/main.webp',
+    image_alt = case when image_alt in ('', 'Motopompe centrifuge avec corps en inox') then 'Photo du produit à venir' else image_alt end
   where slug = 'motopompe-centrifuge-inox' and image_url ~* '^/images/products/[^/]+\.(jpe?g|png)$';
-update public.products set image_url = '/images/products/pompe-centrifuge-haute-pression/main.webp', image_alt = 'Pompe centrifuge à brides avec moteur électrique'
+update public.products set image_url = '/images/products/pompe-centrifuge-haute-pression/main.webp',
+    image_alt = case when image_alt in ('', 'Pompe centrifuge haute pression de grande taille') then 'Pompe centrifuge à brides avec moteur électrique' else image_alt end
   where slug = 'pompe-centrifuge-haute-pression' and image_url ~* '^/images/products/[^/]+\.(jpe?g|png)$';
-update public.products set image_url = '/images/products/pompe-centrifuge-fonte/main.webp', image_alt = 'Pompe centrifuge en fonte à brides'
+update public.products set image_url = '/images/products/pompe-centrifuge-fonte/main.webp',
+    image_alt = case when image_alt in ('', 'Pompe centrifuge en fonte bleue') then 'Pompe centrifuge en fonte à brides' else image_alt end
   where slug = 'pompe-centrifuge-fonte' and image_url ~* '^/images/products/[^/]+\.(jpe?g|png)$';
-update public.products set image_url = '/images/products/gamme-pompes-immergees-inox/main.webp', image_alt = 'Pompes immergées inox alignées en atelier, câbles bleus'
+update public.products set image_url = '/images/products/gamme-pompes-immergees-inox/main.webp',
+    image_alt = case when image_alt in ('', 'Série de pompes immergées inox en atelier') then 'Pompes immergées inox alignées en atelier, câbles bleus' else image_alt end
   where slug = 'gamme-pompes-immergees-inox' and image_url ~* '^/images/products/[^/]+\.(jpe?g|png)$';
-update public.products set image_url = '/images/products/coude-pe-compression-90/main.webp', image_alt = 'Coude PE à compression 90°, corps noir et écrous bleus'
+update public.products set image_url = '/images/products/coude-pe-compression-90/main.webp',
+    image_alt = case when image_alt in ('', 'Coude PE à compression 90 degrés noir et bleu') then 'Coude PE à compression 90°, corps noir et écrous bleus' else image_alt end
   where slug = 'coude-pe-compression-90' and image_url ~* '^/images/products/[^/]+\.(jpe?g|png)$';
-update public.products set image_url = '/images/products/coude-pe-filete-male-90/main.webp', image_alt = 'Photo du produit à venir'
+update public.products set image_url = '/images/products/coude-pe-filete-male-90/main.webp',
+    image_alt = case when image_alt in ('', 'Coude PE fileté mâle à compression') then 'Photo du produit à venir' else image_alt end
   where slug = 'coude-pe-filete-male-90' and image_url ~* '^/images/products/[^/]+\.(jpe?g|png)$';
-update public.products set image_url = '/images/products/te-pvc-pression/main.webp', image_alt = 'Té PVC pression gris'
+update public.products set image_url = '/images/products/te-pvc-pression/main.webp',
+    image_alt = case when image_alt in ('', 'Té PVC pression gris sur établi') then 'Té PVC pression gris' else image_alt end
   where slug = 'te-pvc-pression' and image_url ~* '^/images/products/[^/]+\.(jpe?g|png)$';
-update public.products set image_url = '/images/products/coude-pe-reseau-enterre/main.webp', image_alt = 'Coude PE à compression pour réseau d''irrigation'
+update public.products set image_url = '/images/products/coude-pe-reseau-enterre/main.webp',
+    image_alt = case when image_alt in ('', 'Raccord PE installé sur un réseau d’irrigation enterré') then 'Coude PE à compression pour réseau d''irrigation' else image_alt end
   where slug = 'coude-pe-reseau-enterre' and image_url ~* '^/images/products/[^/]+\.(jpe?g|png)$';
 
 -- 3. Nouveaux produits (caractéristiques à compléter depuis l'admin)

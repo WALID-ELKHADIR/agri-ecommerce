@@ -50,3 +50,20 @@ test("une image choisie depuis l'admin n'est jamais écrasée", async () => {
   const [row] = await rows<{ image_url: string }>("select image_url from public.products where slug = 'te-pvc-pression'");
   assert.equal(row.image_url, custom);
 });
+
+test("un texte alternatif modifié depuis l'admin n'est jamais écrasé", async () => {
+  await db.exec(`
+    update public.products set image_url = '/images/products/x.jpg', image_alt = 'Mon texte'
+      where slug = 'pompe-centrifuge-fonte';
+    update public.products set image_url = '/images/products/y.jpg', image_alt = 'Pompe centrifuge en fonte bleue'
+      where slug = 'pompe-centrifuge-monobloc';
+  `);
+  await db.exec(readFileSync("supabase/migrations/20261120100000_catalogue_images.sql", "utf8"));
+  const result = await rows<{ slug: string; image_url: string; image_alt: string }>(
+    "select slug, image_url, image_alt from public.products where slug in ('pompe-centrifuge-fonte', 'pompe-centrifuge-monobloc') order by slug",
+  );
+  assert.equal(result[0].image_alt, "Mon texte", "texte personnalisé conservé");
+  assert.equal(result[0].image_url, PRODUCT_IMAGES["pompe-centrifuge-fonte"].main.src, "image toujours remplacée");
+  // Le texte d'origine d'un autre produit n'est pas reconnu comme celui du monobloc : conservé aussi.
+  assert.equal(result[1].image_alt, "Pompe centrifuge en fonte bleue");
+});
