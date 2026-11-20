@@ -18,7 +18,7 @@ import {
   Wrench,
 } from "@/components/icons";
 import { MobileCta } from "@/components/mobile-cta";
-import { ProductCard } from "@/components/product-card";
+import { CARD_SIZES, ProductCard } from "@/components/product-card";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { catalogFilters } from "@/lib/catalog-filters";
@@ -411,7 +411,7 @@ export function HomePage({ products, settings }: { products: Product[]; settings
 
             <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {featured.map((product) => (
-                <ProductCard key={product.slug} product={product} />
+                <ProductCard key={product.slug} product={product} sizes={CARD_SIZES.grid} />
               ))}
             </div>
           </div>

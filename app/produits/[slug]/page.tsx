@@ -14,7 +14,7 @@ import {
   WhatsApp,
 } from "@/components/icons";
 import { MobileCta } from "@/components/mobile-cta";
-import { ProductCard } from "@/components/product-card";
+import { CARD_SIZES, ProductCard } from "@/components/product-card";
 import { ProductQuote } from "@/components/product-quote";
 import { SiteFooterWithSettings } from "@/components/site-footer-server";
 import { SiteHeader } from "@/components/site-header";
@@ -304,7 +304,7 @@ async function ProductDetail({ slug }: { slug: string }) {
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((item) => (
-                <ProductCard key={item.slug} product={item} />
+                <ProductCard key={item.slug} product={item} sizes={CARD_SIZES.grid} />
               ))}
             </div>
           </div>

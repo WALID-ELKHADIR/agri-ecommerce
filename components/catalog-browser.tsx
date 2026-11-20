@@ -8,7 +8,7 @@ import {
   WhatsApp,
   X,
 } from "@/components/icons";
-import { ProductCard } from "@/components/product-card";
+import { CARD_SIZES, ProductCard } from "@/components/product-card";
 import { QuickView } from "@/components/quick-view";
 import { catalogFilters } from "@/lib/catalog-filters";
 import {
@@ -236,7 +236,7 @@ export function CatalogBrowser({
               <ProductCard
                 key={product.slug}
                 product={product}
-                onDetails={setSelected}
+                sizes={CARD_SIZES.grid}
               />
             ))}
           </div>
