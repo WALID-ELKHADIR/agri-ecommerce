@@ -6,6 +6,7 @@ import { ArrowLeft } from "@/components/icons";
 import { FormSkeleton } from "@/components/admin/skeletons";
 import { getAdminProduct, getProductImages, listAdminCategories } from "@/lib/admin-data";
 import { requireAdmin } from "@/lib/auth";
+import { getAdminDictionary } from "@/lib/i18n/server";
 
 type EditProps = {
   params: Promise<{ id: string }>;
@@ -24,6 +25,7 @@ export default function EditProduitPage({ params, searchParams }: EditProps) {
 
 async function EditContenu({ id, error }: { id: string; error: string | null }) {
   await requireAdmin();
+  const t = (await getAdminDictionary()).products;
 
   const [product, categories] = await Promise.all([
     getAdminProduct(id),
@@ -34,17 +36,17 @@ async function EditContenu({ id, error }: { id: string; error: string | null }) 
     return (
       <div className="rounded-2xl border border-soil-200 bg-white p-8 text-center">
         <p className="text-sm font-semibold text-soil-900">
-          Produit introuvable.
+          {t.notFound}
         </p>
         <p className="mt-1 text-sm text-soil-500">
-          Il a peut-être été supprimé entre-temps.
+          {t.notFoundText}
         </p>
         <Link
           href="/admin/produits"
           className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-field-900 px-4 py-2.5 text-sm font-semibold text-white"
         >
-          <ArrowLeft className="h-4 w-4" />
-          Retour à la liste
+          <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
+          {t.backToList}
         </Link>
       </div>
     );
@@ -56,15 +58,15 @@ async function EditContenu({ id, error }: { id: string; error: string | null }) 
     <div className="space-y-4">
       <AdminHeader
         title={product.name}
-        description={`Modifier la fiche · /${product.slug}`}
+        description={t.editDescription(product.slug)}
       />
 
       <Link
         href="/admin/produits"
         className="inline-flex items-center gap-1.5 text-sm font-medium text-soil-500 transition hover:text-water-700"
       >
-        <ArrowLeft className="h-4 w-4" />
-        Retour aux produits
+        <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
+        {t.backToProducts}
       </Link>
 
       <ProductForm

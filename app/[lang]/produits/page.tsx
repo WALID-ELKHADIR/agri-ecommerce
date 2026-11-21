@@ -14,7 +14,7 @@ import { getCatalog } from "@/lib/catalog-data";
 import { JsonLd } from "@/components/json-ld";
 import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-config";
-import { getDictionary } from "@/lib/i18n/server";
+import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { catalogHref, parseCatalogQuery, queryCatalog, stockOptions } from "@/lib/catalog-query";
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -38,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const TRUST_ICONS = [Truck, Headset, Clock];
 
 export default async function ProduitsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const { products } = await getCatalog();
+  const { products } = await getCatalog(await getLocale());
   const t = await getDictionary();
   const page = t.catalogPage;
 
@@ -129,7 +129,7 @@ export default async function ProduitsPage({ searchParams }: { searchParams: Pro
 }
 
 async function CatalogResults({ params }: { params: SearchParams }) {
-  const { products, categories } = await getCatalog();
+  const { products, categories } = await getCatalog(await getLocale());
   const t = await getDictionary();
   const stocks = stockOptions(products);
   const ranges = categories

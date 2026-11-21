@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { listAdminCategories } from "@/lib/admin-data";
 import { deleteCategoryAction, moveCategoryAction } from "@/lib/actions/categories";
 import { requireAdmin } from "@/lib/auth";
+import { getAdminDictionary } from "@/lib/i18n/server";
 
 export default function AdminCategoriesPage() {
   return (
@@ -21,24 +22,26 @@ export default function AdminCategoriesPage() {
 async function CategoriesContent() {
   await requireAdmin();
   const categories = await listAdminCategories();
+  const t = await getAdminDictionary();
+  const c = t.categories;
 
   return (
     <div className="space-y-4">
       <SetupNotice />
       <AdminHeader
-        title="Catégories"
-        description="Les gammes du catalogue, dans l'ordre où elles apparaissent sur le site."
-        action={{ href: "/admin/categories/nouvelle", label: "Nouvelle catégorie" }}
+        title={c.title}
+        description={c.description}
+        action={{ href: "/admin/categories/nouvelle", label: c.newCategory }}
       />
 
       {categories.length === 0 ? (
         <EmptyState
           icon={<Tag className="h-5 w-5" />}
-          title="Aucune catégorie"
-          description="Créez une première gamme pour y ranger vos produits."
+          title={c.empty}
+          description={c.emptyText}
           action={
             <Link href="/admin/categories/nouvelle" className={buttonClasses()}>
-              Créer une catégorie
+              {c.create}
             </Link>
           }
         />
@@ -56,7 +59,7 @@ async function CategoriesContent() {
                   <button
                     type="submit"
                     disabled={index === 0}
-                    aria-label={`Monter « ${category.label} »`}
+                    aria-label={c.moveUp(category.label)}
                     className="flex h-11 w-11 items-center justify-center rounded-control text-soil-600 hover:bg-soil-100 disabled:opacity-30 sm:h-8"
                   >
                     <ArrowUp className="h-4 w-4" />
@@ -68,7 +71,7 @@ async function CategoriesContent() {
                   <button
                     type="submit"
                     disabled={index === categories.length - 1}
-                    aria-label={`Descendre « ${category.label} »`}
+                    aria-label={c.moveDown(category.label)}
                     className="flex h-11 w-11 items-center justify-center rounded-control text-soil-600 hover:bg-soil-100 disabled:opacity-30 sm:h-8"
                   >
                     <ArrowDown className="h-4 w-4" />
@@ -88,30 +91,30 @@ async function CategoriesContent() {
               <div className="min-w-0 flex-1">
                 <p className="font-semibold text-soil-900">{category.label}</p>
                 <p className="text-xs text-soil-500">
-                  {category.id} · {category.productCount} produit{category.productCount > 1 ? "s" : ""}
+                  <bdi>{category.id}</bdi> · {c.productCount(category.productCount)}
                 </p>
               </div>
 
               <div className="flex shrink-0 items-center gap-2">
                 <Link href={`/admin/categories/${category.id}`} className={buttonClasses({ variant: "secondary", size: "sm" })}>
-                  Modifier
+                  {t.common.edit}
                 </Link>
                 {category.productCount === 0 ? (
                   <ConfirmSubmit
                     action={deleteCategoryAction}
                     id={category.id}
-                    message={`Supprimer la catégorie « ${category.label} » ? Cette action est définitive.`}
+                    message={c.deleteConfirm(category.label)}
                     className={buttonClasses({ variant: "ghost", size: "sm", className: "text-danger-700 hover:bg-danger-50" })}
                   >
                     <Trash className="h-4 w-4" />
-                    <span className="sr-only sm:not-sr-only">Supprimer</span>
+                    <span className="sr-only sm:not-sr-only">{t.common.delete}</span>
                   </ConfirmSubmit>
                 ) : (
                   <span
                     className="inline-flex min-h-11 items-center px-2 text-xs text-soil-500 sm:min-h-9"
-                    title="Déplacez d'abord ses produits vers une autre catégorie."
+                    title={c.notDeletableHint}
                   >
-                    Non supprimable
+                    {c.notDeletable}
                   </span>
                 )}
               </div>

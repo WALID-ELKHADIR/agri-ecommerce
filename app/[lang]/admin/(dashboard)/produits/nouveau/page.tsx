@@ -4,6 +4,7 @@ import { ProductForm } from "@/components/admin/product-form";
 import { FormSkeleton } from "@/components/admin/skeletons";
 import { listAdminCategories } from "@/lib/admin-data";
 import { requireAdmin } from "@/lib/auth";
+import { getAdminDictionary } from "@/lib/i18n/server";
 
 type NouveauProps = {
   searchParams: Promise<{ error?: string }>;
@@ -22,14 +23,15 @@ export default function NouveauProduitPage({ searchParams }: NouveauProps) {
 async function NouveauContenu({ error }: { error: string | null }) {
   await requireAdmin();
   const categories = await listAdminCategories();
+  const t = await getAdminDictionary();
 
   return (
     <div className="space-y-4">
-      <SetupNotice error={categories.length === 0 ? "Aucune gamme trouvée" : null} />
+      <SetupNotice error={categories.length === 0 ? t.setup.noCategory : null} />
 
       <AdminHeader
-        title="Nouveau produit"
-        description="Ajoutez une référence au catalogue. Elle apparaît immédiatement sur le site une fois publiée."
+        title={t.products.newProduct}
+        description={t.products.newDescription}
       />
 
       <ProductForm

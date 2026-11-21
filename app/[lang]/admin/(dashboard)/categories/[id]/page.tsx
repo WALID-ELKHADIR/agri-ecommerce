@@ -8,6 +8,7 @@ import { buttonClasses } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getAdminCategory } from "@/lib/admin-data";
 import { requireAdmin } from "@/lib/auth";
+import { getAdminDictionary } from "@/lib/i18n/server";
 
 export default function ModifierCategoriePage({ params }: { params: Promise<{ id: string }> }) {
   return (
@@ -22,16 +23,17 @@ export default function ModifierCategoriePage({ params }: { params: Promise<{ id
 async function ModifierCategorie({ id }: { id: string }) {
   await requireAdmin();
   const category = await getAdminCategory(id);
+  const c = (await getAdminDictionary()).categories;
 
   if (!category) {
     return (
       <EmptyState
         icon={<Tag className="h-5 w-5" />}
-        title="Catégorie introuvable"
-        description="Elle a peut-être été supprimée entre-temps."
+        title={c.notFound}
+        description={c.notFoundText}
         action={
           <Link href="/admin/categories" className={buttonClasses()}>
-            Retour aux catégories
+            {c.back}
           </Link>
         }
       />
@@ -42,14 +44,14 @@ async function ModifierCategorie({ id }: { id: string }) {
     <div className="space-y-4">
       <AdminHeader
         title={category.label}
-        description={`${category.productCount} produit${category.productCount > 1 ? "s" : ""} dans cette catégorie.`}
+        description={c.inCategory(category.productCount)}
       />
       <Link
         href="/admin/categories"
         className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-soil-500 hover:text-water-700"
       >
-        <ArrowLeft className="h-4 w-4" />
-        Retour aux catégories
+        <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
+        {c.back}
       </Link>
       <CategoryForm category={category} />
     </div>

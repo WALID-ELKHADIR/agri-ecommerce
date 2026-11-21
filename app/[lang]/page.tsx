@@ -19,7 +19,7 @@ import { organizationJsonLd, pageMetadata } from "@/lib/seo";
 import { FALLBACK_SITE_CONFIG, siteConfig } from "@/lib/site-config";
 import { getSiteSettings } from "@/lib/site-settings";
 import type { Metadata } from "next";
-import { getDictionary } from "@/lib/i18n/server";
+import { getDictionary, getLocale } from "@/lib/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getDictionary();
@@ -38,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** Accueil : sections rendues par le serveur, interactivité limitée aux boutons de devis et WhatsApp. */
 export default async function Page() {
-  const [{ products, categories }, settings] = await Promise.all([getCatalog(), getSiteSettings()]);
+  const [{ products, categories }, settings] = await Promise.all([getCatalog(await getLocale()), getSiteSettings()]);
   const ranges = rangesFor(categories, products);
   // Produits mis en avant, ceux qui ont une vraie photo d'abord.
   const featured = products

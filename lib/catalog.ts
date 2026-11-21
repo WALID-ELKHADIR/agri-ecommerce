@@ -1,4 +1,5 @@
 import { AMBIANCE_IMAGES } from "./ambiance-images";
+import type { CategoryArabic, ProductArabic } from "./i18n/localize-catalog";
 import { resolveProductImages, type ProductImage } from "./product-images";
 import { siteConfig } from "./site-config";
 import {
@@ -12,6 +13,8 @@ export type Category = {
   label: string;
   short: string;
   description: string;
+  /** Textes arabes saisis dans l'admin (facultatifs). */
+  ar?: CategoryArabic;
   /** Image de la gamme choisie dans l'admin (facultative). */
   imageUrl?: string;
 };
@@ -39,6 +42,8 @@ export type Product = {
   specs: ProductSpec[];
   stock: string;
   featured?: boolean;
+  /** Textes arabes saisis dans l'admin (facultatifs). */
+  ar?: ProductArabic;
 };
 
 export type GalleryImage = {

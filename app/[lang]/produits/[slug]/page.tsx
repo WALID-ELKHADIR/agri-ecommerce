@@ -28,7 +28,7 @@ import { catalogHref } from "@/lib/catalog-query";
 import { JsonLd } from "@/components/json-ld";
 import { breadcrumbJsonLd, pageMetadata, productJsonLd } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-config";
-import { getDictionary } from "@/lib/i18n/server";
+import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { stockLabel } from "@/lib/i18n/labels";
 
 type ProductPageProps = {
@@ -49,7 +49,7 @@ export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = await getProductBySlug(slug, await getLocale());
   const t = await getDictionary();
 
   if (!product) {
@@ -89,13 +89,13 @@ export default async function ProduitPage({ params }: ProductPageProps) {
 }
 
 async function ProductDetail({ slug }: { slug: string }) {
-  const product = await getProductBySlug(slug);
+  const product = await getProductBySlug(slug, await getLocale());
 
   if (!product) {
     notFound();
   }
 
-  const related = await getRelatedProducts(product);
+  const related = await getRelatedProducts(product, 3, await getLocale());
   const t = await getDictionary();
   const page = t.productPage;
 

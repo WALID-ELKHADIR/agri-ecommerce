@@ -11,21 +11,13 @@ import { filterProducts, type ProductSort, type ProductStatus } from "@/lib/admi
 import { duplicateProductAction, toggleFeaturedAction, togglePublishedAction } from "@/lib/actions/products";
 import { requireAdmin } from "@/lib/auth";
 import { cn } from "@/lib/cn";
+import { getAdminDictionary, getDictionary } from "@/lib/i18n/server";
+import { stockLabel } from "@/lib/i18n/labels";
 
 type Query = { q?: string; gamme?: string; statut?: string; tri?: string };
 
-const SORTS: { value: ProductSort; label: string }[] = [
-  { value: "position", label: "Ordre du catalogue" },
-  { value: "name", label: "Nom (A → Z)" },
-  { value: "recent", label: "Plus récents" },
-  { value: "featured", label: "Mis en avant d'abord" },
-];
-
-const STATUSES: { value: ProductStatus; label: string }[] = [
-  { value: "all", label: "Tous" },
-  { value: "published", label: "Publiés" },
-  { value: "draft", label: "Masqués" },
-];
+const SORTS: ProductSort[] = ["position", "name", "recent", "featured"];
+const STATUSES: ProductStatus[] = ["all", "published", "draft"];
 
 export default function AdminProduitsPage({ searchParams }: { searchParams: Promise<Query> }) {
   return (
@@ -42,11 +34,15 @@ function asStatus(value: string | undefined): ProductStatus {
 }
 
 function asSort(value: string | undefined): ProductSort {
-  return SORTS.some((sort) => sort.value === value) ? (value as ProductSort) : "position";
+  return SORTS.includes(value as ProductSort) ? (value as ProductSort) : "position";
 }
 
 async function ProduitsContent({ query }: { query: Query }) {
   await requireAdmin();
+  const t = await getAdminDictionary();
+  const p = t.products;
+
+  const site = await getDictionary();
   const [{ products, error }, categories] = await Promise.all([listAdminProducts(), listAdminCategories()]);
 
   const status = asStatus(query.statut);
@@ -67,9 +63,9 @@ async function ProduitsContent({ query }: { query: Query }) {
     <div className="space-y-4">
       <SetupNotice error={error} />
       <AdminHeader
-        title="Produits"
-        description={`${products.length} référence${products.length > 1 ? "s" : ""} · ${products.filter((p) => p.published).length} publiée${products.filter((p) => p.published).length > 1 ? "s" : ""}`}
-        action={{ href: "/admin/produits/nouveau", label: "Nouveau produit" }}
+        title={p.title}
+        description={p.description(products.length, products.filter((item) => item.published).length)}
+        action={{ href: "/admin/produits/nouveau", label: p.newProduct }}
       />
 
       <form
@@ -77,22 +73,22 @@ async function ProduitsContent({ query }: { query: Query }) {
         className="grid gap-3 rounded-card border border-soil-200 bg-white p-3 shadow-soft sm:grid-cols-[1fr_auto_auto_auto_auto] sm:items-end"
       >
         <label className="grid gap-1 text-xs font-semibold text-soil-700">
-          Rechercher
+          {t.common.search}
           <span className="flex min-h-11 items-center gap-2 rounded-control border border-soil-300 px-3 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-water-600">
             <Search className="h-4 w-4 text-soil-500" />
-            <input name="q" defaultValue={q} placeholder="Nom ou slug" className="w-full bg-transparent text-sm font-normal focus:outline-none" />
+            <input name="q" defaultValue={q} placeholder={p.searchPlaceholder} className="w-full bg-transparent text-sm font-normal focus:outline-none" />
           </span>
         </label>
-        <Select name="gamme" label="Catégorie" value={category ?? ""} options={[{ value: "", label: "Toutes" }, ...categories.map((c) => ({ value: c.id, label: c.label }))]} />
-        <Select name="statut" label="Statut" value={status === "all" ? "" : status} options={STATUSES.map((s) => ({ value: s.value === "all" ? "" : s.value, label: s.label }))} />
-        <Select name="tri" label="Trier par" value={sort === "position" ? "" : sort} options={SORTS.map((s) => ({ value: s.value === "position" ? "" : s.value, label: s.label }))} />
+        <Select name="gamme" label={t.common.category} value={category ?? ""} options={[{ value: "", label: t.common.allFeminine }, ...categories.map((c) => ({ value: c.id, label: c.label }))]} />
+        <Select name="statut" label={t.common.status} value={status === "all" ? "" : status} options={STATUSES.map((value) => ({ value: value === "all" ? "" : value, label: p.statuses[value] }))} />
+        <Select name="tri" label={t.common.sortBy} value={sort === "position" ? "" : sort} options={SORTS.map((value) => ({ value: value === "position" ? "" : value, label: p.sorts[value] }))} />
         <div className="flex gap-2">
           <button type="submit" className={buttonClasses({ size: "sm" })}>
-            Filtrer
+            {t.common.filter}
           </button>
           {filtered ? (
             <Link href="/admin/produits" className={buttonClasses({ variant: "ghost", size: "sm" })}>
-              Effacer
+              {t.common.clear}
             </Link>
           ) : null}
         </div>
@@ -101,22 +97,22 @@ async function ProduitsContent({ query }: { query: Query }) {
       {visible.length === 0 ? (
         <EmptyState
           icon={<Layers className="h-5 w-5" />}
-          title={filtered ? "Aucun produit ne correspond" : "Aucun produit"}
-          description={filtered ? "Modifiez la recherche ou retirez un filtre." : "Ajoutez votre premier produit au catalogue."}
+          title={filtered ? p.emptyFiltered : p.empty}
+          description={filtered ? p.emptyFilteredText : p.emptyText}
           action={
             filtered ? (
               <Link href="/admin/produits" className={buttonClasses({ variant: "secondary" })}>
-                Effacer les filtres
+                {t.common.clearFilters}
               </Link>
             ) : (
               <Link href="/admin/produits/nouveau" className={buttonClasses()}>
-                Ajouter un produit
+                {p.add}
               </Link>
             )
           }
         />
       ) : (
-        <ul className="grid gap-2" aria-label={`${visible.length} produit(s)`}>
+        <ul className="grid gap-2" aria-label={p.listLabel(visible.length)}>
           {visible.map((product) => (
             <li
               key={product.id}
@@ -138,10 +134,10 @@ async function ProduitsContent({ query }: { query: Query }) {
                 <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-soil-500">
                   <span>{labels.get(product.category) ?? product.category}</span>
                   <span aria-hidden="true">·</span>
-                  <span>{product.stock}</span>
-                  {!product.published ? <Badge tone="neutral">Masqué</Badge> : null}
-                  {product.featured ? <Badge tone="harvest">Mis en avant</Badge> : null}
-                  {product.specs.length === 0 ? <Badge tone="danger">Caractéristiques à compléter</Badge> : null}
+                  <span>{stockLabel(product.stock, site)}</span>
+                  {!product.published ? <Badge tone="neutral">{p.hidden}</Badge> : null}
+                  {product.featured ? <Badge tone="harvest">{p.featured}</Badge> : null}
+                  {product.specs.length === 0 ? <Badge tone="danger">{p.specsMissing}</Badge> : null}
                 </div>
               </div>
 
@@ -151,7 +147,7 @@ async function ProduitsContent({ query }: { query: Query }) {
                   id={product.id}
                   value={!product.published}
                   back={back}
-                  label={product.published ? `Masquer « ${product.name} » du site` : `Publier « ${product.name} »`}
+                  label={product.published ? p.hide(product.name) : p.publish(product.name)}
                 >
                   {product.published ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                 </QuickAction>
@@ -160,19 +156,19 @@ async function ProduitsContent({ query }: { query: Query }) {
                   id={product.id}
                   value={!product.featured}
                   back={back}
-                  label={product.featured ? "Retirer de la mise en avant" : "Mettre en avant"}
+                  label={product.featured ? p.unfeature : p.feature}
                   active={product.featured}
                 >
                   <Star className="h-4 w-4" />
                 </QuickAction>
                 <form action={duplicateProductAction}>
                   <input type="hidden" name="id" value={product.id} />
-                  <button type="submit" aria-label={`Dupliquer « ${product.name} »`} title="Dupliquer" className={iconButton}>
+                  <button type="submit" aria-label={p.duplicateNamed(product.name)} title={p.duplicate} className={iconButton}>
                     <Copy className="h-4 w-4" />
                   </button>
                 </form>
-                <Link href={`/admin/produits/${product.id}`} className={buttonClasses({ variant: "secondary", size: "sm", className: "ml-1" })}>
-                  Modifier
+                <Link href={`/admin/produits/${product.id}`} className={buttonClasses({ variant: "secondary", size: "sm", className: "ms-1" })}>
+                  {t.common.edit}
                 </Link>
               </div>
             </li>
