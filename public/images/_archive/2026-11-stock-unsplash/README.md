@@ -13,6 +13,5 @@ en 2400 px de large. Licence : [Unsplash License](https://unsplash.com/license)
 | `verger-agrumes.jpg` | nhxl bdl | https://unsplash.com/photos/ripe-oranges-hanging-from-lush-green-trees-in-an-orchard-ka_OiW3I_uE |
 | `serre-tunnel.jpg` | wei | https://unsplash.com/photos/a-large-greenhouse-filled-with-lots-of-green-plants-eoj6t-cMtNs |
 | `pompage-bassin.jpg` | Bernd 📷 Dittrich | https://unsplash.com/photos/water-being-pumped-into-a-pond-from-a-machine-3to-jRLc5NE |
-| `lignes-goutte-a-goutte.jpg` | Marc Pell | https://unsplash.com/photos/plants-grow-in-a-garden-bed-with-irrigation-3f7AWW0YWAA |
 
-Ajouts du 2026-11-21 (accord du propriétaire) : `pompage-bassin.jpg` pour la diapositive « pompage » du carrousel, `lignes-goutte-a-goutte.jpg` comme photo d'illustration de la gaine goutte-à-goutte (en attendant la photo du fournisseur).
+Ajout du 2026-11-21 (accord du propriétaire) : `pompage-bassin.jpg` pour la diapositive « pompage » du carrousel. La photo d'illustration de la gaine goutte-à-goutte a été retirée le 2026-11-22, remplacée par la photo du produit fournie par le propriétaire (`../2026-11-photos-fournisseur/gaine-goutte-a-goutte.png`).

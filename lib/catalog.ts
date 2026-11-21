@@ -1,4 +1,3 @@
-import { AMBIANCE_IMAGES } from "./ambiance-images";
 import { resolveProductImages, type ProductImage } from "./product-images";
 import { siteConfig } from "./site-config";
 import {
@@ -387,6 +386,7 @@ const productData: ProductData[] = [
       { label: "Longueur du rouleau", value: "500 à 3 000 m (selon modèle)" },
     ],
     stock: "Sur demande",
+    featured: true,
   },
   {
     slug: "injecteur-venturi",
@@ -440,16 +440,19 @@ const productData: ProductData[] = [
   },
 ];
 
-/** Produits illustrés par une photo d'ambiance (pas de photo fournisseur dans le manifest). */
-const AMBIANCE_PRODUCT_IMAGES: Record<string, { src: string; alt: string }> = {
+/**
+ * Produits dont la photo est générée hors du manifest des photos fournisseur
+ * (scripts/images/process-gaine.ts pour la gaine goutte-à-goutte).
+ */
+const LOCAL_PRODUCT_IMAGES: Record<string, { src: string; alt: string }> = {
   "gaine-goutte-a-goutte": {
-    src: AMBIANCE_IMAGES.produitGaineGoutte.src,
-    alt: AMBIANCE_IMAGES.produitGaineGoutte.alt,
+    src: "/images/products/gaine-goutte-a-goutte/main.webp",
+    alt: "Rouleau de tuyau goutte-à-goutte noir cerclé de liens orange",
   },
 };
 
 export const products: Product[] = productData.map((product) =>
-  withImages(product, AMBIANCE_PRODUCT_IMAGES[product.slug]),
+  withImages(product, LOCAL_PRODUCT_IMAGES[product.slug]),
 );
 
 /** Image du manifest pour la galerie de l'accueil (principale ou 1re vue de galerie). */
