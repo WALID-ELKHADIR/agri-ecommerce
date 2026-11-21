@@ -26,7 +26,7 @@ test("les trois nouvelles catégories existent, sans doublon", async () => {
 
 // Produits dont la photo est générée hors du manifest produits (scripts/images/process-gaine.ts).
 const AMBIANCE_PRODUCTS: Record<string, string> = {
-  "gaine-goutte-a-goutte": "/images/products/gaine-goutte-a-goutte/main.webp",
+  "gaine-goutte-a-goutte": "/images/products/gaine-goutte-a-goutte/fournisseur.webp",
 };
 
 test("chaque produit de la base a son image dans le manifest (plus aucun ancien .jpg)", async () => {

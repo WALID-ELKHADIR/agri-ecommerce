@@ -62,7 +62,7 @@ test("chaque produit du catalogue de secours a ses images", async () => {
   const { existsSync } = await import("node:fs");
   // Photo générée hors manifest (scripts/images/process-gaine.ts) : vérifiée à part.
   const ambiance = ["gaine-goutte-a-goutte"];
-  assert.ok(existsSync("public/images/products/gaine-goutte-a-goutte/main.webp"));
+  assert.ok(existsSync("public/images/products/gaine-goutte-a-goutte/fournisseur.webp"));
   const slugs = catalogSlugs(readFileSync("lib/catalog.ts", "utf8")).filter((slug) => !ambiance.includes(slug));
   assert.equal(slugs.length, 25);
   const report = checkImages(slugs);

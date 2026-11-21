@@ -446,7 +446,7 @@ const productData: ProductData[] = [
  */
 const LOCAL_PRODUCT_IMAGES: Record<string, { src: string; alt: string }> = {
   "gaine-goutte-a-goutte": {
-    src: "/images/products/gaine-goutte-a-goutte/main.webp",
+    src: "/images/products/gaine-goutte-a-goutte/fournisseur.webp",
     alt: "Rouleau de tuyau goutte-à-goutte noir cerclé de liens orange",
   },
 };

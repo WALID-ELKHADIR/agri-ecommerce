@@ -10,7 +10,9 @@ import { join } from "node:path";
 import sharp from "sharp";
 
 const SOURCE = join("public", "images", "_archive", "2026-11-photos-fournisseur", "gaine-goutte-a-goutte.png");
-const OUT = join("public", "images", "products", "gaine-goutte-a-goutte", "main.webp");
+// Nom distinct de l'ancien visuel (main.webp) : les caches d'images (optimiseur Next,
+// navigateurs, CDN) ne peuvent pas resservir l'ancienne photo.
+const OUT = join("public", "images", "products", "gaine-goutte-a-goutte", "fournisseur.webp");
 const SIZE = 1200;
 const FILL = 0.7;
 const SOIL_50 = { r: 250, g: 248, b: 243, alpha: 1 };
