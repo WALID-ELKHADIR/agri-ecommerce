@@ -302,8 +302,8 @@ async function ProductDetail({ slug }: { slug: string }) {
             </div>
 
             <div className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
-              {related.map((item) => (
-                <ProductCard key={item.slug} product={item} sizes={CARD_SIZES.grid} />
+              {related.map((item, index) => (
+                <ProductCard key={item.slug} product={item} sizes={CARD_SIZES.grid} reveal={index} />
               ))}
             </div>
           </div>

@@ -69,10 +69,10 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <header className="sticky top-0 z-50 border-b border-soil-200/80 bg-soil-50/90 backdrop-blur-xl">
+      <header className="site-header-shell sticky top-0 z-50 border-b border-soil-200/80 bg-soil-50/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
           <Link href="/" aria-label="Saqia — accueil" className="flex min-h-11 items-center">
-            <Logo className="h-9 w-auto" />
+            <Logo className="site-header-logo h-9 w-auto" animated={pathname === "/"} />
           </Link>
 
           <nav className="ml-6 hidden items-center gap-0.5 lg:flex">
@@ -130,7 +130,7 @@ export function SiteHeader() {
             <WhatsAppLink
               source="header"
               message={generalMessage()}
-              className="hidden items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-whatsapp-hover sm:inline-flex"
+              className="wa-pulse hidden items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-whatsapp-hover sm:inline-flex"
             >
               <WhatsApp className="h-4 w-4" />
               Devis WhatsApp

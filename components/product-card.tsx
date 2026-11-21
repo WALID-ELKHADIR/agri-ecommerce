@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { WhatsApp } from "@/components/icons";
 import { AddToQuoteButton } from "@/components/quote-list/add-to-quote-button";
 import { WhatsAppServerLink } from "@/components/whatsapp-server-link";
@@ -17,6 +18,8 @@ type ProductCardProps = {
   sizes: string;
   /** Carte visible dès le chargement (première rangée) : image chargée en priorité. */
   priority?: boolean;
+  /** Rang dans la cascade d'apparition ; absent pour une carte visible au chargement. */
+  reveal?: number;
   className?: string;
 };
 
@@ -24,15 +27,18 @@ type ProductCardProps = {
  * Carte produit rendue par le serveur. Seuls le bouton « Ajouter au devis » et
  * le lien WhatsApp (qui enregistre le clic) sont interactifs.
  */
-export function ProductCard({ product, sizes, priority = false, className }: ProductCardProps) {
+export function ProductCard({ product, sizes, priority = false, reveal, className }: ProductCardProps) {
   const second = product.gallery[0];
   const message = productMessage(product);
 
   return (
     <article
+      data-tilt=""
+      data-reveal={reveal === undefined ? undefined : ""}
+      style={reveal === undefined ? undefined : ({ "--i": reveal % 8 } as CSSProperties)}
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-2xl border border-soil-200 bg-white shadow-sm transition duration-300",
-        "hover:-translate-y-0.5 hover:border-water-200 hover:shadow-lg active:scale-[0.98] motion-reduce:transform-none",
+        "hover:-translate-y-0.5 hover:border-water-200 hover:shadow-lg hover:shadow-field-900/15 active:scale-[0.98] motion-reduce:transform-none",
         className,
       )}
     >

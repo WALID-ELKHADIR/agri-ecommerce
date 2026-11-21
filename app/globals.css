@@ -378,7 +378,12 @@ html:has(dialog[open]) {
   /* Inclinaison 3D des cartes (variables posées par components/motion.tsx). */
   [data-tilt] {
     transform: perspective(800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-    transition: transform 150ms ease-out;
+    transition:
+      transform 150ms ease-out,
+      translate 300ms ease-out,
+      scale 150ms ease-out,
+      box-shadow 300ms ease-out,
+      border-color 300ms ease-out;
   }
 
   /* Morph carte → fiche (<ViewTransition share="morph">). */
