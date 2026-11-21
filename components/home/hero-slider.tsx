@@ -1,13 +1,11 @@
 import { getImageProps } from "next/image";
 import Link from "next/link";
 import { ArrowRight, WhatsApp } from "@/components/icons";
-import { T, Tx } from "@/components/i18n/t";
 import { WhatsAppServerLink } from "@/components/whatsapp-server-link";
 import { AMBIANCE_IMAGES, type AmbianceImage } from "@/lib/ambiance-images";
 import { catalogHref } from "@/lib/catalog-query";
-import { ar } from "@/lib/i18n/ar";
-import { fr, type TextKey } from "@/lib/i18n/fr";
-import { generalMessage } from "@/lib/whatsapp";
+import type { TextKey } from "@/lib/i18n/fr";
+import { getDictionary } from "@/lib/i18n/server";
 import { HeroSliderControls } from "./hero-slider-controls";
 
 export const HERO_TRACK_ID = "hero-track";
@@ -78,15 +76,16 @@ function SlidePicture({ slide, first }: { slide: Slide; first: boolean }) {
  * Carrousel de l'accueil, rendu par le serveur : 3 diapositives en défilement
  * natif (balayage au doigt, scroll-snap). Les flèches, les puces, la pause et
  * le défilement automatique (5 s) sont dans un petit îlot client.
- * Les textes sont bilingues (FR | AR) via <T>.
+ * Textes dans la langue de la page (lib/i18n).
  */
-export function HeroSlider({ brandName, productCount }: { brandName: string; productCount: number }) {
-  const message = generalMessage(brandName);
+export async function HeroSlider({ brandName, productCount }: { brandName: string; productCount: number }) {
+  const t = await getDictionary();
+  const message = t.whatsappGeneral(brandName);
 
   return (
     <section
       aria-roledescription="carousel"
-      aria-label={fr.sliderLabel}
+      aria-label={t.sliderLabel}
       className="relative isolate text-white"
       style={{ backgroundColor: AMBIANCE_IMAGES.heroDesktop.dominantColor }}
     >
@@ -103,7 +102,7 @@ export function HeroSlider({ brandName, productCount }: { brandName: string; pro
               key={slide.id}
               role="group"
               aria-roledescription="slide"
-              aria-label={fr.slideOf(index + 1, SLIDES.length)}
+              aria-label={t.slideOf(index + 1, SLIDES.length)}
               data-slide={index}
               className="relative isolate flex min-h-[calc(100svh-6.5rem)] w-full shrink-0 snap-start items-end overflow-hidden"
             >
@@ -115,10 +114,10 @@ export function HeroSlider({ brandName, productCount }: { brandName: string; pro
               <div className="hero-inner mx-auto w-full max-w-7xl px-4 pb-36 pt-32 md:pb-28">
                 <div className="hero-copy max-w-2xl">
                   <Heading className="font-display text-[2.6rem] font-semibold leading-[0.98] tracking-tight text-balance sm:text-6xl lg:text-7xl">
-                    <T k={slide.title} />
+                    {t[slide.title]}
                   </Heading>
                   <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
-                    <T k={slide.text} />
+                    {t[slide.text]}
                   </p>
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                     <WhatsAppServerLink
@@ -127,19 +126,19 @@ export function HeroSlider({ brandName, productCount }: { brandName: string; pro
                       className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-whatsapp px-6 text-sm font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-whatsapp-hover"
                     >
                       <WhatsApp className="h-4 w-4" />
-                      <T k="heroCtaWhatsapp" />
+                      {t.heroCtaWhatsapp}
                     </WhatsAppServerLink>
                     <Link
                       href={slide.cta.href}
                       className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/35 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/20"
                     >
-                      <T k={slide.cta.label} />
+                      {t[slide.cta.label]}
                       <ArrowRight className="h-4 w-4 rtl:rotate-180" />
                     </Link>
                   </div>
                   {index === 0 ? (
                     <p className="mt-6 text-sm text-white/70">
-                      <Tx fr={fr.heroCount(productCount)} ar={ar.heroCount(productCount)} />
+                      {t.heroCount(productCount)}
                     </p>
                   ) : null}
                 </div>

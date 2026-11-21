@@ -480,13 +480,8 @@ html:has(dialog[open]) {
 }
 
 /* ==========================================================================
-   Langue (AR | FR) : <T> rend les deux textes, seul celui de <html lang> s'affiche.
+   Langue : chaque page est servie dans une seule langue (<html lang dir>).
    ========================================================================== */
-html:not([lang="ar"]) [data-l="ar"],
-html[lang="ar"] [data-l="fr"] {
-  display: none !important;
-}
-
 :lang(ar) {
   font-family: var(--font-arabic), var(--font-geist-sans), ui-sans-serif, sans-serif;
 }
