@@ -15,6 +15,7 @@ export function QuoteCounter({ className }: { className?: string }) {
   return (
     <button
       type="button"
+      data-quote-target=""
       onClick={openQuoteDrawer}
       aria-label={count > 0 ? `Ma liste de devis : ${count} article${count > 1 ? "s" : ""}` : "Ma liste de devis (vide)"}
       className={cn(

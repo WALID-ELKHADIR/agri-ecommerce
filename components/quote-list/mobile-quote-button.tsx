@@ -11,6 +11,7 @@ export function MobileQuoteButton() {
   return (
     <button
       type="button"
+      data-quote-target=""
       onClick={openQuoteDrawer}
       className="flex min-h-12 shrink-0 items-center gap-2 rounded-xl border border-field-900/15 bg-white px-4 text-sm font-semibold text-soil-900"
     >

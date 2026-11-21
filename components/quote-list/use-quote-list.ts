@@ -31,12 +31,15 @@ export function onOpenQuoteDrawer(listener: () => void): () => void {
   return () => window.removeEventListener(OPEN_EVENT, listener);
 }
 
-/** Signale un ajout (le compteur du header rebondit). */
-export function announceQuoteAdded(): void {
-  window.dispatchEvent(new Event(ADDED_EVENT));
+export type QuoteAddedDetail = { name: string; from: { x: number; y: number } | null };
+
+/** Signale un ajout : le compteur rebondit, la pastille vole, le toast s'affiche. */
+export function announceQuoteAdded(detail: QuoteAddedDetail = { name: "", from: null }): void {
+  window.dispatchEvent(new CustomEvent<QuoteAddedDetail>(ADDED_EVENT, { detail }));
 }
 
-export function onQuoteAdded(listener: () => void): () => void {
-  window.addEventListener(ADDED_EVENT, listener);
-  return () => window.removeEventListener(ADDED_EVENT, listener);
+export function onQuoteAdded(listener: (detail: QuoteAddedDetail) => void): () => void {
+  const handler = (event: Event) => listener((event as CustomEvent<QuoteAddedDetail>).detail ?? { name: "", from: null });
+  window.addEventListener(ADDED_EVENT, handler);
+  return () => window.removeEventListener(ADDED_EVENT, handler);
 }
