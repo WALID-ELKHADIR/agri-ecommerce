@@ -127,7 +127,7 @@ export function QuoteForm() {
       </div>
 
       {/* Champ piège : masqué aux humains et aux lecteurs d'écran, rempli par les robots. */}
-      <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
+      <div aria-hidden="true" className="absolute -start-[9999px] h-px w-px overflow-hidden">
         <label>
           {copy.website}
           <input
