@@ -35,7 +35,7 @@ const trust = [
   {
     icon: Clock,
     title: "Devis sous 24h",
-    text: "Réponse d'un technicien",
+    text: "Prix et disponibilité sur WhatsApp",
   },
 ];
 

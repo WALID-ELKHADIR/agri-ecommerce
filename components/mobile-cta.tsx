@@ -1,7 +1,7 @@
 import { WhatsApp } from "@/components/icons";
 import { MobileQuoteButton } from "@/components/quote-list/mobile-quote-button";
 import { WhatsAppLink } from "@/components/whatsapp-link";
-import { generalMessage, whatsappLink } from "@/lib/catalog";
+import { generalMessage } from "@/lib/catalog";
 
 /** Barre d'action mobile : WhatsApp direct et, si elle n'est pas vide, la liste de devis. */
 export function MobileCta() {
@@ -10,7 +10,6 @@ export function MobileCta() {
       <div className="flex gap-2">
         <MobileQuoteButton />
         <WhatsAppLink
-          href={whatsappLink(generalMessage())}
           source="barre-mobile"
           message={generalMessage()}
           className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 text-sm font-semibold text-white shadow-lg shadow-field-900/10 transition active:scale-[0.99]"

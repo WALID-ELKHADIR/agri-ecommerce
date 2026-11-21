@@ -18,7 +18,7 @@ import { ProductQuote } from "@/components/product-quote";
 import { SiteFooterWithSettings } from "@/components/site-footer-server";
 import { SiteHeader } from "@/components/site-header";
 import { WhatsAppLink } from "@/components/whatsapp-link";
-import { generalMessage, whatsappLink } from "@/lib/catalog";
+import { generalMessage } from "@/lib/catalog";
 import {
   getCatalog,
   getProductBySlug,
@@ -196,7 +196,7 @@ async function ProductDetail({ slug }: { slug: string }) {
               )}
 
               <div className="mt-4">
-                <ProductQuote product={product} />
+                <ProductQuote product={{ slug: product.slug, name: product.name }} />
               </div>
 
               <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -267,7 +267,6 @@ async function ProductDetail({ slug }: { slug: string }) {
               votre installation avant commande.
             </p>
             <WhatsAppLink
-              href={whatsappLink(generalMessage())}
               source="fiche-produit"
               message={generalMessage()}
               className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-3 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"

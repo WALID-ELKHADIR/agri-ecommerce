@@ -3,16 +3,16 @@ import Link from "next/link";
 import { ArrowRight, WhatsApp } from "@/components/icons";
 import { WhatsAppLink } from "@/components/whatsapp-link";
 import { AMBIANCE_IMAGES } from "@/lib/ambiance-images";
-import { generalMessage, whatsappLink } from "@/lib/whatsapp";
+import { generalMessage } from "@/lib/whatsapp";
 
-type HeroProps = { brandName: string; slogan: string; whatsappNumber: string; productCount: number };
+type HeroProps = { brandName: string; slogan: string; productCount: number };
 
 /**
  * Ouverture plein écran : la photo d'une ligne de goutte-à-goutte dans la terre
  * ocre, recadrée en 4:5 sur mobile et 16:9 sur ordinateur. C'est l'image LCP
  * de l'accueil : seule image chargée en priorité.
  */
-export function Hero({ brandName, slogan, whatsappNumber, productCount }: HeroProps) {
+export function Hero({ brandName, slogan, productCount }: HeroProps) {
   const desktop = AMBIANCE_IMAGES.heroDesktop;
   const mobile = AMBIANCE_IMAGES.heroMobile;
   const common = { alt: desktop.alt, sizes: "100vw" };
@@ -25,7 +25,7 @@ export function Hero({ brandName, slogan, whatsappNumber, productCount }: HeroPr
   const message = generalMessage(brandName);
 
   return (
-    <section className="relative isolate flex min-h-[100svh] items-end overflow-hidden text-white" style={{ backgroundColor: desktop.dominantColor }}>
+    <section className="relative isolate flex min-h-[calc(100svh-6.5rem)] items-end overflow-hidden text-white" style={{ backgroundColor: desktop.dominantColor }}>
       <picture>
         <source media="(min-width: 768px)" srcSet={desktopSrcSet} />
         <source srcSet={mobileSrcSet} />
@@ -54,7 +54,6 @@ export function Hero({ brandName, slogan, whatsappNumber, productCount }: HeroPr
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <WhatsAppLink
-              href={whatsappLink(message, whatsappNumber)}
               source="accueil-hero"
               message={message}
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-whatsapp px-6 text-sm font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-whatsapp-hover"

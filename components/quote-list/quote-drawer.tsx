@@ -7,32 +7,43 @@ import { Sheet } from "@/components/ui/dialog";
 import { saveQuoteRequest } from "@/lib/actions/quotes";
 import { quoteList } from "@/lib/quote-list-store";
 import { quoteListMessage, whatsappLink } from "@/lib/whatsapp";
+import { useWhatsappContact } from "@/components/whatsapp-provider";
 import { onOpenQuoteDrawer, useQuoteList } from "./use-quote-list";
 
 const inputClass =
   "min-h-11 w-full rounded-xl border border-soil-300 bg-white px-3.5 py-2.5 text-sm text-soil-900 placeholder:text-soil-500 focus:border-water-500";
 
 /** Tiroir récapitulatif de la liste de devis, envoyée en un seul message WhatsApp. */
-export function QuoteDrawer({ whatsappNumber, brandName }: { whatsappNumber: string; brandName: string }) {
+export function QuoteDrawer() {
+  const { number, brandName } = useWhatsappContact();
   const { lines, count } = useQuoteList();
   const [open, setOpen] = useState(false);
+  // Après l'envoi, la liste est gardée : rien ne garantit que WhatsApp s'est
+  // ouvert (navigateur intégré, bloqueur). Le visiteur la vide lui-même.
+  const [sent, setSent] = useState(false);
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
 
-  useEffect(() => onOpenQuoteDrawer(() => setOpen(true)), []);
+  useEffect(
+    () =>
+      onOpenQuoteDrawer(() => {
+        setSent(false);
+        setOpen(true);
+      }),
+    [],
+  );
 
-  function send() {
-    const message = quoteListMessage(lines, { name, city }, brandName);
-    // Ouverture dans le même geste que le clic : pas de blocage de fenêtre.
-    window.open(whatsappLink(message, whatsappNumber), "_blank", "noopener,noreferrer");
+  const message = quoteListMessage(lines, { name, city }, brandName);
+
+  // Un vrai lien (et non window.open) : les bloqueurs de fenêtres ne l'arrêtent pas.
+  function logRequest() {
     void saveQuoteRequest({
       source: "liste-devis",
       name: name.trim() || undefined,
       message,
       items: lines.map((line) => ({ slug: line.slug, name: line.name, quantity: line.quantity })),
     }).catch(() => {});
-    quoteList.clear();
-    setOpen(false);
+    setSent(true);
   }
 
   return (
@@ -48,14 +59,36 @@ export function QuoteDrawer({ whatsappNumber, brandName }: { whatsappNumber: str
       }
       footer={
         lines.length > 0 ? (
-          <button
-            type="button"
-            onClick={send}
-            className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
-          >
-            <WhatsApp className="h-4 w-4" />
-            Envoyer sur WhatsApp
-          </button>
+          <div className="grid w-full gap-2">
+            {sent ? (
+              <p role="status" className="text-sm text-soil-700">
+                Votre liste a été préparée dans WhatsApp. Une fois le message envoyé, vous pouvez vider la liste.
+              </p>
+            ) : null}
+            <a
+              href={whatsappLink(message, number)}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={logRequest}
+              className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
+            >
+              <WhatsApp className="h-4 w-4" />
+              {sent ? "Rouvrir WhatsApp" : "Envoyer sur WhatsApp"}
+            </a>
+            {sent ? (
+              <button
+                type="button"
+                onClick={() => {
+                  quoteList.clear();
+                  setSent(false);
+                  setOpen(false);
+                }}
+                className="min-h-11 w-full rounded-xl border border-soil-300 bg-white px-4 text-sm font-semibold text-soil-900 hover:border-water-300"
+              >
+                Vider la liste
+              </button>
+            ) : null}
+          </div>
         ) : null
       }
     >

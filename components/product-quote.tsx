@@ -7,11 +7,11 @@ import { WhatsAppLink } from "@/components/whatsapp-link";
 import {
   BRAND,
   productMessage,
-  whatsappLink,
   type Product,
 } from "@/lib/catalog";
 
-export function ProductQuote({ product }: { product: Product }) {
+/** Reçoit seulement le nom et le slug : rien d'autre n'est envoyé au navigateur. */
+export function ProductQuote({ product }: { product: Pick<Product, "slug" | "name"> }) {
   const [quantity, setQuantity] = useState(1);
   // Ce produit seul : la liste de devis a son propre envoi.
   const message = productMessage(product, quantity);
@@ -49,9 +49,8 @@ export function ProductQuote({ product }: { product: Product }) {
       </div>
 
       <div className="mt-4 grid gap-2 sm:grid-cols-2">
-        <AddToQuoteButton product={product} quantity={quantity} className="w-full" />
+        <AddToQuoteButton product={{ slug: product.slug, name: product.name }} quantity={quantity} className="w-full" />
         <WhatsAppLink
-          href={whatsappLink(message)}
           source="fiche-produit"
           message={message}
           product={{ slug: product.slug, quantity }}

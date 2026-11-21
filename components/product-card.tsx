@@ -3,7 +3,7 @@ import Link from "next/link";
 import { WhatsApp } from "@/components/icons";
 import { AddToQuoteButton } from "@/components/quote-list/add-to-quote-button";
 import { WhatsAppLink } from "@/components/whatsapp-link";
-import { productMessage, whatsappLink, type Product } from "@/lib/catalog";
+import { productMessage, type Product } from "@/lib/catalog";
 import { cn } from "@/lib/cn";
 
 /** `sizes` des cartes selon leur contexte (largeurs réelles des colonnes). */
@@ -55,7 +55,7 @@ export function ProductCard({ product, sizes, className }: ProductCardProps) {
             fill
             sizes={sizes}
             loading="lazy"
-            className="object-cover opacity-0 transition duration-500 group-hover:opacity-100 motion-reduce:transition-none"
+            className="hidden object-cover opacity-0 transition duration-500 group-hover:opacity-100 motion-reduce:transition-none md:block"
           />
         ) : null}
         {product.badge ? (
@@ -89,9 +89,8 @@ export function ProductCard({ product, sizes, className }: ProductCardProps) {
         </p>
 
         <div className="mt-auto flex items-center gap-2 pt-3">
-          <AddToQuoteButton product={product} size="sm" className="flex-1" />
+          <AddToQuoteButton product={{ slug: product.slug, name: product.name }} size="sm" className="flex-1" />
           <WhatsAppLink
-            href={whatsappLink(message)}
             source="carte-produit"
             message={message}
             product={{ slug: product.slug, quantity: 1 }}

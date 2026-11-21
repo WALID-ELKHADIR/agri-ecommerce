@@ -9,7 +9,7 @@ import {
 } from "@/components/icons";
 import { Logo } from "@/components/brand/logo";
 import { BRAND, generalMessage } from "@/lib/catalog";
-import { whatsappUrl, type SiteConfig } from "@/lib/site-config";
+import type { SiteConfig } from "@/lib/site-config";
 import { WhatsAppLink } from "@/components/whatsapp-link";
 
 const rangeLinks = [
@@ -55,7 +55,6 @@ export function SiteFooter({ brand = BRAND }: { brand?: SiteConfig }) {
             </div>
 
             <WhatsAppLink
-              href={whatsappUrl(generalMessage(), brand.whatsappNumber)}
               source="footer"
               message={generalMessage()}
               className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"

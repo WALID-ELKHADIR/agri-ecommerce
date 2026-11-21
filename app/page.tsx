@@ -32,7 +32,6 @@ export default async function Page() {
         <Hero
           brandName={settings.name}
           slogan={settings.slogan}
-          whatsappNumber={settings.whatsappNumber}
           productCount={products.length}
         />
         <Reassurance />
@@ -42,7 +41,7 @@ export default async function Page() {
         <Showcase productCount={products.length} rangeCount={ranges.length} />
         <Testimonials />
         <Faq />
-        <FinalCta brandName={settings.name} whatsappNumber={settings.whatsappNumber} />
+        <FinalCta brandName={settings.name} />
       </main>
       <SiteFooter brand={settings} />
       <MobileCta />

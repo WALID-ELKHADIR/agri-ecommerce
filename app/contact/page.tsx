@@ -92,7 +92,6 @@ export default async function ContactPage() {
                     channel.accent ? (
                       <WhatsAppLink
                         key={channel.title}
-                        href={channel.href}
                         source="contact"
                         message={generalMessage()}
                         className={`flex items-start gap-3 rounded-2xl border p-4 transition ${

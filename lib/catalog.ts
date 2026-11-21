@@ -454,7 +454,7 @@ export function generalMessage() {
   return buildGeneralMessage(BRAND.name);
 }
 
-export function productMessage(product: Product, quantity = 1) {
+export function productMessage(product: Pick<Product, "slug" | "name">, quantity = 1) {
   return buildProductMessage(product, quantity, BRAND.siteUrl);
 }
 

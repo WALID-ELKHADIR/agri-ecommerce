@@ -6,7 +6,7 @@ import { WhatsAppLink } from "@/components/whatsapp-link";
 import { AMBIANCE_IMAGES } from "@/lib/ambiance-images";
 import type { Category, Product } from "@/lib/catalog";
 import { catalogHref } from "@/lib/catalog-query";
-import { generalMessage, whatsappLink } from "@/lib/whatsapp";
+import { generalMessage } from "@/lib/whatsapp";
 
 const wrap = "mx-auto max-w-7xl px-4";
 const sectionTitle = "font-display text-3xl font-semibold tracking-tight text-soil-900 text-balance sm:text-4xl";
@@ -202,7 +202,7 @@ const FAQ = [
     q: "Comment demander un devis ?",
     a: "Ajoutez les produits qui vous intéressent à votre liste de devis, puis envoyez-la sur WhatsApp en un clic. Vous pouvez aussi nous écrire directement sur WhatsApp depuis n'importe quelle page.",
   },
-  { q: "Le devis est-il payant ?", a: "Non, le devis est gratuit et sans engagement." },
+  { q: "Le devis est-il payant ?", a: "Non, le devis est gratuit." },
   {
     q: "Livrez-vous partout au Maroc ?",
     a: "Oui, nous livrons partout au Maroc. Indiquez votre ville dans votre demande : nous vous précisons les conditions de livraison avec le devis.",
@@ -240,7 +240,7 @@ export function Faq() {
   );
 }
 
-export function FinalCta({ brandName, whatsappNumber }: { brandName: string; whatsappNumber: string }) {
+export function FinalCta({ brandName }: { brandName: string }) {
   const message = generalMessage(brandName);
   return (
     <section className="bg-water-50 py-16 sm:py-20">
@@ -250,7 +250,6 @@ export function FinalCta({ brandName, whatsappNumber }: { brandName: string; wha
           <p className="mt-3 text-soil-700">Décrivez-le sur WhatsApp : vous recevez un devis gratuit sous 24 h.</p>
         </div>
         <WhatsAppLink
-          href={whatsappLink(message, whatsappNumber)}
           source="accueil-cta"
           message={message}
           className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-full bg-whatsapp px-6 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
