@@ -19,7 +19,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ lang
   const names = new Map(products.map((product) => [product.slug, product.name]));
 
   const rows = filterQuotes(quotes, {
-    status: status && status in q.statuses ? status : undefined,
+    status: status && Object.hasOwn(q.statuses, status) ? status : undefined,
     source: query.get("source")?.slice(0, 40) || undefined,
     period: period === "7" || period === "30" ? period : undefined,
     q: query.get("q")?.slice(0, 80) || undefined,

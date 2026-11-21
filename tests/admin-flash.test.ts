@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { adminAr } from "../lib/i18n/admin-ar.ts";
 import { adminFr } from "../lib/i18n/admin-fr.ts";
-import { flashCode, flashText } from "../lib/i18n/flash.ts";
+import { flashCode, flashText, lookup } from "../lib/i18n/flash.ts";
 
 test("une clé simple est traduite dans la langue de l'admin", () => {
   assert.equal(flashText(adminFr.flash, "productSaved"), "Produit enregistré.");
@@ -35,4 +35,16 @@ test("le dictionnaire arabe a exactement les clés du français", () => {
       ? Object.entries(value).flatMap(([key, child]) => keys(child, `${prefix}${key}.`))
       : [prefix];
   assert.deepEqual(keys(adminAr).sort(), keys(adminFr).sort());
+});
+
+test("enregistré sans l'arabe : avertissement dans les deux langues", () => {
+  assert.match(flashText(adminFr.flash, "savedWithoutArabic"), /arabe/);
+  assert.match(flashText(adminFr.flash, "savedWithoutArabic"), /20261124100000/);
+  assert.match(flashText(adminAr.flash, "savedWithoutArabic"), /20261124100000/);
+});
+
+test("une clé héritée d'Object (__proto__, constructor) n'est jamais traduite", () => {
+  assert.equal(lookup(adminFr.login.errors, "__proto__"), undefined);
+  assert.equal(lookup(adminFr.login.errors, "toString"), undefined);
+  assert.equal(lookup(adminFr.login.errors, "invalid"), adminFr.login.errors.invalid);
 });

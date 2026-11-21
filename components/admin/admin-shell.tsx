@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { withoutLocale } from "@/lib/i18n/routing";
 import { Suspense, type ReactNode } from "react";
 import {
   ArrowUpRight,
@@ -29,7 +30,7 @@ const LINKS = [
 ] as const;
 
 export function AdminShell({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
+  const pathname = withoutLocale(usePathname());
   const t = useAdminDictionary().nav;
   const links = LINKS.map((link) => ({ ...link, label: t[link.key] }));
 

@@ -6,6 +6,7 @@ import { LangSwitcher } from "@/components/i18n/lang-switcher";
 import { ArrowLeft, ShieldCheck, WhatsApp } from "@/components/icons";
 import { signInAction } from "@/lib/actions/auth";
 import type { AdminDictionary } from "@/lib/i18n/admin-fr";
+import { lookup } from "@/lib/i18n/flash";
 import { getAdminDictionary } from "@/lib/i18n/server";
 import { isSupabaseConfigured } from "@/lib/supabase/public";
 
@@ -37,7 +38,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           {searchParams.then((params) => (
             <LoginCard
               t={t}
-              error={params.error ? t.errors[params.error] ?? t.errors.invalid : null}
+              error={params.error ? (lookup(t.errors, params.error) ?? t.errors.invalid) : null}
               next={params.next}
             />
           ))}

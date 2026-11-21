@@ -97,7 +97,7 @@ export async function CategoryCards({ ranges }: { ranges: Range[] }) {
                   className={image.contain ? "absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white via-white/90" : "absolute inset-0 bg-gradient-to-t from-field-900/80 via-field-900/10"}
                 />
                 <span className={`relative p-4 ${image.contain ? "text-soil-900" : "text-white"}`}>
-                  <span className="block font-display text-lg font-semibold leading-tight sm:text-xl">{category.label}</span>
+                  <span className="block font-display text-lg font-semibold leading-tight sm:text-xl"><bdi>{category.label}</bdi></span>
                   <span className="text-sm opacity-80">{t.references(count)}</span>
                 </span>
               </Link>

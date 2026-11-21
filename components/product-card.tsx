@@ -79,16 +79,16 @@ export async function ProductCard({ product, sizes, priority = false, reveal, cl
         ) : null}
         {product.badge ? (
           <span className="absolute start-2.5 top-2.5 rounded-md bg-field-900 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
-            {product.badge}
+            <bdi>{product.badge}</bdi>
           </span>
         ) : null}
       </Link>
 
       <div className="flex flex-1 flex-col p-3 sm:p-4">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-water-700">{product.categoryLabel}</p>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-water-700"><bdi>{product.categoryLabel}</bdi></p>
         <h3 className="mt-1 text-sm font-semibold leading-snug text-soil-900 sm:text-base">
           <Link href={`/produits/${product.slug}`} className="hover:text-water-700">
-            {product.name}
+            <bdi>{product.name}</bdi>
           </Link>
         </h3>
 
@@ -96,7 +96,9 @@ export async function ProductCard({ product, sizes, priority = false, reveal, cl
           <ul className="mt-2 grid gap-0.5 text-[11px] text-soil-600 sm:text-xs">
             {product.specs.slice(0, 3).map((spec) => (
               <li key={spec.label} className="truncate">
-                {spec.label} : <span className="font-medium text-soil-800">{spec.value}</span>
+                <bdi>
+                  {spec.label} : <span className="font-medium text-soil-800">{spec.value}</span>
+                </bdi>
               </li>
             ))}
           </ul>

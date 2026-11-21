@@ -13,10 +13,21 @@ export type LocaleRoute =
 export function localeRoute(pathname: string, cookieLocale: string | null): LocaleRoute {
   const [, first = "", ...rest] = pathname.split("/");
   if (isLocale(first)) {
-    return { type: "redirect", path: `/${rest.join("/")}`, locale: first };
+    // Barres en tête retirées : « /ar//site.com » ne doit jamais rediriger vers un autre site.
+    return { type: "redirect", path: `/${rest.join("/").replace(/^[/\\]+/, "")}`, locale: first };
   }
   const locale = cookieLocale && isLocale(cookieLocale) ? cookieLocale : DEFAULT_LOCALE;
   return { type: "rewrite", path: pathname === "/" ? `/${locale}` : `/${locale}${pathname}` };
+}
+
+/**
+ * Adresse visible d'un chemin, sans la langue. usePathname() donne « /fr/produits »
+ * au rendu serveur (destination de la réécriture) et « /produits » dans le
+ * navigateur : comparer ce résultat évite un écart d'hydratation.
+ */
+export function withoutLocale(pathname: string): string {
+  const [, first = "", ...rest] = pathname.split("/");
+  return isLocale(first) ? `/${rest.join("/")}` : pathname;
 }
 
 /** Chemins réels (avec langue) d'une adresse visible, pour revalidatePath. */

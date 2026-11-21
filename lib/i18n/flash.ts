@@ -15,6 +15,11 @@ export function flashCode(key: FlashKey, arg?: string | number): string {
   return arg === undefined ? key : `${key}${SEPARATOR}${arg}`;
 }
 
+/** Lecture d'une clé venue de l'URL : jamais une propriété héritée (__proto__, toString…). */
+export function lookup<T>(record: Record<string, T>, key: string): T | undefined {
+  return Object.hasOwn(record, key) ? record[key] : undefined;
+}
+
 export function flashText(flash: Flash, value: string): string {
   if (value === "1") return flash.saved;
   const at = value.indexOf(SEPARATOR);

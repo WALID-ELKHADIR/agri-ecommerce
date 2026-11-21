@@ -8,7 +8,7 @@ import { parseImageList, removedStoragePaths, type ImageEntry } from "@/lib/admi
 import { removeUnreferencedFiles } from "@/lib/admin/storage-cleanup";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/slugify";
-import { productArabicColumns, isMissingColumn, stripArabic } from "@/lib/admin/arabic-fields";
+import { hasArabic, productArabicColumns, isMissingColumn, stripArabic } from "@/lib/admin/arabic-fields";
 import { parseSpecs } from "@/lib/i18n/localize-catalog";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -129,8 +129,12 @@ export async function saveProductAction(formData: FormData) {
       ? supabase.from("products").update(values).eq("id", id).select("id").single()
       : supabase.from("products").insert(values).select("id").single();
   let result = await write(payload);
-  // Base pas encore migrée (contenu arabe) : on enregistre au moins le reste.
-  if (isMissingColumn(result.error)) result = await write(stripArabic(payload));
+  // Base pas encore migrée (contenu arabe) : on enregistre au moins le reste, et on le dit.
+  let arabicLost = false;
+  if (isMissingColumn(result.error)) {
+    arabicLost = hasArabic(productArabicColumns((key) => String(formData.get(key) ?? "")));
+    result = await write(stripArabic(payload));
+  }
 
   if (result.error || !result.data) {
     fail(
@@ -148,7 +152,7 @@ export async function saveProductAction(formData: FormData) {
   }
 
   refreshCatalog();
-  redirect(`/admin/produits?ok=${flashCode("productSaved")}`);
+  redirect(`/admin/produits?ok=${flashCode(arabicLost ? "savedWithoutArabic" : "productSaved")}`);
 }
 
 /** Bascule un booléen (publié, mis en avant) depuis la liste. */

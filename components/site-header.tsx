@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { withoutLocale } from "@/lib/i18n/routing";
 import { useState, type FormEvent } from "react";
 import {
   ArrowRight,
@@ -34,7 +35,7 @@ const links: { href: string; label: TextKey }[] = [
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [term, setTerm] = useState("");
-  const pathname = usePathname();
+  const pathname = withoutLocale(usePathname());
   const router = useRouter();
   const { t } = useLocale();
 

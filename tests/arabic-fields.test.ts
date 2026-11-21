@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { categoryArabicColumns, isMissingColumn, productArabicColumns, stripArabic } from "../lib/admin/arabic-fields.ts";
+import { categoryArabicColumns, hasArabic, isMissingColumn, productArabicColumns, stripArabic } from "../lib/admin/arabic-fields.ts";
 
 const form = (values: Record<string, string>) => (name: string) => values[name] ?? "";
 
@@ -34,4 +34,10 @@ test("une colonne absente est reconnue, en lecture (Postgres) comme en écriture
   assert.equal(isMissingColumn({ code: "PGRST204" }), true);
   assert.equal(isMissingColumn({ code: "23505" }), false);
   assert.equal(isMissingColumn(null), false);
+});
+
+test("enregistrement sans les champs arabes : on prévient seulement si un champ arabe était rempli", () => {
+  assert.equal(hasArabic({ name_ar: null, description_ar: null, specs_ar: null }), false);
+  assert.equal(hasArabic({ name_ar: "مضخة", description_ar: null, specs_ar: null }), true);
+  assert.equal(hasArabic({ label_ar: null, short_ar: null, description_ar: "وصف" }), true);
 });

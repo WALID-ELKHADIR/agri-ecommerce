@@ -115,7 +115,7 @@ export function QuoteDrawer() {
                   onClick={() => setOpen(false)}
                   className="min-w-0 flex-1 text-sm font-semibold text-soil-900 hover:text-water-700"
                 >
-                  {line.name}
+                  <bdi>{line.name}</bdi>
                 </Link>
                 <div className="flex items-center gap-1 rounded-full border border-soil-200 p-0.5">
                   <button

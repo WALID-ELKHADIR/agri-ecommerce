@@ -8,7 +8,7 @@ import { parseImageList, storagePathFromUrl } from "@/lib/admin/image-list";
 import { removeUnreferencedFiles } from "@/lib/admin/storage-cleanup";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/slugify";
-import { categoryArabicColumns, isMissingColumn, stripArabic } from "@/lib/admin/arabic-fields";
+import { categoryArabicColumns, hasArabic, isMissingColumn, stripArabic } from "@/lib/admin/arabic-fields";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function refresh() {
@@ -41,6 +41,7 @@ export async function saveCategoryAction(formData: FormData) {
   if (!images) fail(failurePath, flashCode("invalidImage"));
   const imageUrl = images[0]?.url ?? null;
   const arabic = categoryArabicColumns((key) => field(formData, key, 400));
+  let arabicLost = false;
 
   const supabase = await createSupabaseServerClient();
 
@@ -49,7 +50,10 @@ export async function saveCategoryAction(formData: FormData) {
     const values = { label, short, description, image_url: imageUrl, ...arabic };
     let { error } = await supabase.from("categories").update(values).eq("id", originalId);
     // Base pas encore migrée (contenu arabe) : on enregistre au moins le reste.
-    if (isMissingColumn(error)) ({ error } = await supabase.from("categories").update(stripArabic(values)).eq("id", originalId));
+    if (isMissingColumn(error)) {
+      arabicLost = hasArabic(arabic);
+      ({ error } = await supabase.from("categories").update(stripArabic(values)).eq("id", originalId));
+    }
     if (error) fail(failurePath, error.message);
 
     // Ancienne image remplacée ou retirée : le fichier Storage est supprimé.
@@ -71,14 +75,17 @@ export async function saveCategoryAction(formData: FormData) {
 
     const values = { id, label, short, description, image_url: imageUrl, position, ...arabic };
     let { error } = await supabase.from("categories").insert(values);
-    if (isMissingColumn(error)) ({ error } = await supabase.from("categories").insert(stripArabic(values)));
+    if (isMissingColumn(error)) {
+      arabicLost = hasArabic(arabic);
+      ({ error } = await supabase.from("categories").insert(stripArabic(values)));
+    }
     if (error) {
       fail(failurePath, error.code === "23505" ? flashCode("idExists", id) : error.message);
     }
   }
 
   refresh();
-  redirect(`/admin/categories?ok=${flashCode("categorySaved")}`);
+  redirect(`/admin/categories?ok=${flashCode(arabicLost ? "savedWithoutArabic" : "categorySaved")}`);
 }
 
 /** Échange la position d'une catégorie avec sa voisine (« up » ou « down »). */

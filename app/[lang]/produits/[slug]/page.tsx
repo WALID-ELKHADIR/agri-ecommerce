@@ -115,7 +115,7 @@ async function ProductDetail({ slug }: { slug: string }) {
               {t.navProducts}
             </Link>
             <span aria-hidden="true" className="mx-2 text-soil-600">/</span>
-            <span className="text-soil-200">{product.name}</span>
+            <span className="text-soil-200"><bdi>{product.name}</bdi></span>
           </nav>
         </div>
       </section>
@@ -146,21 +146,21 @@ async function ProductDetail({ slug }: { slug: string }) {
             <div className="flex flex-col">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded-full bg-water-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-water-700">
-                  {product.categoryLabel}
+                  <bdi>{product.categoryLabel}</bdi>
                 </span>
                 {product.badge ? (
                   <span className="rounded-full bg-field-900 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
-                    {product.badge}
+                    <bdi>{product.badge}</bdi>
                   </span>
                 ) : null}
               </div>
 
               <h1 className="mt-3 text-3xl font-semibold leading-tight tracking-tight text-soil-900 sm:text-4xl">
-                {product.name}
+                <bdi>{product.name}</bdi>
               </h1>
 
               <p className="mt-3 text-sm leading-relaxed text-soil-600 sm:text-base">
-                {product.description}
+                <bdi>{product.description}</bdi>
               </p>
 
               <p className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-field-700">
@@ -175,9 +175,9 @@ async function ProductDetail({ slug }: { slug: string }) {
                     {product.specs.map((spec) => (
                       <tr key={spec.label}>
                         <th scope="row" className="px-4 py-3 text-start font-normal text-soil-500">
-                          {spec.label}
+                          <bdi>{spec.label}</bdi>
                         </th>
-                        <td className="px-4 py-3 text-end font-semibold text-soil-900">{spec.value}</td>
+                        <td className="px-4 py-3 text-end font-semibold text-soil-900"><bdi>{spec.value}</bdi></td>
                       </tr>
                     ))}
                   </tbody>

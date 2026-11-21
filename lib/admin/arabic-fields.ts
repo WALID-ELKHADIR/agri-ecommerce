@@ -41,6 +41,11 @@ export function categoryArabicColumns(read: Read): {
   };
 }
 
+/** Vrai si au moins un champ arabe est rempli. */
+export function hasArabic(columns: Record<string, unknown>): boolean {
+  return Object.values(columns).some((value) => value !== null);
+}
+
 /** Même enregistrement sans les colonnes arabes, pour une base pas encore migrée. */
 export function stripArabic<T extends Record<string, unknown>>(payload: T): Partial<T> {
   return Object.fromEntries(Object.entries(payload).filter(([key]) => !key.endsWith("_ar"))) as Partial<T>;

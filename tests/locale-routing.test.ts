@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { localeRoute, localizedPaths } from "../lib/i18n/routing.ts";
+import { localeRoute, localizedPaths, withoutLocale } from "../lib/i18n/routing.ts";
 
 test("sans préfixe : réécriture interne vers la langue du cookie (français par défaut)", () => {
   assert.deepEqual(localeRoute("/", "ar"), { type: "rewrite", path: "/ar" });
@@ -23,4 +23,23 @@ test("un segment qui ressemble à une langue n'en est pas une", () => {
 test("chemins réels d'une page dans chaque langue (pour revalidatePath)", () => {
   assert.deepEqual(localizedPaths("/produits"), ["/fr/produits", "/ar/produits"]);
   assert.deepEqual(localizedPaths("/"), ["/fr", "/ar"]);
+});
+
+test("redirection d'un lien préfixé : jamais vers un autre site (//domaine)", () => {
+  for (const path of ["/ar//evil.com", "/fr///evil.com/x", "/ar/\\evil.com"]) {
+    const route = localeRoute(path, null);
+    assert.equal(route.type, "redirect");
+    assert.ok(!/^\/[/\\]/.test(route.path), `${path} → ${route.path}`);
+    assert.equal(new URL(route.path, "https://saqia.site").host, "saqia.site", path);
+  }
+});
+
+test("chemin sans langue : identique côté serveur (/fr/produits) et navigateur (/produits)", () => {
+  assert.equal(withoutLocale("/fr/produits"), "/produits");
+  assert.equal(withoutLocale("/produits"), "/produits");
+  assert.equal(withoutLocale("/ar"), "/");
+  assert.equal(withoutLocale("/fr"), "/");
+  assert.equal(withoutLocale("/"), "/");
+  assert.equal(withoutLocale("/ar/admin/produits/1"), "/admin/produits/1");
+  assert.equal(withoutLocale("/arrosage"), "/arrosage");
 });

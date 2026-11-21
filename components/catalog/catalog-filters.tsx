@@ -38,7 +38,7 @@ export async function CategoryChips({
           className={chip(query.gamme === category.id)}
           aria-current={query.gamme === category.id ? "page" : undefined}
         >
-          {category.label}
+          <bdi>{category.label}</bdi>
           <span className="text-xs font-medium opacity-70">{category.count}</span>
         </Link>
       ))}
@@ -85,7 +85,7 @@ export async function FilterForm({
           <option value="">{t.catalogPage.allAvailability}</option>
           {stocks.map((stock) => (
             <option key={stock.value} value={stock.value}>
-              {t.stock[stock.value] ?? stock.label} ({stock.count})
+              {Object.hasOwn(t.stock, stock.value) ? t.stock[stock.value] : stock.label} ({stock.count})
             </option>
           ))}
         </select>

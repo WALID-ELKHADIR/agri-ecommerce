@@ -323,6 +323,7 @@ export const adminAr: AdminDictionary = {
 
   flash: {
     saved: "تم حفظ التعديلات.",
+    savedWithoutArabic: "تم الحفظ باستثناء الحقول العربية: نفّذ أولًا الترحيل 20261124100000_contenu_arabe.sql في Supabase.",
     failedTitle: "تعذّر تنفيذ الإجراء",
     categorySaved: "تم حفظ الفئة.",
     categoryDeleted: "تم حذف الفئة.",

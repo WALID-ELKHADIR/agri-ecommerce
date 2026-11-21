@@ -324,6 +324,8 @@ export const adminFr = {
   /** Messages après une action (clé posée dans l'URL par la Server Action). */
   flash: {
     saved: "Modifications enregistrées.",
+    savedWithoutArabic:
+      "Enregistré, sauf les champs arabes : exécutez d'abord la migration 20261124100000_contenu_arabe.sql dans Supabase.",
     failedTitle: "Action impossible",
     categorySaved: "Catégorie enregistrée.",
     categoryDeleted: "Catégorie supprimée.",
