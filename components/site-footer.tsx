@@ -34,7 +34,7 @@ const YEAR = 2026;
  */
 export function SiteFooter({ brand = BRAND }: { brand?: SiteConfig }) {
   return (
-    <footer id="contact" className="border-t border-soil-200 bg-white">
+    <footer id="contact" lang="fr" dir="ltr" className="border-t border-soil-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 pb-24 pt-12 sm:pb-14 sm:pt-14">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.3fr]">
           <div>

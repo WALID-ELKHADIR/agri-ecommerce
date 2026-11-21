@@ -478,3 +478,21 @@ html:has(dialog[open]) {
     animation: none !important;
   }
 }
+
+/* ==========================================================================
+   Langue (AR | FR) : <T> rend les deux textes, seul celui de <html lang> s'affiche.
+   ========================================================================== */
+html:not([lang="ar"]) [data-l="ar"],
+html[lang="ar"] [data-l="fr"] {
+  display: none !important;
+}
+
+:lang(ar) {
+  font-family: var(--font-arabic), var(--font-geist-sans), ui-sans-serif, sans-serif;
+}
+
+/* Le carrousel garde un défilement de gauche à droite ; ses textes suivent la langue. */
+html[dir="rtl"] .hero-copy {
+  direction: rtl;
+  text-align: right;
+}

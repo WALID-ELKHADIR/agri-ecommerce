@@ -9,7 +9,7 @@ export default function NotFound() {
     <>
       <SiteHeader />
 
-      <main className="flex flex-1 items-center bg-soil-50 pb-24 pt-16 md:pb-16">
+      <main lang="fr" dir="ltr" className="flex flex-1 items-center bg-soil-50 pb-24 pt-16 md:pb-16">
         <div className="mx-auto max-w-xl px-4 text-center">
           <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-field-900 to-water-600 text-white shadow-lg shadow-soil-900/20">
             <Droplet className="h-7 w-7" />

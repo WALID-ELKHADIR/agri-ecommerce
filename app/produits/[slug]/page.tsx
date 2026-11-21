@@ -92,7 +92,7 @@ export default function ProduitPage({ params }: ProductPageProps) {
     <>
       <SiteHeader />
 
-      <main className="pb-24 md:pb-0">
+      <main lang="fr" dir="ltr" className="pb-24 md:pb-0">
         <Suspense fallback={<ProductSkeleton />}>
           {params.then(({ slug }) => (
             <ProductDetail slug={slug} />
