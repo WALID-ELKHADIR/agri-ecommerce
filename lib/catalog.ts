@@ -454,6 +454,20 @@ const LOCAL_PRODUCT_IMAGES: Record<string, { src: string; alt: string }> = {
     src: "/images/products/gaine-goutte-a-goutte/fournisseur.webp",
     alt: "Rouleau de tuyau goutte-à-goutte noir cerclé de liens orange",
   },
+  // Visuels générés par IA (public/images/_archive/2026-11-images-ia/README.md),
+  // en attendant une vraie photo de ces produits.
+  "pompe-immergee-inox-4-pouces": {
+    src: "/images/products/pompe-immergee-inox-4-pouces/ia.webp",
+    alt: "Pompe immergée de forage en acier inoxydable",
+  },
+  "motopompe-centrifuge-inox": {
+    src: "/images/products/motopompe-centrifuge-inox/ia.webp",
+    alt: "Pompe de surface électrique à corps en acier inoxydable",
+  },
+  "coude-pe-filete-male-90": {
+    src: "/images/products/coude-pe-filete-male-90/ia.webp",
+    alt: "Coude PE à compression avec embout fileté en laiton",
+  },
 };
 
 export const products: Product[] = productData.map((product) =>
