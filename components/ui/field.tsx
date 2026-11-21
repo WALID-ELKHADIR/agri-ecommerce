@@ -132,7 +132,7 @@ export function Select({
           id={id}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy(id, hint, error, describedByProp)}
-          className={controlClasses(error, "min-h-11 appearance-none py-2.5 pr-10", className)}
+          className={controlClasses(error, "min-h-11 appearance-none py-2.5 pe-10", className)}
           {...props}
         >
           {children}
@@ -140,7 +140,7 @@ export function Select({
         <svg
           aria-hidden="true"
           viewBox="0 0 16 16"
-          className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-soil-500"
+          className="pointer-events-none absolute end-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-soil-500"
         >
           <path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
         </svg>

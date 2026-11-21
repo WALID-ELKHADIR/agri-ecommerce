@@ -262,14 +262,14 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
                   {max > 1 ? (
                     <div className="flex gap-1">
                       <IconButton label={t.moveLeft} onClick={() => move(index, index - 1)} disabled={index === 0}>
-                        <ArrowLeft className="h-4 w-4" />
+                        <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
                       </IconButton>
                       <IconButton
                         label={t.moveRight}
                         onClick={() => move(index, index + 1)}
                         disabled={index === images.length - 1}
                       >
-                        <ArrowRight className="h-4 w-4" />
+                        <ArrowRight className="h-4 w-4 rtl:rotate-180" />
                       </IconButton>
                       {index > 0 ? (
                         <IconButton label={t.setMain} onClick={() => move(index, 0)}>

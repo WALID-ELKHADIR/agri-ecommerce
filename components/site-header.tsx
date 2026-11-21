@@ -133,7 +133,7 @@ export function SiteHeader() {
                 className="flex h-6 w-6 items-center justify-center rounded-full text-soil-500 transition hover:bg-soil-100 hover:text-soil-900"
                 aria-label={t.searchSubmit}
               >
-                <ArrowRight className="h-3.5 w-3.5" />
+                <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
               </button>
             </form>
 

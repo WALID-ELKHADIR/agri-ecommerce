@@ -78,7 +78,7 @@ export async function ProductCard({ product, sizes, priority = false, reveal, cl
           />
         ) : null}
         {product.badge ? (
-          <span className="absolute left-2.5 top-2.5 rounded-md bg-field-900 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
+          <span className="absolute start-2.5 top-2.5 rounded-md bg-field-900 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
             {product.badge}
           </span>
         ) : null}
