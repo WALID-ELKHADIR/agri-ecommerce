@@ -23,6 +23,12 @@ function text(value: string | undefined): string | undefined {
   return trimmed ? trimmed : undefined;
 }
 
+/** Numéro marocain (212 + 9 chiffres) au format « +212 7 66 92 25 45 » ; sinon la saisie telle quelle. */
+function displayPhone(digits: string, typed: string): string {
+  const match = /^212(\d)(\d{2})(\d{2})(\d{2})(\d{2})$/.exec(digits);
+  return match ? `+212 ${match.slice(1).join(" ")}` : typed;
+}
+
 export function mergeSiteSettings(
   config: SiteConfig,
   contact: ContactSettings,
@@ -35,7 +41,7 @@ export function mergeSiteSettings(
   return {
     ...config,
     whatsappNumber: whatsapp ?? config.whatsappNumber,
-    phoneDisplay: phone && phoneNumber ? phone : config.phoneDisplay,
+    phoneDisplay: phone && phoneNumber ? displayPhone(phoneNumber, phone) : config.phoneDisplay,
     phoneRaw: phoneNumber ? `+${phoneNumber}` : config.phoneRaw,
     email: text(contact.email) ?? config.email,
     address: text(contact.address) ?? config.address,

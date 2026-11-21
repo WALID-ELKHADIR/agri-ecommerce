@@ -17,7 +17,7 @@ test("réglages renseignés : ils remplacent l'environnement, numéros normalis�
     [{ region: "Souss", number: "+212 6 70 00 00 01" }],
   );
   assert.equal(merged.whatsappNumber, "212661223344");
-  assert.equal(merged.phoneDisplay, "05 22 11 22 33");
+  assert.equal(merged.phoneDisplay, "+212 5 22 11 22 33");
   assert.equal(merged.phoneRaw, "+212522112233");
   assert.equal(merged.email, "ventes@saqia.com");
   assert.equal(merged.address, "Agadir");
@@ -37,4 +37,18 @@ test("régions : saisie « Région : numéro » ligne par ligne, aller-retour", 
     { region: "Oriental", number: "+212 6 70 00 00 02" },
   ]);
   assert.equal(regionsToText(regions), "Souss-Massa : 06 70 00 00 01\nOriental : +212 6 70 00 00 02");
+});
+
+test("téléphone marocain affiché au format international, quelle que soit la saisie", () => {
+  for (const phone of ["0766922545", "07 66 92 25 45", "+212766922545", "00212 7 66 92 25 45"]) {
+    const merged = mergeSiteSettings(FALLBACK_SITE_CONFIG, { phone }, []);
+    assert.equal(merged.phoneDisplay, "+212 7 66 92 25 45", phone);
+    assert.equal(merged.phoneRaw, "+212766922545", phone);
+  }
+});
+
+test("numéro étranger : affiché tel que saisi", () => {
+  const merged = mergeSiteSettings(FALLBACK_SITE_CONFIG, { phone: "+33 1 23 45 67 89" }, []);
+  assert.equal(merged.phoneDisplay, "+33 1 23 45 67 89");
+  assert.equal(merged.phoneRaw, "+33123456789");
 });

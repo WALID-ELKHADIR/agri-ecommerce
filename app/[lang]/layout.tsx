@@ -80,7 +80,13 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
       </head>
       <body className="flex min-h-full flex-col font-sans">
         <LocaleProvider locale={locale}>
-          <WhatsappProvider number={settings.whatsappNumber} brandName={settings.name}>
+          <WhatsappProvider
+            number={settings.whatsappNumber}
+            brandName={settings.name}
+            phoneDisplay={settings.phoneDisplay}
+            phoneRaw={settings.phoneRaw}
+            address={settings.address}
+          >
             {children}
             <ClickTracker />
             <Motion />
