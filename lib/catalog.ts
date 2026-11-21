@@ -1,3 +1,4 @@
+import { AMBIANCE_IMAGES } from "./ambiance-images";
 import { resolveProductImages, type ProductImage } from "./product-images";
 import { siteConfig } from "./site-config";
 import {
@@ -370,6 +371,24 @@ const productData: ProductData[] = [
     stock: "Sur demande",
   },
   {
+    // Même produit que la migration 20261122100000_gaine_goutte_a_goutte.sql.
+    slug: "gaine-goutte-a-goutte",
+    name: "Tuyau goutte-à-goutte (gaine / drip tape)",
+    category: "arrosage",
+    categoryLabel: "Arrosage & goutte-à-goutte",
+    description:
+      "Gaine souple à goutteurs intégrés pour l'irrigation localisée des cultures en rangs : maraîchage, plein champ et serres. Caractéristiques indicatives selon le modèle, confirmées sur le devis.",
+    specs: [
+      { label: "Diamètre", value: "16 mm (selon modèle)" },
+      { label: "Épaisseur de paroi", value: "0,15 à 0,40 mm (selon modèle)" },
+      { label: "Espacement des goutteurs", value: "10 à 40 cm (selon modèle)" },
+      { label: "Débit par goutteur", value: "0,6 à 2,5 L/h (selon modèle)" },
+      { label: "Pression de service", value: "0,5 à 1 bar (selon modèle)" },
+      { label: "Longueur du rouleau", value: "500 à 3 000 m (selon modèle)" },
+    ],
+    stock: "Sur demande",
+  },
+  {
     slug: "injecteur-venturi",
     name: "Injecteur d'engrais Venturi",
     category: "arrosage",
@@ -421,7 +440,17 @@ const productData: ProductData[] = [
   },
 ];
 
-export const products: Product[] = productData.map((product) => withImages(product));
+/** Produits illustrés par une photo d'ambiance (pas de photo fournisseur dans le manifest). */
+const AMBIANCE_PRODUCT_IMAGES: Record<string, { src: string; alt: string }> = {
+  "gaine-goutte-a-goutte": {
+    src: AMBIANCE_IMAGES.produitGaineGoutte.src,
+    alt: AMBIANCE_IMAGES.produitGaineGoutte.alt,
+  },
+};
+
+export const products: Product[] = productData.map((product) =>
+  withImages(product, AMBIANCE_PRODUCT_IMAGES[product.slug]),
+);
 
 /** Image du manifest pour la galerie de l'accueil (principale ou 1re vue de galerie). */
 function showcase(slug: string, label: string, kind: "main" | "gallery" = "main"): GalleryImage {

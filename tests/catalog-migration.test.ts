@@ -1,6 +1,7 @@
 // Vérifie la migration du catalogue (phase 2bis) dans un Postgres en mémoire.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { after, before, test } from "node:test";
 import type { PGlite } from "@electric-sql/pglite";
 import { PRODUCT_IMAGES } from "../lib/images-manifest.ts";
@@ -23,17 +24,37 @@ test("les trois nouvelles catégories existent, sans doublon", async () => {
   assert.deepEqual(ids, ["pompes", "raccords", "kits", "accessoires-pompage", "arrosage", "outillage"]);
 });
 
+// Produits illustrés par une photo d'ambiance (pas de photo fournisseur) : hors manifest produits.
+const AMBIANCE_PRODUCTS: Record<string, string> = {
+  "gaine-goutte-a-goutte": "/images/products/gaine-goutte-a-goutte/main.webp",
+};
+
 test("chaque produit de la base a son image dans le manifest (plus aucun ancien .jpg)", async () => {
   const products = await rows<{ slug: string; image_url: string }>("select slug, image_url from public.products");
-  assert.equal(products.length, Object.keys(PRODUCT_IMAGES).length);
+  assert.equal(products.length, Object.keys(PRODUCT_IMAGES).length + Object.keys(AMBIANCE_PRODUCTS).length);
   for (const product of products) {
-    assert.equal(product.image_url, PRODUCT_IMAGES[product.slug]?.main.src, product.slug);
+    assert.equal(product.image_url, PRODUCT_IMAGES[product.slug]?.main.src ?? AMBIANCE_PRODUCTS[product.slug], product.slug);
   }
+});
+
+test("gaine goutte-à-goutte : publiée en irrigation, photo présente, caractéristiques indicatives", async () => {
+  const [gaine] = await rows<{ name: string; category_id: string; image_url: string; description: string; specs: { label: string; value: string }[]; published: boolean }>(
+    "select name, category_id, image_url, description, specs, published from public.products where slug = 'gaine-goutte-a-goutte'",
+  );
+  assert.ok(gaine, "produit absent");
+  assert.match(gaine.name, /goutte-à-goutte/i);
+  assert.equal(gaine.category_id, "arrosage");
+  assert.equal(gaine.published, true);
+  assert.ok(existsSync(join("public", gaine.image_url)), gaine.image_url);
+  assert.ok(gaine.specs.length >= 4);
+  // Aucune valeur présentée comme un fait : chaque plage est « selon modèle ».
+  for (const spec of gaine.specs) assert.match(spec.value, /selon modèle/, spec.label);
+  assert.match(gaine.description, /indicati/);
 });
 
 test("les nouveaux produits sont publiés, sans caractéristiques inventées", async () => {
   const created = await rows<{ specs: unknown[]; published: boolean; stock: string }>(
-    "select specs, published, stock from public.products where position >= 100",
+    "select specs, published, stock from public.products where position between 100 and 113",
   );
   assert.equal(created.length, 14);
   for (const product of created) {
