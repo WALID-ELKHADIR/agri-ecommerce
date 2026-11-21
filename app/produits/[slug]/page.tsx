@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -9,21 +8,23 @@ import {
   Check,
   Clock,
   Headset,
-  ShieldCheck,
   Truck,
   WhatsApp,
 } from "@/components/icons";
-import { MobileCta } from "@/components/mobile-cta";
+import { Gallery } from "@/components/product/gallery";
+import { StickyBar } from "@/components/product/sticky-bar";
 import { CARD_SIZES, ProductCard } from "@/components/product-card";
 import { ProductQuote } from "@/components/product-quote";
 import { SiteFooterWithSettings } from "@/components/site-footer-server";
 import { SiteHeader } from "@/components/site-header";
+import { WhatsAppLink } from "@/components/whatsapp-link";
 import { generalMessage, whatsappLink } from "@/lib/catalog";
 import {
   getCatalog,
   getProductBySlug,
   getRelatedProducts,
 } from "@/lib/catalog-data";
+import { catalogHref } from "@/lib/catalog-query";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -57,19 +58,19 @@ export async function generateMetadata({
 
 const assurances = [
   {
-    icon: ShieldCheck,
-    title: "Garantie constructeur",
-    text: "Matériel professionnel sélectionné",
-  },
-  {
     icon: Truck,
     title: "Livraison nationale",
     text: "Expédition partout au Maroc",
   },
   {
+    icon: Headset,
+    title: "Conseil technique",
+    text: "Aide au choix du matériel",
+  },
+  {
     icon: Clock,
     title: "Devis sous 24h",
-    text: "Réponse d'un technicien",
+    text: "Prix et disponibilité sur WhatsApp",
   },
 ];
 
@@ -93,7 +94,6 @@ export default function ProduitPage({ params }: ProductPageProps) {
       </main>
 
       <SiteFooterWithSettings />
-      <MobileCta />
     </>
   );
 }
@@ -139,26 +139,15 @@ async function ProductDetail({ slug }: { slug: string }) {
           </Link>
 
           <div className="mt-4 grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
-            <div className="relative overflow-hidden rounded-3xl border border-soil-200 bg-white shadow-sm">
-              <div className="relative h-64 bg-gradient-to-br from-soil-50 via-white to-water-50/60 sm:h-80 lg:h-[26rem]">
-                <Image
-                  src={product.image}
-                  alt={product.imageAlt}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 640px"
-                  className="object-contain p-8 sm:p-10"
-                />
-              </div>
-              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-soil-100 px-4 py-3">
-                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-field-700">
-                  <span className="h-1.5 w-1.5 rounded-full bg-field-500" />
-                  {product.stock}
-                </span>
-                <span className="text-[11px] text-soil-500">
-                  Photos non contractuelles
-                </span>
-              </div>
+            <div>
+              <Gallery
+                productName={product.name}
+                images={[
+                  { src: product.image, alt: product.imageAlt, blurDataURL: product.imageBlurDataURL },
+                  ...product.gallery.map((image) => ({ src: image.src, alt: image.alt, blurDataURL: image.blurDataURL, contain: false })),
+                ]}
+              />
+              <p className="mt-2 text-right text-[11px] text-soil-500">Photos non contractuelles</p>
             </div>
 
             <div className="flex flex-col">
@@ -181,19 +170,30 @@ async function ProductDetail({ slug }: { slug: string }) {
                 {product.description}
               </p>
 
-              <dl className="mt-5 divide-y divide-soil-100 overflow-hidden rounded-2xl border border-soil-200 bg-white">
-                {product.specs.map((spec) => (
-                  <div
-                    key={spec.label}
-                    className="flex items-center justify-between gap-4 px-4 py-3 text-sm"
-                  >
-                    <dt className="text-soil-500">{spec.label}</dt>
-                    <dd className="text-right font-semibold text-soil-900">
-                      {spec.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+              <p className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-field-700">
+                <span className="h-2 w-2 rounded-full bg-field-500" />
+                {product.stock}
+              </p>
+
+              {product.specs.length > 0 ? (
+                <table className="mt-4 w-full overflow-hidden rounded-2xl border border-soil-200 bg-white text-sm">
+                  <caption className="sr-only">Caractéristiques de {product.name}</caption>
+                  <tbody className="divide-y divide-soil-100">
+                    {product.specs.map((spec) => (
+                      <tr key={spec.label}>
+                        <th scope="row" className="px-4 py-3 text-left font-normal text-soil-500">
+                          {spec.label}
+                        </th>
+                        <td className="px-4 py-3 text-right font-semibold text-soil-900">{spec.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="mt-4 rounded-2xl border border-soil-200 bg-white px-4 py-3 text-sm text-soil-600">
+                  Caractéristiques détaillées sur demande : posez votre question sur WhatsApp.
+                </p>
+              )}
 
               <div className="mt-4">
                 <ProductQuote product={product} />
@@ -263,20 +263,20 @@ async function ProductDetail({ slug }: { slug: string }) {
               Besoin d’un conseil technique ?
             </p>
             <p className="mt-1 text-sm leading-relaxed text-soil-600">
-              Un technicien vous aide à valider le modèle, les raccords et la
-              protection électrique avant commande.
+              Nous vous aidons à valider le modèle et les raccords adaptés à
+              votre installation avant commande.
             </p>
-            <a
+            <WhatsAppLink
               href={whatsappLink(generalMessage())}
-              target="_blank"
-              rel="noopener noreferrer"
+              source="fiche-produit"
+              message={generalMessage()}
               className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-3 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
             >
               <WhatsApp className="h-4 w-4" />
               Poser une question
-            </a>
+            </WhatsAppLink>
             <Link
-              href="/produits"
+              href={catalogHref({ gamme: product.category })}
               className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-soil-300 bg-white px-4 py-3 text-sm font-semibold text-soil-900 transition hover:border-water-300"
             >
               Voir les produits de cette gamme
@@ -294,7 +294,7 @@ async function ProductDetail({ slug }: { slug: string }) {
                 Dans la même gamme
               </h2>
               <Link
-                href="/produits"
+                href={catalogHref({ gamme: product.category })}
                 className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-soil-900 transition hover:text-water-700"
               >
                 Tout voir
@@ -302,7 +302,7 @@ async function ProductDetail({ slug }: { slug: string }) {
               </Link>
             </div>
 
-            <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
               {related.map((item) => (
                 <ProductCard key={item.slug} product={item} sizes={CARD_SIZES.grid} />
               ))}
@@ -310,6 +310,7 @@ async function ProductDetail({ slug }: { slug: string }) {
           </div>
         </section>
       ) : null}
+      <StickyBar product={product} />
     </>
   );
 }

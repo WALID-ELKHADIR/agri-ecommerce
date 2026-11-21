@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Minus, Phone, Plus, WhatsApp } from "@/components/icons";
-import { saveQuoteRequest } from "@/lib/actions/quotes";
+import { AddToQuoteButton } from "@/components/quote-list/add-to-quote-button";
+import { WhatsAppLink } from "@/components/whatsapp-link";
 import {
   BRAND,
   productMessage,
@@ -12,6 +13,8 @@ import {
 
 export function ProductQuote({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
+  // Ce produit seul : la liste de devis a son propre envoi.
+  const message = productMessage(product, quantity);
 
   return (
     <div className="rounded-2xl border border-soil-200 bg-white p-4 sm:p-5">
@@ -36,7 +39,7 @@ export function ProductQuote({ product }: { product: Product }) {
           </span>
           <button
             type="button"
-            onClick={() => setQuantity((value) => value + 1)}
+            onClick={() => setQuantity((value) => Math.min(99, value + 1))}
             className="flex h-8 w-8 items-center justify-center rounded-full text-soil-900 transition hover:bg-soil-100"
             aria-label="Augmenter la quantité"
           >
@@ -45,25 +48,19 @@ export function ProductQuote({ product }: { product: Product }) {
         </div>
       </div>
 
-      <a
-        href={whatsappLink(productMessage(product, quantity))}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={() => {
-          // Enregistre la demande côté serveur sans bloquer l'ouverture de WhatsApp.
-          void saveQuoteRequest({
-            name: "",
-            productSlug: product.slug,
-            quantity,
-            message: product.name,
-            source: "fiche-produit",
-          });
-        }}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
-      >
-        <WhatsApp className="h-5 w-5" />
-        Demander un devis sur WhatsApp
-      </a>
+      <div className="mt-4 grid gap-2 sm:grid-cols-2">
+        <AddToQuoteButton product={product} quantity={quantity} className="w-full" />
+        <WhatsAppLink
+          href={whatsappLink(message)}
+          source="fiche-produit"
+          message={message}
+          product={{ slug: product.slug, quantity }}
+          className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-whatsapp px-4 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
+        >
+          <WhatsApp className="h-5 w-5" />
+          Devis WhatsApp
+        </WhatsAppLink>
+      </div>
 
       <a
         href={`tel:${BRAND.phoneRaw}`}
