@@ -27,13 +27,17 @@ test("les trois nouvelles catégories existent, sans doublon", async () => {
 // Produits dont la photo est générée hors du manifest produits (scripts/images/process-gaine.ts).
 const AMBIANCE_PRODUCTS: Record<string, string> = {
   "gaine-goutte-a-goutte": "/images/products/gaine-goutte-a-goutte/fournisseur.webp",
+  // Visuels IA (20261125100000_visuels_ia.sql) en attendant une vraie photo.
+  "pompe-immergee-inox-4-pouces": "/images/products/pompe-immergee-inox-4-pouces/ia.webp",
+  "motopompe-centrifuge-inox": "/images/products/motopompe-centrifuge-inox/ia.webp",
+  "coude-pe-filete-male-90": "/images/products/coude-pe-filete-male-90/ia.webp",
 };
 
 test("chaque produit de la base a son image dans le manifest (plus aucun ancien .jpg)", async () => {
   const products = await rows<{ slug: string; image_url: string }>("select slug, image_url from public.products");
-  assert.equal(products.length, Object.keys(PRODUCT_IMAGES).length + Object.keys(AMBIANCE_PRODUCTS).length);
+  assert.equal(products.length, new Set([...Object.keys(PRODUCT_IMAGES), ...Object.keys(AMBIANCE_PRODUCTS)]).size);
   for (const product of products) {
-    assert.equal(product.image_url, PRODUCT_IMAGES[product.slug]?.main.src ?? AMBIANCE_PRODUCTS[product.slug], product.slug);
+    assert.equal(product.image_url, AMBIANCE_PRODUCTS[product.slug] ?? PRODUCT_IMAGES[product.slug]?.main.src, product.slug);
   }
 });
 
@@ -95,4 +99,18 @@ test("gaine goutte-à-goutte : photo du fournisseur décrite et mise en avant su
   );
   assert.match(gaine.image_alt, /rouleau/i);
   assert.equal(gaine.featured, true);
+});
+
+test("visuels IA : seule l'image provisoire est remplacée, jamais une photo ajoutée depuis l'admin", async () => {
+  const fresh = await createSupabaseDb();
+  try {
+    await fresh.query("update public.products set image_url = 'https://x.supabase.co/storage/v1/object/public/product-images/vraie.webp' where slug = 'coude-pe-filete-male-90'");
+    await fresh.exec(readFileSync("supabase/migrations/20261125100000_visuels_ia.sql", "utf8"));
+    const { rows: kept } = await fresh.query<{ image_url: string }>("select image_url from public.products where slug = 'coude-pe-filete-male-90'");
+    assert.match(kept[0].image_url, /vraie.webp$/);
+    const { rows: alts } = await fresh.query<{ image_alt: string }>("select image_alt from public.products where slug = 'pompe-immergee-inox-4-pouces'");
+    assert.doesNotMatch(alts[0].image_alt, /à venir/);
+  } finally {
+    await fresh.close();
+  }
 });
