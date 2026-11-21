@@ -25,6 +25,8 @@ import {
   getRelatedProducts,
 } from "@/lib/catalog-data";
 import { catalogHref } from "@/lib/catalog-query";
+import { pageMetadata } from "@/lib/seo";
+import { siteConfig } from "@/lib/site-config";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -47,13 +49,15 @@ export async function generateMetadata({
   const product = await getProductBySlug(slug);
 
   if (!product) {
-    return { title: "Produit introuvable | Saqia" };
+    return { title: "Produit introuvable", robots: { index: false, follow: true } };
   }
 
-  return {
-    title: `${product.name} — ${product.categoryLabel} | Saqia`,
+  return pageMetadata({
+    title: `${product.name} — ${product.categoryLabel}`,
     description: product.description,
-  };
+    path: `/produits/${product.slug}`,
+    siteUrl: siteConfig.siteUrl,
+  });
 }
 
 const assurances = [

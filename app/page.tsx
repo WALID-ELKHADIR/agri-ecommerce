@@ -14,7 +14,22 @@ import { MobileCta } from "@/components/mobile-cta";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getCatalog } from "@/lib/catalog-data";
+import { pageMetadata } from "@/lib/seo";
+import { siteConfig } from "@/lib/site-config";
 import { getSiteSettings } from "@/lib/site-settings";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  ...pageMetadata({
+    title: `${siteConfig.name} — ${siteConfig.slogan} Pompes, raccords et irrigation`,
+    description:
+      "Pompes centrifuges et immergées, raccords PE/PVC et kits d'irrigation au Maroc. Composez votre liste et recevez votre devis gratuit sur WhatsApp.",
+    path: "/",
+    siteUrl: siteConfig.siteUrl,
+  }),
+  // Titre complet sur l'accueil (sans le suffixe « | Saqia »).
+  title: { absolute: `${siteConfig.name} — ${siteConfig.slogan} Pompes, raccords et irrigation` },
+};
 
 /** Accueil : sections rendues par le serveur, interactivité limitée aux boutons de devis et WhatsApp. */
 export default async function Page() {

@@ -11,15 +11,27 @@ import { MobileCta } from "@/components/mobile-cta";
 import { SiteFooterWithSettings } from "@/components/site-footer-server";
 import { SiteHeader } from "@/components/site-header";
 import { getCatalog } from "@/lib/catalog-data";
+import { pageMetadata } from "@/lib/seo";
+import { siteConfig } from "@/lib/site-config";
 import { catalogHref, parseCatalogQuery, queryCatalog, stockOptions } from "@/lib/catalog-query";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
-export const metadata: Metadata = {
-  title: "Catalogue — Pompes, raccords et kits d'irrigation | Saqia",
-  description:
-    "Découvrez notre catalogue de pompes centrifuges et immergées, raccords PE/PVC et kits de pompage. Devis technique sous 24h.",
-};
+/**
+ * Les vues filtrées pointent vers /produits (canonique) ; une recherche (?q=)
+ * n'est pas indexée pour éviter les doublons dans Google.
+ */
+export async function generateMetadata({ searchParams }: { searchParams: Promise<SearchParams> }): Promise<Metadata> {
+  const { q } = await searchParams;
+  return pageMetadata({
+    title: "Catalogue — pompes, raccords et kits d'irrigation",
+    description:
+      "Découvrez notre catalogue de pompes centrifuges et immergées, raccords PE/PVC et kits de pompage. Devis technique sous 24h.",
+    path: "/produits",
+    siteUrl: siteConfig.siteUrl,
+    noindex: Boolean(q),
+  });
+}
 
 const trust = [
   {

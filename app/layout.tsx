@@ -27,7 +27,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
-  title: `${siteConfig.name} — ${siteConfig.slogan} Pompes, raccords et irrigation`,
+  title: {
+    default: `${siteConfig.name} — ${siteConfig.slogan} Pompes, raccords et irrigation`,
+    template: `%s | ${siteConfig.name}`,
+  },
+  applicationName: siteConfig.name,
   description:
     "Pompes centrifuges et immergées, raccords PE/PVC et kits d'irrigation pour les professionnels agricoles. Conseil technique et devis sous 24h.",
 };

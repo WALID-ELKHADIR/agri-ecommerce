@@ -15,13 +15,17 @@ import { WhatsAppServerLink } from "@/components/whatsapp-server-link";
 import { SiteFooterWithSettings } from "@/components/site-footer-server";
 import { generalMessage } from "@/lib/catalog";
 import { whatsappUrl, type SiteConfig } from "@/lib/site-config";
+import { pageMetadata } from "@/lib/seo";
+import { siteConfig } from "@/lib/site-config";
 import { getSiteSettings } from "@/lib/site-settings";
 
-export const metadata: Metadata = {
-  title: "Contact & devis — Saqia, pompes et irrigation",
+export const metadata: Metadata = pageMetadata({
+  title: "Contact et devis",
   description:
     "Contactez Saqia pour un devis de pompes, raccords PE/PVC ou kits d'irrigation. WhatsApp, téléphone et e-mail — réponse sous 24h.",
-};
+  path: "/contact",
+  siteUrl: siteConfig.siteUrl,
+});
 
 /** Canaux de contact, avec les coordonnées des réglages de l'admin. */
 const channelsFor = (BRAND: SiteConfig) => [
