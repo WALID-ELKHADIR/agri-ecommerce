@@ -19,20 +19,17 @@ import { catalogHref, parseCatalogQuery, queryCatalog, stockOptions } from "@/li
 type SearchParams = Record<string, string | string[] | undefined>;
 
 /**
- * Les vues filtrées pointent vers /produits (canonique) ; une recherche (?q=)
- * n'est pas indexée pour éviter les doublons dans Google.
+ * Métadonnées statiques (dans <head>, lisibles par tous les robots) : toutes
+ * les vues filtrées pointent vers /produits (canonique). Les recherches (?q=)
+ * sont exclues de l'exploration dans app/robots.ts.
  */
-export async function generateMetadata({ searchParams }: { searchParams: Promise<SearchParams> }): Promise<Metadata> {
-  const { q } = await searchParams;
-  return pageMetadata({
-    title: "Catalogue — pompes, raccords et kits d'irrigation",
-    description:
-      "Découvrez notre catalogue de pompes centrifuges et immergées, raccords PE/PVC et kits de pompage. Devis technique sous 24h.",
-    path: "/produits",
-    siteUrl: siteConfig.siteUrl,
-    noindex: Boolean(q),
-  });
-}
+export const metadata: Metadata = pageMetadata({
+  title: "Catalogue — pompes, raccords et kits d'irrigation",
+  description:
+    "Découvrez notre catalogue de pompes centrifuges et immergées, raccords PE/PVC et kits de pompage. Devis technique sous 24h.",
+  path: "/produits",
+  siteUrl: siteConfig.siteUrl,
+});
 
 const trust = [
   {
