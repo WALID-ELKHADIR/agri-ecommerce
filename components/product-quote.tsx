@@ -5,12 +5,14 @@ import { Minus, Phone, Plus, WhatsApp } from "@/components/icons";
 import { useLocale } from "@/components/i18n/locale-provider";
 import { AddToQuoteButton } from "@/components/quote-list/add-to-quote-button";
 import { WhatsAppLink } from "@/components/whatsapp-link";
+import { useWhatsappContact } from "@/components/whatsapp-provider";
 import { BRAND, type Product } from "@/lib/catalog";
 import { productMessage } from "@/lib/whatsapp";
 
 /** Reçoit seulement le nom et le slug : rien d'autre n'est envoyé au navigateur. */
 export function ProductQuote({ product }: { product: Pick<Product, "slug" | "name"> }) {
   const { t } = useLocale();
+  const contact = useWhatsappContact();
   const [quantity, setQuantity] = useState(1);
   // Ce produit seul : la liste de devis a son propre envoi.
   const message = productMessage(product, quantity, BRAND.siteUrl, t);
@@ -62,13 +64,13 @@ export function ProductQuote({ product }: { product: Pick<Product, "slug" | "nam
       </div>
 
       <a
-        href={`tel:${BRAND.phoneRaw}`}
+        href={`tel:${contact.phoneRaw}`}
         className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-soil-300 bg-white px-4 py-3 text-sm font-semibold text-soil-900 transition hover:border-water-300 hover:bg-water-50/40"
       >
         <Phone className="h-4 w-4 text-water-600" />
         <span>
           {t.ui.call("")}
-          <bdi dir="ltr">{BRAND.phoneDisplay}</bdi>
+          <bdi dir="ltr">{contact.phoneDisplay}</bdi>
         </span>
       </a>
     </div>

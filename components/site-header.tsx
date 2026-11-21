@@ -15,7 +15,8 @@ import {
 } from "@/components/icons";
 import { Logo } from "@/components/brand/logo";
 import { catalogHref } from "@/lib/catalog-query";
-import { BRAND, generalMessage } from "@/lib/catalog";
+import { generalMessage } from "@/lib/catalog";
+import { useWhatsappContact } from "@/components/whatsapp-provider";
 import { QuoteCounter } from "@/components/quote-list/quote-counter";
 import { QuoteDrawer } from "@/components/quote-list/quote-drawer";
 import { Sheet } from "@/components/ui/dialog";
@@ -38,6 +39,8 @@ export function SiteHeader() {
   const pathname = withoutLocale(usePathname());
   const router = useRouter();
   const { t } = useLocale();
+  // Coordonnées des réglages de l'admin.
+  const contact = useWhatsappContact();
 
   function handleChange(value: string) {
     setTerm(value);
@@ -65,15 +68,15 @@ export function SiteHeader() {
           <div className="flex items-center gap-4">
             <span lang="fr" dir="ltr" className="hidden items-center gap-1.5 text-soil-300/80 md:flex">
               <MapPin className="h-3.5 w-3.5 text-water-400" />
-              {BRAND.address}
+              {contact.address}
             </span>
             <a
-              href={`tel:${BRAND.phoneRaw}`}
+              href={`tel:${contact.phoneRaw}`}
               dir="ltr"
               className="relative after:absolute after:-inset-x-2 after:-inset-y-4 after:content-[''] flex items-center gap-1.5 font-semibold text-white transition hover:text-water-300"
             >
               <Phone className="h-3.5 w-3.5 text-water-400" />
-              {BRAND.phoneDisplay}
+              {contact.phoneDisplay}
             </a>
           </div>
         </div>
@@ -214,12 +217,12 @@ export function SiteHeader() {
                 {t.requestQuote}
               </WhatsAppLink>
               <a
-                href={`tel:${BRAND.phoneRaw}`}
+                href={`tel:${contact.phoneRaw}`}
               dir="ltr"
                 className="flex items-center justify-center gap-2 rounded-xl border border-soil-300 bg-white px-4 py-3 text-sm font-semibold text-soil-900"
               >
                 <Phone className="h-4 w-4" />
-                {BRAND.phoneDisplay}
+                {contact.phoneDisplay}
               </a>
             </div>
           </div>
