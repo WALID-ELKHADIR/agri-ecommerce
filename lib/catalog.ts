@@ -1,4 +1,4 @@
-import { AMBIANCE_IMAGES } from "./ambiance-images";
+import type { CategoryArabic, ProductArabic } from "./i18n/localize-catalog";
 import { resolveProductImages, type ProductImage } from "./product-images";
 import { siteConfig } from "./site-config";
 import {
@@ -12,6 +12,8 @@ export type Category = {
   label: string;
   short: string;
   description: string;
+  /** Textes arabes saisis dans l'admin (facultatifs). */
+  ar?: CategoryArabic;
   /** Image de la gamme choisie dans l'admin (facultative). */
   imageUrl?: string;
 };
@@ -39,6 +41,8 @@ export type Product = {
   specs: ProductSpec[];
   stock: string;
   featured?: boolean;
+  /** Textes arabes saisis dans l'admin (facultatifs). */
+  ar?: ProductArabic;
 };
 
 export type GalleryImage = {
@@ -387,6 +391,7 @@ const productData: ProductData[] = [
       { label: "Longueur du rouleau", value: "500 à 3 000 m (selon modèle)" },
     ],
     stock: "Sur demande",
+    featured: true,
   },
   {
     slug: "injecteur-venturi",
@@ -440,16 +445,19 @@ const productData: ProductData[] = [
   },
 ];
 
-/** Produits illustrés par une photo d'ambiance (pas de photo fournisseur dans le manifest). */
-const AMBIANCE_PRODUCT_IMAGES: Record<string, { src: string; alt: string }> = {
+/**
+ * Produits dont la photo est générée hors du manifest des photos fournisseur
+ * (scripts/images/process-gaine.ts pour la gaine goutte-à-goutte).
+ */
+const LOCAL_PRODUCT_IMAGES: Record<string, { src: string; alt: string }> = {
   "gaine-goutte-a-goutte": {
-    src: AMBIANCE_IMAGES.produitGaineGoutte.src,
-    alt: AMBIANCE_IMAGES.produitGaineGoutte.alt,
+    src: "/images/products/gaine-goutte-a-goutte/fournisseur.webp",
+    alt: "Rouleau de tuyau goutte-à-goutte noir cerclé de liens orange",
   },
 };
 
 export const products: Product[] = productData.map((product) =>
-  withImages(product, AMBIANCE_PRODUCT_IMAGES[product.slug]),
+  withImages(product, LOCAL_PRODUCT_IMAGES[product.slug]),
 );
 
 /** Image du manifest pour la galerie de l'accueil (principale ou 1re vue de galerie). */
@@ -479,8 +487,9 @@ export function whatsappLink(message: string) {
   return buildWhatsappLink(message, BRAND.whatsappNumber);
 }
 
-export function generalMessage() {
-  return buildGeneralMessage(BRAND.name);
+/** Message WhatsApp général, dans la langue du dictionnaire donné (français par défaut). */
+export function generalMessage(copy?: Parameters<typeof buildGeneralMessage>[1]) {
+  return buildGeneralMessage(BRAND.name, copy);
 }
 
 export function productMessage(product: Pick<Product, "slug" | "name">, quantity = 1) {

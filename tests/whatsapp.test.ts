@@ -62,3 +62,20 @@ test("lien : numéro et texte encodé", () => {
 test("lien : la région est acceptée mais pas encore routée", () => {
   assert.equal(whatsappLink("m", "212600000000", "souss"), whatsappLink("m", "212600000000"));
 });
+
+test("messages en arabe avec le dictionnaire arabe", async () => {
+  const { ar } = await import("../lib/i18n/ar.ts");
+  const message = quoteListMessage([{ name: "A", quantity: 2 }], { name: "علي", city: "أكادير" }, "Saqia", ar);
+  assert.match(message, /مرحبًا Saqia/);
+  assert.match(message, /• 2 × A/);
+  assert.match(message, /المدينة: أكادير/);
+  assert.match(productMessage({ name: "Pompe", slug: "p" }, 1, "https://saqia.site", ar), /أرغب في عرض سعر/);
+});
+
+test("un seul produit en trop : accord au singulier", () => {
+  const lines = Array.from({ length: 13 }, (_, i) => ({ name: `${"x".repeat(140)}-${i}`, quantity: 1 }));
+  const message = quoteListMessage(lines, {}, "Saqia");
+  const shown = message.split("\n").filter((l) => l.startsWith("• ")).length;
+  if (13 - shown === 1) assert.match(message, /… et 1 autre produit$/m);
+  else assert.match(message, new RegExp(`… et ${13 - shown} autres produits`));
+});

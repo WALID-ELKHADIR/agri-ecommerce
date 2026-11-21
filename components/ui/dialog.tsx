@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, type MouseEvent, type ReactNode } from "react";
+import { useLocale } from "@/components/i18n/locale-provider";
 import { cn } from "@/lib/cn";
 
 type Placement = "center" | "bottom" | "right";
@@ -27,8 +28,10 @@ const PLACEMENTS: Record<Placement, string> = {
     "mt-auto mb-0 max-h-[85dvh] w-full max-w-none rounded-t-panel " +
     "motion-safe:translate-y-full open:translate-y-0 motion-safe:starting:open:translate-y-full",
   right:
-    "ml-auto mr-0 h-dvh max-h-none w-[min(28rem,100%)] " +
-    "motion-safe:translate-x-full open:translate-x-0 motion-safe:starting:open:translate-x-full",
+    // Côté « fin » de ligne : à droite en français, à gauche en arabe (--sheet-dir).
+    "ms-auto me-0 h-dvh max-h-none w-[min(28rem,100%)] [--sheet-dir:1] rtl:[--sheet-dir:-1] " +
+    "motion-safe:translate-x-[calc(var(--sheet-dir)*100%)] open:translate-x-0 " +
+    "motion-safe:starting:open:translate-x-[calc(var(--sheet-dir)*100%)]",
 };
 
 /** Vrai si le clic tombe hors de la boîte (donc sur le fond assombri). */
@@ -56,6 +59,7 @@ function ModalBase({
   className,
   placement,
 }: DialogProps & { placement: Placement }) {
+  const { t } = useLocale();
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const descriptionId = useId();
@@ -100,8 +104,8 @@ function ModalBase({
         <button
           type="button"
           onClick={close}
-          aria-label="Fermer"
-          className="-mr-2 -mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-soil-600 hover:bg-soil-100 hover:text-soil-900"
+          aria-label={t.ui.close}
+          className="-me-2 -mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-soil-600 hover:bg-soil-100 hover:text-soil-900"
         >
           <svg aria-hidden="true" viewBox="0 0 16 16" className="h-4 w-4">
             <path d="m4 4 8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />

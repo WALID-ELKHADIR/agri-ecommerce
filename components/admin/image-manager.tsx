@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/toast";
 import { computeSquareCrop, MAX_ZOOM, MIN_ZOOM, outputSize, type CropSettings } from "@/lib/admin/image-crop";
 import type { ImageEntry } from "@/lib/admin/image-list";
 import { cn } from "@/lib/cn";
+import { useAdminDictionary } from "@/components/admin/use-admin-dictionary";
 import { getBrowserClient } from "@/lib/supabase/browser";
 
 const BUCKET = "product-images";
@@ -44,7 +45,11 @@ async function loadPending(file: File): Promise<Pending> {
 }
 
 /** Recadre en carré et compresse en WebP (1600 px au plus), dans le navigateur. */
-async function cropToWebp(pending: Pending, settings: CropSettings): Promise<Blob> {
+async function cropToWebp(
+  pending: Pending,
+  settings: CropSettings,
+  errors: { noCanvas: string; noWebp: string },
+): Promise<Blob> {
   const bitmap = await createImageBitmap(pending.file);
   const crop = computeSquareCrop(bitmap.width, bitmap.height, settings);
   const size = outputSize(crop.size);
@@ -52,17 +57,19 @@ async function cropToWebp(pending: Pending, settings: CropSettings): Promise<Blo
   canvas.width = size;
   canvas.height = size;
   const context = canvas.getContext("2d");
-  if (!context) throw new Error("Canvas indisponible");
+  if (!context) throw new Error(errors.noCanvas);
   context.imageSmoothingQuality = "high";
   context.drawImage(bitmap, crop.x, crop.y, crop.size, crop.size, 0, 0, size, size);
   bitmap.close();
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/webp", WEBP_QUALITY));
-  if (!blob || blob.type !== "image/webp") throw new Error("Ce navigateur ne sait pas produire du WebP.");
+  if (!blob || blob.type !== "image/webp") throw new Error(errors.noWebp);
   return blob;
 }
 
 export function ImageManager({ name, initial, folder, max = 12, label = "Images" }: ImageManagerProps) {
   const toast = useToast();
+  const admin = useAdminDictionary();
+  const t = admin.images;
   const inputId = useId();
   const fileInput = useRef<HTMLInputElement>(null);
   const [images, setImages] = useState<ManagedImage[]>(() =>
@@ -96,21 +103,21 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
     const guard = (event: SubmitEvent) => {
       if (!uploadingRef.current) return;
       event.preventDefault();
-      toast({ title: "Envoi de photo en cours", description: "Attendez la fin du recadrage et de l'envoi avant d'enregistrer." });
+      toast({ title: t.uploadingTitle, description: t.uploadingText });
     };
     form.addEventListener("submit", guard);
     return () => form.removeEventListener("submit", guard);
-  }, [toast]);
+  }, [toast, t]);
 
   async function addFiles(files: FileList | File[]) {
     const accepted = [...files].filter((file) => file.type.startsWith("image/"));
     if (accepted.length === 0) {
-      toast({ tone: "error", title: "Format non pris en charge", description: "Choisissez une photo (JPEG, PNG ou WebP)." });
+      toast({ tone: "error", title: t.formatTitle, description: t.formatText });
       return;
     }
     const room = Math.max(0, remaining - queue.length);
     if (room === 0) {
-      toast({ tone: "error", title: `${max} image${max > 1 ? "s" : ""} au maximum`, description: "Retirez une image avant d'en ajouter." });
+      toast({ tone: "error", title: t.maxTitle(max), description: t.maxText });
       return;
     }
     const results = await Promise.allSettled(accepted.slice(0, room).map(loadPending));
@@ -119,8 +126,8 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
       if (result.status === "rejected") {
         toast({
           tone: "error",
-          title: `Photo illisible : ${accepted[index].name}`,
-          description: "Enregistrez-la en JPEG ou PNG (les photos HEIC d'iPhone ne sont pas lues par tous les navigateurs).",
+          title: t.unreadableTitle(accepted[index].name),
+          description: t.unreadableText,
         });
       }
     });
@@ -133,12 +140,12 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
     if (!current) return;
     const supabase = getBrowserClient();
     if (!supabase) {
-      toast({ tone: "error", title: "Supabase n'est pas configuré" });
+      toast({ tone: "error", title: t.noSupabase });
       return;
     }
     setUploading(true);
     try {
-      const blob = await cropToWebp(current, settings);
+      const blob = await cropToWebp(current, settings, t);
       const path = `${folder}/${crypto.randomUUID()}.webp`;
       const { error } = await supabase.storage
         .from(BUCKET)
@@ -146,12 +153,12 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
       if (error) throw new Error(error.message);
       const url = supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
       setImages((existing) => [...existing, { url, storagePath: path, alt: "", key: key(), fresh: true }]);
-      toast({ title: "Image ajoutée", description: `${Math.round(blob.size / 1024)} Ko, pensez à enregistrer.` });
+      toast({ title: t.addedTitle, description: t.addedText(Math.round(blob.size / 1024)) });
     } catch (error) {
       toast({
         tone: "error",
-        title: "Envoi impossible",
-        description: error instanceof Error ? error.message : "Réessayez dans un instant.",
+        title: t.failedTitle,
+        description: error instanceof Error ? error.message : t.failedText,
       });
     } finally {
       setUploading(false);
@@ -202,7 +209,7 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-sm font-semibold text-soil-800">{label}</p>
         <p className="text-xs text-soil-500">
-          {max > 1 ? "La première image est l'image principale. Glissez pour réordonner." : "Format carré, recadré à l'ajout."}
+          {max > 1 ? t.multipleHint : t.singleHint}
         </p>
       </div>
 
@@ -231,8 +238,8 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
                 {/* eslint-disable-next-line @next/next/no-img-element -- aperçu admin (URL Storage ou locale), pas d'optimisation utile ici */}
                 <img src={image.url} alt="" className="h-full w-full object-cover" />
                 {index === 0 && max > 1 ? (
-                  <span className="absolute left-2 top-2 rounded-full bg-field-900 px-2 py-0.5 text-[11px] font-semibold text-white">
-                    Principale
+                  <span className="absolute start-2 top-2 rounded-full bg-field-900 px-2 py-0.5 text-[11px] font-semibold text-white">
+                    {t.main}
                   </span>
                 ) : null}
               </div>
@@ -247,25 +254,25 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
                         existing.map((item, i) => (i === index ? { ...item, alt: event.target.value } : item)),
                       )
                     }
-                    placeholder="Description de l'image"
+                    placeholder={t.altPlaceholder}
                     className="min-h-9 w-full rounded-control border border-soil-300 px-2 text-xs"
                   />
                 </label>
                 <div className="flex items-center justify-between gap-1">
                   {max > 1 ? (
                     <div className="flex gap-1">
-                      <IconButton label="Déplacer à gauche" onClick={() => move(index, index - 1)} disabled={index === 0}>
-                        <ArrowLeft className="h-4 w-4" />
+                      <IconButton label={t.moveLeft} onClick={() => move(index, index - 1)} disabled={index === 0}>
+                        <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
                       </IconButton>
                       <IconButton
-                        label="Déplacer à droite"
+                        label={t.moveRight}
                         onClick={() => move(index, index + 1)}
                         disabled={index === images.length - 1}
                       >
-                        <ArrowRight className="h-4 w-4" />
+                        <ArrowRight className="h-4 w-4 rtl:rotate-180" />
                       </IconButton>
                       {index > 0 ? (
-                        <IconButton label="Définir comme image principale" onClick={() => move(index, 0)}>
+                        <IconButton label={t.setMain} onClick={() => move(index, 0)}>
                           <Star className="h-4 w-4" />
                         </IconButton>
                       ) : null}
@@ -273,7 +280,7 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
                   ) : (
                     <span />
                   )}
-                  <IconButton label="Retirer l'image" onClick={() => void remove(index)} danger>
+                  <IconButton label={t.remove} onClick={() => void remove(index)} danger>
                     <Trash className="h-4 w-4" />
                   </IconButton>
                 </div>
@@ -297,9 +304,9 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
           )}
         >
           <ImageIcon className="h-6 w-6 text-soil-500" />
-          <p className="text-sm text-soil-700">Glissez une photo ici, ou</p>
+          <p className="text-sm text-soil-700">{t.dropHere}</p>
           <label htmlFor={inputId} className="sr-only">
-            Ajouter des images
+            {t.add}
           </label>
           <input
             ref={fileInput}
@@ -315,9 +322,9 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
           />
           <Button variant="secondary" size="sm" onClick={() => fileInput.current?.click()}>
             <Upload className="h-4 w-4" />
-            Choisir {max > 1 ? "des photos" : "une photo"}
+            {t.choose(max > 1)}
           </Button>
-          <p className="text-xs text-soil-500">Recadrée en carré et compressée en WebP (1600 px max) avant l&apos;envoi.</p>
+          <p className="text-xs text-soil-500">{t.compressNote}</p>
         </div>
       ) : null}
 
@@ -327,15 +334,15 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
         onClose={() => {
           if (!uploading) skipCurrent();
         }}
-        title="Recadrer la photo"
-        description="Centrez le produit dans le carré : c'est ce cadrage qui apparaîtra sur le site."
+        title={t.cropTitle}
+        description={t.cropText}
         footer={
           <>
             <Button variant="ghost" onClick={skipCurrent} disabled={uploading}>
-              Annuler
+              {admin.common.cancel}
             </Button>
             <Button onClick={() => void confirmCrop()} loading={uploading}>
-              Recadrer et envoyer
+              {t.cropConfirm}
             </Button>
           </>
         }
@@ -346,7 +353,7 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
               {/* eslint-disable-next-line @next/next/no-img-element -- aperçu local (blob:) du recadrage */}
               <img
                 src={current.previewUrl}
-                alt="Aperçu du recadrage"
+                alt={t.cropPreview}
                 className="absolute max-w-none"
                 style={{
                   width: `${(current.width / crop.size) * 100}%`,
@@ -355,13 +362,13 @@ export function ImageManager({ name, initial, folder, max = 12, label = "Images"
                 }}
               />
             </div>
-            <Slider label="Zoom" min={MIN_ZOOM} max={MAX_ZOOM} step={0.05} value={settings.zoom}
+            <Slider label={t.zoom} min={MIN_ZOOM} max={MAX_ZOOM} step={0.05} value={settings.zoom}
               onChange={(zoom) => setSettings((s) => ({ ...s, zoom }))} />
-            <Slider label="Gauche ↔ droite" min={-1} max={1} step={0.02} value={settings.x}
+            <Slider label={t.horizontal} min={-1} max={1} step={0.02} value={settings.x}
               onChange={(x) => setSettings((s) => ({ ...s, x }))} />
-            <Slider label="Haut ↕ bas" min={-1} max={1} step={0.02} value={settings.y}
+            <Slider label={t.vertical} min={-1} max={1} step={0.02} value={settings.y}
               onChange={(y) => setSettings((s) => ({ ...s, y }))} />
-            {queue.length > 1 ? <p className="text-xs text-soil-500">Encore {queue.length - 1} photo(s) à recadrer.</p> : null}
+            {queue.length > 1 ? <p className="text-xs text-soil-500">{t.remaining(queue.length - 1)}</p> : null}
           </div>
         ) : null}
       </Dialog>

@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { useLocale } from "@/components/i18n/locale-provider";
 import { cn } from "@/lib/cn";
 
 export type ToastTone = "success" | "info" | "error";
@@ -54,6 +55,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 }
 
 function Toast({ toast, onDismiss }: { toast: ToastItem; onDismiss: (id: number) => void }) {
+  const { t } = useLocale();
   // Le minuteur s'arrête tant que la souris ou le focus sont sur la notification.
   const [paused, setPaused] = useState(false);
   const persistent = toast.tone === "error";
@@ -72,7 +74,7 @@ function Toast({ toast, onDismiss }: { toast: ToastItem; onDismiss: (id: number)
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
       className={cn(
-        "pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-card border bg-white py-3 pl-4 pr-1 shadow-lifted",
+        "pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-card border bg-white py-3 ps-4 pe-1 shadow-lifted",
         "motion-safe:animate-[toast-in_var(--duration-base)_var(--ease-out-expo)]",
         tone.box,
       )}
@@ -85,7 +87,7 @@ function Toast({ toast, onDismiss }: { toast: ToastItem; onDismiss: (id: number)
       <button
         type="button"
         onClick={() => onDismiss(toast.id)}
-        aria-label="Fermer la notification"
+        aria-label={t.ui.closeNotification}
         className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-soil-500 hover:bg-soil-100 hover:text-soil-900"
       >
         <svg aria-hidden="true" viewBox="0 0 16 16" className="h-3.5 w-3.5">

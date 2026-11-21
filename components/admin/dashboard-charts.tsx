@@ -1,9 +1,10 @@
 /** Petits graphiques SVG du tableau de bord (rendus côté serveur, sans bibliothèque). */
 
-const dayFormat = new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric", timeZone: "UTC" });
+type DailyLabels = { chart: (total: number, max: number) => string; start: string; end: string; locale: string };
 
 /** Demandes par jour : barres verticales, valeur du jour le plus haut indiquée. */
-export function DailyBars({ data }: { data: { date: string; count: number }[] }) {
+export function DailyBars({ data, labels }: { data: { date: string; count: number }[]; labels: DailyLabels }) {
+  const dayFormat = new Intl.DateTimeFormat(labels.locale, { weekday: "short", day: "numeric", timeZone: "UTC" });
   const max = Math.max(1, ...data.map((day) => day.count));
   const total = data.reduce((sum, day) => sum + day.count, 0);
   const width = 280;
@@ -12,11 +13,11 @@ export function DailyBars({ data }: { data: { date: string; count: number }[] })
   const bar = (width - gap * (data.length - 1)) / data.length;
 
   return (
-    <figure className="grid gap-2">
+    <figure dir="ltr" className="grid gap-2">
       <svg
         viewBox={`0 0 ${width} ${height + 18}`}
         role="img"
-        aria-label={`${total} demande${total > 1 ? "s" : ""} sur 14 jours, au plus ${max} par jour`}
+        aria-label={labels.chart(total, max)}
         className="h-auto w-full"
       >
         <line x1="0" x2={width} y1={height} y2={height} className="stroke-soil-200" strokeWidth="1" />
@@ -37,10 +38,10 @@ export function DailyBars({ data }: { data: { date: string; count: number }[] })
           );
         })}
         <text x="0" y={height + 14} className="fill-soil-500 text-[10px]">
-          il y a 14 j
+          {labels.start}
         </text>
         <text x={width} y={height + 14} textAnchor="end" className="fill-soil-500 text-[10px]">
-          aujourd&apos;hui
+          {labels.end}
         </text>
       </svg>
     </figure>

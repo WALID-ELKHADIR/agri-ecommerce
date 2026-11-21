@@ -6,33 +6,35 @@ import { computeQuoteStats } from "@/lib/admin/quote-stats";
 import { requireAdmin } from "@/lib/auth";
 import { getAdminStats, listAdminProducts, listQuoteRequests } from "@/lib/admin-data";
 import { isSupabaseConfigured } from "@/lib/supabase/public";
+import { getAdminDictionary } from "@/lib/i18n/server";
 
-export function SetupNotice({ error }: { error?: string | null }) {
+export async function SetupNotice({ error }: { error?: string | null }) {
   if (isSupabaseConfigured() && !error) {
     return null;
   }
+  const t = (await getAdminDictionary()).setup;
 
   return (
     <div className="rounded-2xl border border-harvest-200 bg-harvest-50 p-4 text-sm text-harvest-900">
       <p className="flex items-center gap-2 font-semibold">
         <Database className="h-4 w-4" />
-        Base de données à initialiser
+        {t.title}
       </p>
-      <ol className="mt-2 list-decimal space-y-1 pl-5 text-xs leading-relaxed">
+      <ol className="mt-2 list-decimal space-y-1 ps-5 text-xs leading-relaxed">
         <li>
-          Ouvrez votre projet Supabase → <strong>SQL Editor</strong>.
+          {t.step1Before}<strong>SQL Editor</strong>.
         </li>
         <li>
-          Exécutez, dans l&apos;ordre, les fichiers de{" "}
-          <code className="rounded bg-harvest-100 px-1">supabase/migrations/</code> (voir le README).
+          {t.step2Before}
+          <code className="rounded bg-harvest-100 px-1">supabase/migrations/</code>{t.step2After}
         </li>
         <li>
-          Créez votre compte dans <strong>Authentication → Users</strong>, puis déclarez-le dans{" "}
+          {t.step3Before}<strong dir="ltr">Authentication → Users</strong>{t.step3Middle}
           <code className="rounded bg-harvest-100 px-1">admin_users</code>.
         </li>
       </ol>
       {error ? (
-        <p className="mt-2 text-[11px] text-harvest-800">Détail : {error}</p>
+        <p className="mt-2 text-[11px] text-harvest-800">{t.detail(error)}</p>
       ) : null}
     </div>
   );
@@ -113,11 +115,13 @@ function Panel({ title, action, children }: { title: string; action?: ReactNode;
   );
 }
 
-const percent = new Intl.NumberFormat("fr-FR", { style: "percent", maximumFractionDigits: 0 });
-const dateTime = new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Africa/Casablanca" });
 
 export async function DashboardContent() {
   await requireAdmin();
+  const t = await getAdminDictionary();
+  const d = t.dashboard;
+  const percent = new Intl.NumberFormat(t.dateLocale, { style: "percent", maximumFractionDigits: 0 });
+  const dateTime = new Intl.DateTimeFormat(t.dateLocale, { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Africa/Casablanca" });
 
   const [stats, { quotes, error }, { products }] = await Promise.all([
     getAdminStats(),
@@ -133,65 +137,65 @@ export async function DashboardContent() {
       <SetupNotice error={error} />
 
       <AdminHeader
-        title="Tableau de bord"
-        description="Les demandes de devis et l'état du catalogue, en un coup d'œil."
-        action={{ href: "/admin/produits/nouveau", label: "Nouveau produit" }}
+        title={d.title}
+        description={d.description}
+        action={{ href: "/admin/produits/nouveau", label: d.newProduct }}
       />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="À traiter" value={stats.pending} hint="Nouvelles demandes" href="/admin/demandes?statut=new" />
-        <StatCard label="Demandes, 7 jours" value={kpis.last7} hint={`${kpis.last30} sur 30 jours`} href="/admin/demandes?periode=7" />
+        <StatCard label={d.pending} value={stats.pending} hint={d.pendingHint} href="/admin/demandes?statut=new" />
+        <StatCard label={d.last7} value={kpis.last7} hint={d.last30Hint(kpis.last30)} href="/admin/demandes?periode=7" />
         <StatCard
-          label="Taux de gain, 30 jours"
+          label={d.winRate}
           value={kpis.winRate === null ? "—" : percent.format(kpis.winRate)}
-          hint="Gagnées ÷ (gagnées + perdues)"
+          hint={d.winRateHint}
         />
         <StatCard
-          label="Produits en ligne"
+          label={d.online}
           value={`${stats.published} / ${stats.products}`}
-          hint={toComplete > 0 ? `${toComplete} fiche${toComplete > 1 ? "s" : ""} à compléter` : "Toutes les fiches sont complètes"}
+          hint={toComplete > 0 ? d.toComplete(toComplete) : d.allComplete}
           href="/admin/produits"
         />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <Panel title="Demandes, 14 derniers jours">
-          <DailyBars data={kpis.daily} />
+        <Panel title={d.daily}>
+          <DailyBars data={kpis.daily} labels={{ chart: d.chartLabel, start: d.daysAgo, end: d.today, locale: t.dateLocale }} />
         </Panel>
-        <Panel title="Produits les plus demandés">
+        <Panel title={d.topProducts}>
           <RankBars
             data={kpis.topProducts.map((item) => ({ label: names.get(item.slug) ?? item.slug, count: item.count }))}
-            empty="Aucun produit demandé sur 30 jours."
+            empty={d.noTopProduct}
           />
         </Panel>
-        <Panel title="Origine des demandes">
-          <RankBars data={kpis.sources.map((item) => ({ label: item.source, count: item.count }))} empty="Aucune demande sur 30 jours." />
+        <Panel title={d.sources}>
+          <RankBars data={kpis.sources.map((item) => ({ label: t.quotes.sources[item.source] ?? item.source, count: item.count }))} empty={d.noSource} />
         </Panel>
       </div>
 
       <Panel
-        title="Dernières demandes"
+        title={d.latest}
         action={
           <Link href="/admin/demandes" className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-water-700 hover:text-water-800 sm:min-h-0">
-            Tout voir
-            <ArrowRight className="h-4 w-4" />
+            {d.seeAll}
+            <ArrowRight className="h-4 w-4 rtl:rotate-180" />
           </Link>
         }
       >
         {quotes.length === 0 ? (
-          <p className="py-6 text-center text-sm text-soil-500">Aucune demande enregistrée pour le moment.</p>
+          <p className="py-6 text-center text-sm text-soil-500">{d.noQuote}</p>
         ) : (
           <ul className="-mx-5 divide-y divide-soil-100">
             {quotes.slice(0, 5).map((quote) => (
               <li key={quote.id} className="flex flex-col gap-1 px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-soil-900">{quote.name || quote.phone || quote.email || "Visiteur"}</p>
+                  <p className="truncate text-sm font-medium text-soil-900">{quote.name || quote.phone || quote.email || t.common.visitor}</p>
                   <p className="truncate text-xs text-soil-500">
                     {quote.items?.length
                       ? quote.items.map((item) => item.name).join(", ")
                       : quote.productSlug
                         ? (names.get(quote.productSlug) ?? quote.productSlug)
-                        : quote.source}
+                        : (t.quotes.sources[quote.source] ?? quote.source)}
                   </p>
                 </div>
                 <span className="shrink-0 text-xs text-soil-500">{dateTime.format(new Date(quote.createdAt))}</span>

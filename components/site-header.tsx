@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { withoutLocale } from "@/lib/i18n/routing";
 import { useState, type FormEvent } from "react";
 import {
   ArrowRight,
@@ -20,8 +21,7 @@ import { QuoteDrawer } from "@/components/quote-list/quote-drawer";
 import { Sheet } from "@/components/ui/dialog";
 import { WhatsAppLink } from "@/components/whatsapp-link";
 import { LangSwitcher } from "@/components/i18n/lang-switcher";
-import { T } from "@/components/i18n/t";
-import { useLocale } from "@/components/i18n/use-locale";
+import { useLocale } from "@/components/i18n/locale-provider";
 import type { TextKey } from "@/lib/i18n/fr";
 
 const links: { href: string; label: TextKey }[] = [
@@ -35,7 +35,7 @@ const links: { href: string; label: TextKey }[] = [
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [term, setTerm] = useState("");
-  const pathname = usePathname();
+  const pathname = withoutLocale(usePathname());
   const router = useRouter();
   const { t } = useLocale();
 
@@ -56,10 +56,10 @@ export function SiteHeader() {
           <p className="flex items-center gap-2 font-medium">
             <Clock className="h-3.5 w-3.5 text-water-400" />
             <span className="hidden sm:inline">
-              <T k="topbarLong" />
+              {t.topbarLong}
             </span>
             <span className="sm:hidden">
-              <T k="topbarShort" />
+              {t.topbarShort}
             </span>
           </p>
           <div className="flex items-center gap-4">
@@ -105,7 +105,7 @@ export function SiteHeader() {
                       : "text-soil-600 hover:bg-soil-900/5 hover:text-soil-900"
                   }`}
                 >
-                  <T k={link.label} />
+                  {t[link.label]}
                 </Link>
               );
             })}
@@ -120,7 +120,7 @@ export function SiteHeader() {
             >
               <Search className="h-4 w-4 text-soil-500" />
               <label htmlFor="header-search" className="sr-only">
-                <T k="searchLabel" />
+                {t.searchLabel}
               </label>
               <input
                 id="header-search"
@@ -134,17 +134,17 @@ export function SiteHeader() {
                 className="flex h-6 w-6 items-center justify-center rounded-full text-soil-500 transition hover:bg-soil-100 hover:text-soil-900"
                 aria-label={t.searchSubmit}
               >
-                <ArrowRight className="h-3.5 w-3.5" />
+                <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
               </button>
             </form>
 
             <WhatsAppLink
               source="header"
-              message={generalMessage()}
+              message={generalMessage(t)}
               className="wa-pulse hidden items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-whatsapp-hover sm:inline-flex"
             >
               <WhatsApp className="h-4 w-4" />
-              <T k="quoteWhatsapp" />
+              {t.quoteWhatsapp}
             </WhatsAppLink>
 
             <QuoteCounter />
@@ -173,7 +173,7 @@ export function SiteHeader() {
             >
               <Search className="h-4 w-4 text-soil-500" />
               <label htmlFor="mobile-search" className="sr-only">
-                <T k="searchLabel" />
+                {t.searchLabel}
               </label>
               <input
                 id="mobile-search"
@@ -186,7 +186,7 @@ export function SiteHeader() {
                 type="submit"
                 className="rounded-full bg-field-900 px-3 py-1.5 text-xs font-semibold text-white"
               >
-                <T k="searchOk" />
+                {t.searchOk}
               </button>
             </form>
 
@@ -198,7 +198,7 @@ export function SiteHeader() {
                   onClick={() => setOpen(false)}
                   className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium text-soil-700 transition hover:bg-soil-900/5"
                 >
-                  <T k={link.label} />
+                  {t[link.label]}
                   <ArrowRight className="h-4 w-4 text-soil-500 rtl:rotate-180" />
                 </Link>
               ))}
@@ -207,11 +207,11 @@ export function SiteHeader() {
             <div className="mt-3 grid gap-2">
               <WhatsAppLink
                 source="header"
-                message={generalMessage()}
+                message={generalMessage(t)}
                 className="flex items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-3 text-sm font-semibold text-white"
               >
                 <WhatsApp className="h-4 w-4" />
-                <T k="requestQuote" />
+                {t.requestQuote}
               </WhatsAppLink>
               <a
                 href={`tel:${BRAND.phoneRaw}`}

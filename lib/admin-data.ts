@@ -23,6 +23,9 @@ export type AdminProduct = {
   published: boolean;
   position: number;
   createdAt: string;
+  nameAr: string;
+  descriptionAr: string;
+  specsAr: ProductSpec[];
 };
 
 type ProductRow = {
@@ -40,10 +43,14 @@ type ProductRow = {
   published: boolean;
   position: number;
   created_at: string;
+  // Absentes tant que 20261124100000_contenu_arabe.sql n'est pas appliquée.
+  name_ar?: string | null;
+  description_ar?: string | null;
+  specs_ar?: ProductSpec[] | null;
 };
 
-const PRODUCT_COLUMNS =
-  "id, slug, name, category_id, description, image_url, image_alt, badge, stock, specs, featured, published, position, created_at";
+// « * » : l'admin reste utilisable avant la migration du contenu arabe.
+const PRODUCT_COLUMNS = "*";
 
 function mapProduct(row: ProductRow): AdminProduct {
   return {
@@ -61,6 +68,9 @@ function mapProduct(row: ProductRow): AdminProduct {
     published: row.published,
     position: row.position,
     createdAt: row.created_at,
+    nameAr: row.name_ar ?? "",
+    descriptionAr: row.description_ar ?? "",
+    specsAr: Array.isArray(row.specs_ar) ? row.specs_ar : [],
   };
 }
 
@@ -125,12 +135,15 @@ export type AdminCategory = {
   imageUrl: string | null;
   position: number;
   productCount: number;
+  labelAr: string;
+  shortAr: string;
+  descriptionAr: string;
 };
 
 export async function listAdminCategories(): Promise<AdminCategory[]> {
   const supabase = await createSupabaseServerClient();
   const [categories, products] = await Promise.all([
-    supabase.from("categories").select("id, label, short, description, image_url, position").order("position"),
+    supabase.from("categories").select("*").order("position"),
     supabase.from("products").select("category_id"),
   ]);
 
@@ -139,7 +152,17 @@ export async function listAdminCategories(): Promise<AdminCategory[]> {
     counts.set(row.category_id, (counts.get(row.category_id) ?? 0) + 1);
   }
 
-  type Row = { id: string; label: string; short: string; description: string; image_url: string | null; position: number };
+  type Row = {
+    id: string;
+    label: string;
+    short: string;
+    description: string;
+    image_url: string | null;
+    position: number;
+    label_ar?: string | null;
+    short_ar?: string | null;
+    description_ar?: string | null;
+  };
   return ((categories.data ?? []) as Row[]).map((row) => ({
     id: row.id,
     label: row.label,
@@ -148,6 +171,9 @@ export async function listAdminCategories(): Promise<AdminCategory[]> {
     imageUrl: row.image_url,
     position: row.position,
     productCount: counts.get(row.id) ?? 0,
+    labelAr: row.label_ar ?? "",
+    shortAr: row.short_ar ?? "",
+    descriptionAr: row.description_ar ?? "",
   }));
 }
 

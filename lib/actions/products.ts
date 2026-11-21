@@ -1,33 +1,24 @@
 "use server";
 
-import { revalidatePath, updateTag } from "next/cache";
+import { updateTag } from "next/cache";
+import { revalidateLocalized } from "@/lib/i18n/revalidate";
+import { flashCode, type FlashKey } from "@/lib/i18n/flash";
 import { redirect } from "next/navigation";
 import { parseImageList, removedStoragePaths, type ImageEntry } from "@/lib/admin/image-list";
 import { removeUnreferencedFiles } from "@/lib/admin/storage-cleanup";
 import { requireAdmin } from "@/lib/auth";
-import type { ProductSpec } from "@/lib/catalog";
 import { slugify } from "@/lib/slugify";
+import { hasArabic, productArabicColumns, isMissingColumn, stripArabic } from "@/lib/admin/arabic-fields";
+import { parseSpecs } from "@/lib/i18n/localize-catalog";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type Supabase = Awaited<ReturnType<typeof createSupabaseServerClient>>;
 
-function parseSpecs(raw: string): ProductSpec[] {
-  return raw
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => {
-      const [label, ...rest] = line.split(":");
-      return { label: label.trim(), value: rest.join(":").trim() };
-    })
-    .filter((spec) => spec.label.length > 0 && spec.value.length > 0);
-}
-
 function refreshCatalog() {
   updateTag("catalog");
-  revalidatePath("/");
-  revalidatePath("/produits");
-  revalidatePath("/admin/produits");
+  revalidateLocalized("/");
+  revalidateLocalized("/produits");
+  revalidateLocalized("/admin/produits");
 }
 
 function fail(path: string, message: string): never {
@@ -106,12 +97,12 @@ export async function saveProductAction(formData: FormData) {
   const slug = slugify(slugInput || name);
   const failurePath = id ? `/admin/produits/${id}` : "/admin/produits/nouveau";
 
-  if (!name || !slug || !category) fail(failurePath, "Nom et catégorie sont obligatoires.");
+  if (!name || !slug || !category) fail(failurePath, flashCode("nameAndCategoryRequired"));
 
   const images = parseImageList(String(formData.get("images") ?? "[]"), process.env.NEXT_PUBLIC_SUPABASE_URL ?? null);
-  if (!images) fail(failurePath, "Liste d'images invalide : rechargez la page et réessayez.");
+  if (!images) fail(failurePath, flashCode("invalidImageList"));
   if (published && images.length === 0) {
-    fail(failurePath, "Ajoutez au moins une photo avant de publier ce produit.");
+    fail(failurePath, flashCode("photoRequired"));
   }
 
   const main = images[0];
@@ -129,34 +120,43 @@ export async function saveProductAction(formData: FormData) {
     featured,
     published,
     position,
+    ...productArabicColumns((key) => String(formData.get(key) ?? "")),
   };
 
   const supabase = await createSupabaseServerClient();
-  const result = id
-    ? await supabase.from("products").update(payload).eq("id", id).select("id").single()
-    : await supabase.from("products").insert(payload).select("id").single();
+  const write = (values: Partial<typeof payload>) =>
+    id
+      ? supabase.from("products").update(values).eq("id", id).select("id").single()
+      : supabase.from("products").insert(values).select("id").single();
+  let result = await write(payload);
+  // Base pas encore migrée (contenu arabe) : on enregistre au moins le reste, et on le dit.
+  let arabicLost = false;
+  if (isMissingColumn(result.error)) {
+    arabicLost = hasArabic(productArabicColumns((key) => String(formData.get(key) ?? "")));
+    result = await write(stripArabic(payload));
+  }
 
   if (result.error || !result.data) {
     fail(
       failurePath,
       result.error?.code === "23505"
-        ? "Ce slug est déjà utilisé par un autre produit."
-        : (result.error?.message ?? "Enregistrement impossible."),
+        ? flashCode("slugTaken")
+        : (result.error?.message ?? flashCode("saveFailed")),
     );
   }
 
   try {
     await replaceGallery(supabase, (result.data as { id: string }).id, images, name);
   } catch (error) {
-    fail(failurePath, `Produit enregistré, mais la galerie n'a pas pu l'être : ${error instanceof Error ? error.message : ""}`);
+    fail(failurePath, flashCode("galleryFailed", error instanceof Error ? error.message : ""));
   }
 
   refreshCatalog();
-  redirect(`/admin/produits?ok=${encodeURIComponent("Produit enregistré.")}`);
+  redirect(`/admin/produits?ok=${flashCode(arabicLost ? "savedWithoutArabic" : "productSaved")}`);
 }
 
 /** Bascule un booléen (publié, mis en avant) depuis la liste. */
-async function toggle(formData: FormData, column: "published" | "featured", labels: [string, string]) {
+async function toggle(formData: FormData, column: "published" | "featured", labels: [FlashKey, FlashKey]) {
   await requireAdmin();
   const id = String(formData.get("id") ?? "").trim();
   const value = formData.get("value") === "true";
@@ -175,11 +175,11 @@ async function toggle(formData: FormData, column: "published" | "featured", labe
 }
 
 export async function togglePublishedAction(formData: FormData) {
-  await toggle(formData, "published", ["Produit publié.", "Produit masqué du site."]);
+  await toggle(formData, "published", ["productPublished", "productHidden"]);
 }
 
 export async function toggleFeaturedAction(formData: FormData) {
-  await toggle(formData, "featured", ["Produit mis en avant.", "Produit retiré de la mise en avant."]);
+  await toggle(formData, "featured", ["productFeatured", "productUnfeatured"]);
 }
 
 /** Copie un produit (non publié) avec sa galerie ; les fichiers sont partagés, pas dupliqués. */
@@ -189,7 +189,7 @@ export async function duplicateProductAction(formData: FormData) {
   const supabase = await createSupabaseServerClient();
 
   const { data: source } = await supabase.from("products").select("*").eq("id", id).maybeSingle();
-  if (!source) fail("/admin/produits", "Produit introuvable.");
+  if (!source) fail("/admin/produits", flashCode("productNotFound"));
 
   const original = source as Record<string, unknown> & { slug: string; name: string };
   const { data: existing } = await supabase.from("products").select("slug").like("slug", `${original.slug}-copie%`);
@@ -203,7 +203,7 @@ export async function duplicateProductAction(formData: FormData) {
   delete copy.updated_at;
 
   const { data: created, error } = await supabase.from("products").insert(copy).select("id").single();
-  if (error || !created) fail("/admin/produits", error?.message ?? "Copie impossible.");
+  if (error || !created) fail("/admin/produits", error?.message ?? flashCode("copyFailed"));
 
   // La copie partage les mêmes fichiers : ils ne sont supprimés de Storage que
   // lorsque plus aucun produit ne les utilise (voir removeUnreferencedFiles).
@@ -219,7 +219,7 @@ export async function duplicateProductAction(formData: FormData) {
   }
 
   refreshCatalog();
-  redirect(`/admin/produits/${(created as { id: string }).id}?ok=${encodeURIComponent("Copie créée (non publiée).")}`);
+  redirect(`/admin/produits/${(created as { id: string }).id}?ok=${flashCode("productCopied")}`);
 }
 
 export async function deleteProductAction(formData: FormData) {
@@ -236,5 +236,5 @@ export async function deleteProductAction(formData: FormData) {
   await removeUnreferencedFiles(supabase, files);
 
   refreshCatalog();
-  redirect(`/admin/produits?ok=${encodeURIComponent("Produit supprimé.")}`);
+  redirect(`/admin/produits?ok=${flashCode("productDeleted")}`);
 }

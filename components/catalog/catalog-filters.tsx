@@ -2,24 +2,22 @@ import Link from "next/link";
 import { Search } from "@/components/icons";
 import { catalogHref, type CatalogQuery, type CatalogSort } from "@/lib/catalog-query";
 import { cn } from "@/lib/cn";
+import { getDictionary } from "@/lib/i18n/server";
 
-const SORT_LABELS: Record<CatalogSort, string> = {
-  featured: "Mis en avant d'abord",
-  name: "Nom (A → Z)",
-  category: "Gamme",
-};
+const SORTS: CatalogSort[] = ["featured", "name", "category"];
 
 const control =
   "min-h-11 w-full rounded-xl border border-soil-300 bg-white px-3.5 text-sm text-soil-900 focus:border-water-500";
 
 /** Chips de gammes défilables : de simples liens, sans JavaScript. */
-export function CategoryChips({
+export async function CategoryChips({
   query,
   categories,
 }: {
   query: CatalogQuery;
   categories: { id: string; label: string; count: number }[];
 }) {
+  const t = await getDictionary();
   const chip = (active: boolean) =>
     cn(
       "inline-flex min-h-11 shrink-0 snap-start items-center gap-1.5 rounded-full border px-4 text-sm font-semibold transition",
@@ -29,9 +27,9 @@ export function CategoryChips({
     );
 
   return (
-    <nav aria-label="Gammes" className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
+    <nav aria-label={t.catalogPage.ranges} className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
       <Link href={catalogHref({ ...query, gamme: null })} className={chip(!query.gamme)} aria-current={!query.gamme ? "page" : undefined}>
-        Tout
+        {t.catalogPage.all}
       </Link>
       {categories.map((category) => (
         <Link
@@ -40,7 +38,7 @@ export function CategoryChips({
           className={chip(query.gamme === category.id)}
           aria-current={query.gamme === category.id ? "page" : undefined}
         >
-          {category.label}
+          <bdi>{category.label}</bdi>
           <span className="text-xs font-medium opacity-70">{category.count}</span>
         </Link>
       ))}
@@ -49,7 +47,7 @@ export function CategoryChips({
 }
 
 /** Formulaire GET : recherche, disponibilité et tri. Fonctionne sans JavaScript. */
-export function FilterForm({
+export async function FilterForm({
   query,
   stocks,
   layout,
@@ -58,6 +56,7 @@ export function FilterForm({
   stocks: { value: string; label: string; count: number }[];
   layout: "bar" | "sheet";
 }) {
+  const t = await getDictionary();
   return (
     <form
       action="/produits"
@@ -67,36 +66,36 @@ export function FilterForm({
     >
       {query.gamme ? <input type="hidden" name="gamme" value={query.gamme} /> : null}
       <label className="grid gap-1.5 text-xs font-semibold text-soil-600">
-        Rechercher
+        {t.catalogPage.search}
         <span className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-soil-500" />
+          <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-soil-500" />
           <input
             name="q"
             type="search"
             defaultValue={query.q}
             maxLength={80}
-            placeholder="Pompe, raccord, Ø…"
-            className={cn(control, "pl-9")}
+            placeholder={t.searchPlaceholder}
+            className={cn(control, "ps-9")}
           />
         </span>
       </label>
       <label className="grid gap-1.5 text-xs font-semibold text-soil-600">
-        Disponibilité
+        {t.catalogPage.availability}
         <select name="dispo" defaultValue={query.dispo ?? ""} className={control}>
-          <option value="">Toutes</option>
+          <option value="">{t.catalogPage.allAvailability}</option>
           {stocks.map((stock) => (
             <option key={stock.value} value={stock.value}>
-              {stock.label} ({stock.count})
+              {Object.hasOwn(t.stock, stock.value) ? t.stock[stock.value] : stock.label} ({stock.count})
             </option>
           ))}
         </select>
       </label>
       <label className="grid gap-1.5 text-xs font-semibold text-soil-600">
-        Trier par
+        {t.catalogPage.sortBy}
         <select name="tri" defaultValue={query.tri} className={control}>
-          {(Object.keys(SORT_LABELS) as CatalogSort[]).map((sort) => (
+          {SORTS.map((sort) => (
             <option key={sort} value={sort}>
-              {SORT_LABELS[sort]}
+              {t.catalogPage.sorts[sort]}
             </option>
           ))}
         </select>
@@ -105,7 +104,7 @@ export function FilterForm({
         type="submit"
         className="min-h-11 rounded-xl bg-field-900 px-5 text-sm font-semibold text-white transition hover:bg-field-800"
       >
-        Appliquer
+        {t.catalogPage.apply}
       </button>
     </form>
   );

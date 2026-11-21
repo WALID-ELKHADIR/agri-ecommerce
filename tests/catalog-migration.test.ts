@@ -24,9 +24,9 @@ test("les trois nouvelles catégories existent, sans doublon", async () => {
   assert.deepEqual(ids, ["pompes", "raccords", "kits", "accessoires-pompage", "arrosage", "outillage"]);
 });
 
-// Produits illustrés par une photo d'ambiance (pas de photo fournisseur) : hors manifest produits.
+// Produits dont la photo est générée hors du manifest produits (scripts/images/process-gaine.ts).
 const AMBIANCE_PRODUCTS: Record<string, string> = {
-  "gaine-goutte-a-goutte": "/images/products/gaine-goutte-a-goutte/main.webp",
+  "gaine-goutte-a-goutte": "/images/products/gaine-goutte-a-goutte/fournisseur.webp",
 };
 
 test("chaque produit de la base a son image dans le manifest (plus aucun ancien .jpg)", async () => {
@@ -87,4 +87,12 @@ test("un texte alternatif modifié depuis l'admin n'est jamais écrasé", async 
   assert.equal(result[0].image_url, PRODUCT_IMAGES["pompe-centrifuge-fonte"].main.src, "image toujours remplacée");
   // Le texte d'origine d'un autre produit n'est pas reconnu comme celui du monobloc : conservé aussi.
   assert.equal(result[1].image_alt, "Pompe centrifuge en fonte bleue");
+});
+
+test("gaine goutte-à-goutte : photo du fournisseur décrite et mise en avant sur l'accueil", async () => {
+  const [gaine] = await rows<{ image_alt: string; featured: boolean }>(
+    "select image_alt, featured from public.products where slug = 'gaine-goutte-a-goutte'",
+  );
+  assert.match(gaine.image_alt, /rouleau/i);
+  assert.equal(gaine.featured, true);
 });

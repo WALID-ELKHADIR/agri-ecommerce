@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { Check } from "@/components/icons";
+import { useLocale } from "@/components/i18n/locale-provider";
 import { onQuoteAdded, openQuoteDrawer } from "./use-quote-list";
 
 const VISIBLE_MS = 3000;
 
 /** Confirmation brève après un ajout au devis, avec un accès direct à la liste. */
 export function QuoteToast() {
+  const { t } = useLocale();
   const [name, setName] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
 
@@ -28,8 +30,6 @@ export function QuoteToast() {
 
   return (
     <div
-      lang="fr"
-      dir="ltr"
       role="status"
       aria-live="polite"
       // Caché : plus de clic ni de lecture (le texte précédent reste monté).
@@ -41,7 +41,7 @@ export function QuoteToast() {
       {name ? (
         <div className="flex max-w-md items-center gap-3 rounded-2xl bg-field-900 px-4 py-3 text-sm text-white shadow-lg shadow-field-900/25">
           <Check className="h-4 w-4 shrink-0 text-water-300" />
-          <p className="min-w-0 flex-1 truncate">{name} ajouté à votre liste</p>
+          <p className="min-w-0 flex-1 truncate">{t.ui.toastAdded(name)}</p>
           <button
             type="button"
             onClick={() => {
@@ -50,7 +50,7 @@ export function QuoteToast() {
             }}
             className="min-h-11 shrink-0 rounded-full px-3 font-semibold text-water-200 underline-offset-2 hover:underline"
           >
-            Voir la liste
+            {t.ui.seeList}
           </button>
         </div>
       ) : null}

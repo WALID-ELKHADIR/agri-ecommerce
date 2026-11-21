@@ -22,6 +22,8 @@ export function pageMetadata(input: {
   siteUrl: string;
   noindex?: boolean;
   image?: string;
+  /** Locale Open Graph de la page (fr_MA par défaut). */
+  ogLocale?: string;
 }): Metadata {
   const url = absoluteUrl(input.path, input.siteUrl);
   // Un openGraph de page remplace celui du parent : l'image de la racine est
@@ -33,7 +35,7 @@ export function pageMetadata(input: {
     alternates: { canonical: url },
     openGraph: {
       type: "website",
-      locale: "fr_MA",
+      locale: input.ogLocale ?? "fr_MA",
       siteName: SITE_NAME,
       url,
       title: input.title,

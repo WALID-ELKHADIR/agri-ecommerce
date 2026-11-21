@@ -1,26 +1,47 @@
 /**
  * Seul endroit qui construit les messages et les liens WhatsApp du site
- * (module pur, testé dans tests/whatsapp.test.ts).
+ * (module pur, testé dans tests/whatsapp.test.ts). Les textes viennent du
+ * dictionnaire de la langue du visiteur (français par défaut).
  */
+import { fr, type Dictionary } from "./i18n/fr.ts";
 
 export type WhatsappLine = { name: string; quantity: number; slug?: string };
+
+/** Textes des messages, dans la langue du visiteur. */
+export type WhatsappCopy = Pick<
+  Dictionary,
+  | "whatsappGeneral"
+  | "waProductIntro"
+  | "waProductWant"
+  | "waProductThanks"
+  | "waListIntro"
+  | "waListThanks"
+  | "waName"
+  | "waCity"
+  | "waMore"
+>;
 
 /** Longueur maximale d'un message : wa.me reste fiable bien en dessous de ~2 000 caractères. */
 export const WHATSAPP_MESSAGE_MAX = 1800;
 
-export function generalMessage(brandName: string): string {
-  return `Bonjour ${brandName} 👋, je souhaite un devis pour du matériel d'irrigation / de pompage. Pouvez-vous m'aider ?`;
+export function generalMessage(brandName: string, copy: Pick<WhatsappCopy, "whatsappGeneral"> = fr): string {
+  return copy.whatsappGeneral(brandName);
 }
 
-export function productMessage(product: { name: string; slug: string }, quantity: number, siteUrl: string): string {
+export function productMessage(
+  product: { name: string; slug: string },
+  quantity: number,
+  siteUrl: string,
+  copy: WhatsappCopy = fr,
+): string {
   const base = siteUrl.replace(/\/+$/, "");
   return [
-    "Bonjour 👋,",
-    "Je souhaite un devis pour :",
+    copy.waProductIntro,
+    copy.waProductWant,
     `• ${quantity} × ${product.name}`,
     `${base}/produits/${product.slug}`,
     "",
-    "Merci de me communiquer le prix, la disponibilité et le délai de livraison.",
+    copy.waProductThanks,
   ].join("\n");
 }
 
@@ -29,19 +50,20 @@ export function quoteListMessage(
   lines: WhatsappLine[],
   contact: { name?: string; city?: string },
   brandName: string,
+  copy: WhatsappCopy = fr,
 ): string {
-  const head = [`Bonjour ${brandName} 👋,`, "Je souhaite un devis pour :"];
+  const head = [copy.waListIntro(brandName), copy.waProductWant];
   const tail = [
     "",
-    ...(contact.name?.trim() ? [`Nom : ${contact.name.trim()}`] : []),
-    ...(contact.city?.trim() ? [`Ville : ${contact.city.trim()}`] : []),
-    "Merci de me communiquer les prix, la disponibilité et le délai de livraison.",
+    ...(contact.name?.trim() ? [copy.waName(contact.name.trim())] : []),
+    ...(contact.city?.trim() ? [copy.waCity(contact.city.trim())] : []),
+    copy.waListThanks,
   ];
   const items = lines.map((line) => `• ${line.quantity} × ${line.name}`);
 
   const build = (shown: number) => {
     const rest = items.length - shown;
-    const more = rest > 0 ? [`… et ${rest} autres produits`] : [];
+    const more = rest > 0 ? [copy.waMore(rest)] : [];
     return [...head, ...items.slice(0, shown), ...more, ...tail].join("\n");
   };
 

@@ -1,6 +1,8 @@
 "use server";
 
-import { revalidatePath, updateTag } from "next/cache";
+import { updateTag } from "next/cache";
+import { revalidateLocalized } from "@/lib/i18n/revalidate";
+import { flashCode } from "@/lib/i18n/flash";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { parseRegions, type ContactSettings } from "@/lib/settings-merge";
@@ -28,18 +30,18 @@ export async function saveSettingsAction(formData: FormData) {
   };
 
   if (contact.whatsappNumber && !phoneDigits(contact.whatsappNumber)) {
-    fail("Numéro WhatsApp invalide : utilisez par exemple 06 12 34 56 78 ou +212 6 12 34 56 78.");
+    fail(flashCode("invalidWhatsapp"));
   }
   if (contact.phone && !phoneDigits(contact.phone)) {
-    fail("Numéro de téléphone invalide : utilisez par exemple 05 22 11 22 33.");
+    fail(flashCode("invalidPhone"));
   }
   if (contact.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email)) {
-    fail("Adresse e-mail invalide.");
+    fail(flashCode("invalidEmail"));
   }
 
   const regions = parseRegions(field(formData, "regions", 4000)).slice(0, 30);
   const invalid = regions.find((region) => !phoneDigits(region.number));
-  if (invalid) fail(`Numéro invalide pour la région « ${invalid.region} ».`);
+  if (invalid) fail(flashCode("invalidRegion", invalid.region));
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("settings").upsert([
@@ -49,6 +51,6 @@ export async function saveSettingsAction(formData: FormData) {
   if (error) fail(error.message);
 
   updateTag("settings");
-  revalidatePath("/", "layout");
-  redirect(`/admin/reglages?ok=${encodeURIComponent("Réglages enregistrés : le site est à jour.")}`);
+  revalidateLocalized("/", "layout");
+  redirect(`/admin/reglages?ok=${flashCode("settingsSaved")}`);
 }

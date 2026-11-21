@@ -7,20 +7,45 @@ import {
   UNAVAILABLE_ERROR,
   type AdminRole,
 } from "@/lib/admin-access";
+import { LOCALE_COOKIE } from "@/lib/i18n/cookie";
+import { localeRoute } from "@/lib/i18n/routing";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+const ONE_YEAR = 60 * 60 * 24 * 365;
+
+/**
+ * 1. Langue : les adresses visibles n'ont pas de préfixe. La page est servie en
+ *    interne depuis /fr/... ou /ar/... selon le cookie « saqia-lang » ; un lien
+ *    préfixé (/ar/produits) redirige vers /produits et retient la langue.
+ * 2. Admin : accès réservé aux administrateurs (session Supabase + is_admin()).
+ */
 export async function proxy(request: NextRequest) {
+  const { pathname, search } = request.nextUrl;
+  const route = localeRoute(pathname, request.cookies.get(LOCALE_COOKIE)?.value ?? null);
+
+  if (route.type === "redirect") {
+    const redirect = NextResponse.redirect(new URL(route.path + search, request.url));
+    redirect.cookies.set(LOCALE_COOKIE, route.locale, { path: "/", maxAge: ONE_YEAR, sameSite: "lax" });
+    return redirect;
+  }
+
+  const target = new URL(route.path + search, request.url);
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) return guardAdmin(request, target);
+  return NextResponse.rewrite(target);
+}
+
+async function guardAdmin(request: NextRequest, target: URL) {
   const isLoginPage = request.nextUrl.pathname === "/admin/login";
 
   if (!url || !anonKey) {
     return isLoginPage
-      ? NextResponse.next()
+      ? NextResponse.rewrite(target)
       : NextResponse.redirect(new URL("/admin/login?error=config", request.url));
   }
 
-  let response = NextResponse.next({ request });
+  let response = NextResponse.rewrite(target, { request });
 
   const supabase = createServerClient(url, anonKey, {
     cookies: {
@@ -31,7 +56,7 @@ export async function proxy(request: NextRequest) {
         cookiesToSet.forEach(({ name, value }) => {
           request.cookies.set(name, value);
         });
-        response = NextResponse.next({ request });
+        response = NextResponse.rewrite(target, { request });
         cookiesToSet.forEach(({ name, value, options }) => {
           response.cookies.set(name, value, options);
         });
@@ -77,5 +102,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  // Tout sauf les fichiers internes de Next et les fichiers statiques (avec extension :
+  // images, sw.js, sitemap.xml, robots.txt, manifest.webmanifest, icônes...).
+  matcher: ["/((?!_next/|.*\\.[a-zA-Z0-9]+$).*)"],
 };

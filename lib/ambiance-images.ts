@@ -15,7 +15,7 @@ export type AmbianceImage = {
   hash: string;
 };
 
-export type AmbianceKey = "heroDesktop" | "heroMobile" | "goutteAGoutte" | "vergers" | "serres" | "categorieArrosage" | "heroPompageDesktop" | "heroPompageMobile" | "heroSerresDesktop" | "heroSerresMobile" | "produitGaineGoutte";
+export type AmbianceKey = "heroDesktop" | "heroMobile" | "goutteAGoutte" | "vergers" | "serres" | "categorieArrosage" | "heroPompageDesktop" | "heroPompageMobile" | "heroSerresDesktop" | "heroSerresMobile";
 
 export const AMBIANCE_IMAGES: Record<AmbianceKey, AmbianceImage> = {
   "heroDesktop": {
@@ -177,21 +177,5 @@ export const AMBIANCE_IMAGES: Record<AmbianceKey, AmbianceImage> = {
     "dominantColor": "#d8d8d8",
     "bytes": 203794,
     "hash": "09d9fff287"
-  },
-  "produitGaineGoutte": {
-    "src": "/images/products/gaine-goutte-a-goutte/main.webp",
-    "width": 1200,
-    "height": 1200,
-    "alt": "Lignes de goutte-à-goutte posées au pied de jeunes plants",
-    "source": "stock",
-    "credit": {
-      "author": "Marc Pell",
-      "url": "https://unsplash.com/photos/plants-grow-in-a-garden-bed-with-irrigation-3f7AWW0YWAA",
-      "license": "Unsplash License"
-    },
-    "blurDataURL": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAABQAgCdASoQABAAA4BaJbACdAYtzc7QHKTJqHAA/eJGQn5Wb+aj7SMBFLfljI7rJdGVav9uwKrKvjfinNRDPDZGO0VoAlFv1fjALVgNgmWEX5sG7jpKUUcFxL20eXR0gnr1p5ccxD8hyAAA",
-    "dominantColor": "#a88868",
-    "bytes": 158206,
-    "hash": "035e8ff823"
   }
 };

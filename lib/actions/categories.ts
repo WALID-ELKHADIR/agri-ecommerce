@@ -1,18 +1,21 @@
 "use server";
 
-import { revalidatePath, updateTag } from "next/cache";
+import { updateTag } from "next/cache";
+import { revalidateLocalized } from "@/lib/i18n/revalidate";
+import { flashCode } from "@/lib/i18n/flash";
 import { redirect } from "next/navigation";
 import { parseImageList, storagePathFromUrl } from "@/lib/admin/image-list";
 import { removeUnreferencedFiles } from "@/lib/admin/storage-cleanup";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/slugify";
+import { categoryArabicColumns, hasArabic, isMissingColumn, stripArabic } from "@/lib/admin/arabic-fields";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function refresh() {
   updateTag("catalog");
-  revalidatePath("/");
-  revalidatePath("/produits");
-  revalidatePath("/admin/categories");
+  revalidateLocalized("/");
+  revalidateLocalized("/produits");
+  revalidateLocalized("/admin/categories");
 }
 
 function fail(path: string, message: string): never {
@@ -32,20 +35,25 @@ export async function saveCategoryAction(formData: FormData) {
   const description = field(formData, "description", 400);
   const failurePath = originalId ? `/admin/categories/${originalId}` : "/admin/categories/nouvelle";
 
-  if (!label) fail(failurePath, "Donnez un nom à la catégorie.");
+  if (!label) fail(failurePath, flashCode("categoryNameRequired"));
 
   const images = parseImageList(String(formData.get("images") ?? "[]"), process.env.NEXT_PUBLIC_SUPABASE_URL ?? null);
-  if (!images) fail(failurePath, "Image invalide : rechargez la page et réessayez.");
+  if (!images) fail(failurePath, flashCode("invalidImage"));
   const imageUrl = images[0]?.url ?? null;
+  const arabic = categoryArabicColumns((key) => field(formData, key, 400));
+  let arabicLost = false;
 
   const supabase = await createSupabaseServerClient();
 
   if (originalId) {
     const { data: previous } = await supabase.from("categories").select("image_url").eq("id", originalId).maybeSingle();
-    const { error } = await supabase
-      .from("categories")
-      .update({ label, short, description, image_url: imageUrl })
-      .eq("id", originalId);
+    const values = { label, short, description, image_url: imageUrl, ...arabic };
+    let { error } = await supabase.from("categories").update(values).eq("id", originalId);
+    // Base pas encore migrée (contenu arabe) : on enregistre au moins le reste.
+    if (isMissingColumn(error)) {
+      arabicLost = hasArabic(arabic);
+      ({ error } = await supabase.from("categories").update(stripArabic(values)).eq("id", originalId));
+    }
     if (error) fail(failurePath, error.message);
 
     // Ancienne image remplacée ou retirée : le fichier Storage est supprimé.
@@ -55,7 +63,7 @@ export async function saveCategoryAction(formData: FormData) {
     }
   } else {
     const id = slugify(field(formData, "id", 80) || label);
-    if (!id) fail(failurePath, "Identifiant invalide : utilisez des lettres ou des chiffres.");
+    if (!id) fail(failurePath, flashCode("invalidId"));
 
     const { data: last } = await supabase
       .from("categories")
@@ -65,14 +73,19 @@ export async function saveCategoryAction(formData: FormData) {
       .maybeSingle();
     const position = ((last as { position: number } | null)?.position ?? 0) + 1;
 
-    const { error } = await supabase.from("categories").insert({ id, label, short, description, image_url: imageUrl, position });
+    const values = { id, label, short, description, image_url: imageUrl, position, ...arabic };
+    let { error } = await supabase.from("categories").insert(values);
+    if (isMissingColumn(error)) {
+      arabicLost = hasArabic(arabic);
+      ({ error } = await supabase.from("categories").insert(stripArabic(values)));
+    }
     if (error) {
-      fail(failurePath, error.code === "23505" ? `L'identifiant « ${id} » existe déjà.` : error.message);
+      fail(failurePath, error.code === "23505" ? flashCode("idExists", id) : error.message);
     }
   }
 
   refresh();
-  redirect(`/admin/categories?ok=${encodeURIComponent("Catégorie enregistrée.")}`);
+  redirect(`/admin/categories?ok=${flashCode(arabicLost ? "savedWithoutArabic" : "categorySaved")}`);
 }
 
 /** Échange la position d'une catégorie avec sa voisine (« up » ou « down »). */
@@ -98,7 +111,7 @@ export async function moveCategoryAction(formData: FormData) {
     );
     refresh();
     const failed = results.find((result) => result.error);
-    if (failed?.error) fail("/admin/categories", `Ordre non enregistré : ${failed.error.message}`);
+    if (failed?.error) fail("/admin/categories", flashCode("orderNotSaved", failed.error.message));
   }
   redirect("/admin/categories");
 }
@@ -112,7 +125,7 @@ export async function deleteCategoryAction(formData: FormData) {
   if ((count ?? 0) > 0) {
     fail(
       "/admin/categories",
-      `Cette catégorie contient ${count} produit${(count ?? 0) > 1 ? "s" : ""} : déplacez-les vers une autre catégorie avant de la supprimer.`,
+      flashCode("categoryHasProducts", count ?? 0),
     );
   }
 
@@ -120,12 +133,12 @@ export async function deleteCategoryAction(formData: FormData) {
   const { error } = await supabase.from("categories").delete().eq("id", id);
   if (error) {
     // Garde-fou : la clé étrangère refuse aussi la suppression (code 23503).
-    fail("/admin/categories", error.code === "23503" ? "Cette catégorie contient encore des produits." : error.message);
+    fail("/admin/categories", error.code === "23503" ? flashCode("categoryStillUsed") : error.message);
   }
 
   const path = storagePathFromUrl((previous as { image_url: string | null } | null)?.image_url ?? null);
   if (path) await removeUnreferencedFiles(supabase, [path]);
 
   refresh();
-  redirect(`/admin/categories?ok=${encodeURIComponent("Catégorie supprimée.")}`);
+  redirect(`/admin/categories?ok=${flashCode("categoryDeleted")}`);
 }
