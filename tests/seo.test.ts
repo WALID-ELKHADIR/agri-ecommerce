@@ -29,3 +29,52 @@ test("plan du site : pages publiques et produits, jamais les pages internes", as
   }
   assert.ok(urls.every((url) => !/\/(brand|design|admin)/.test(url)));
 });
+
+const SETTINGS = { name: "Saqia", phoneRaw: "+212600000000", email: "contact@saqia.site", address: "Casablanca, Maroc" };
+const PRODUCT = {
+  slug: "pompe-a",
+  name: "Pompe A",
+  description: "Pompe immergée inox.",
+  categoryLabel: "Pompes & motopompes",
+  image: "/images/products/pompe-a/main.webp",
+  imagePlaceholder: false,
+};
+
+test("JSON-LD entreprise : identité et contact, aucune note ni offre", async () => {
+  const { organizationJsonLd } = await import("../lib/seo.ts");
+  const data = organizationJsonLd(SETTINGS, "https://saqia.site") as Record<string, unknown>;
+  assert.equal(data["@type"], "Organization");
+  assert.equal(data.url, "https://saqia.site/");
+  assert.match(String(data.logo), /^https:\/\/saqia\.site\//);
+  assert.equal(data.telephone, "+212600000000");
+  assert.equal(data.areaServed, "MA");
+  for (const key of ["aggregateRating", "review", "offers"]) assert.equal(key in data, false, key);
+});
+
+test("JSON-LD produit : faits connus seulement, pas de photo provisoire", async () => {
+  const { productJsonLd } = await import("../lib/seo.ts");
+  const data = productJsonLd(PRODUCT, "https://saqia.site") as Record<string, unknown>;
+  assert.equal(data["@type"], "Product");
+  assert.equal(data.name, "Pompe A");
+  assert.equal(data.category, "Pompes & motopompes");
+  assert.equal(data.url, "https://saqia.site/produits/pompe-a");
+  assert.equal(data.image, "https://saqia.site/images/products/pompe-a/main.webp");
+  for (const key of ["offers", "review", "aggregateRating"]) assert.equal(key in data, false, key);
+  const placeholder = productJsonLd({ ...PRODUCT, imagePlaceholder: true }, "https://saqia.site") as Record<string, unknown>;
+  assert.equal("image" in placeholder, false);
+});
+
+test("JSON-LD fil d'Ariane : positions et URL absolues", async () => {
+  const { breadcrumbJsonLd } = await import("../lib/seo.ts");
+  const data = breadcrumbJsonLd([{ name: "Accueil", path: "/" }, { name: "Produits", path: "/produits" }], "https://saqia.site") as {
+    itemListElement: { position: number; item: string; name: string }[];
+  };
+  assert.deepEqual(data.itemListElement.map((i) => [i.position, i.item]), [[1, "https://saqia.site/"], [2, "https://saqia.site/produits"]]);
+});
+
+test("JSON-LD : un texte avec </script> ne ferme pas la balise", async () => {
+  const { jsonLdScript, productJsonLd } = await import("../lib/seo.ts");
+  const out = jsonLdScript(productJsonLd({ ...PRODUCT, name: 'Pompe "A" </script><script>alert(1)</script>' }, "https://saqia.site"));
+  assert.equal(out.includes("</script"), false);
+  assert.equal(JSON.parse(out).name, 'Pompe "A" </script><script>alert(1)</script>');
+});

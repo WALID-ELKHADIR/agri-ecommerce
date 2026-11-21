@@ -25,7 +25,8 @@ import {
   getRelatedProducts,
 } from "@/lib/catalog-data";
 import { catalogHref } from "@/lib/catalog-query";
-import { pageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbJsonLd, pageMetadata, productJsonLd } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-config";
 
 type ProductPageProps = {
@@ -314,6 +315,17 @@ async function ProductDetail({ slug }: { slug: string }) {
           </div>
         </section>
       ) : null}
+      <JsonLd data={productJsonLd(product, siteConfig.siteUrl)} />
+      <JsonLd
+        data={breadcrumbJsonLd(
+          [
+            { name: "Accueil", path: "/" },
+            { name: "Produits", path: "/produits" },
+            { name: product.name, path: `/produits/${product.slug}` },
+          ],
+          siteConfig.siteUrl,
+        )}
+      />
       <StickyBar product={product} />
     </>
   );

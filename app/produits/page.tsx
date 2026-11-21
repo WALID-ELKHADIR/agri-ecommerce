@@ -11,7 +11,8 @@ import { MobileCta } from "@/components/mobile-cta";
 import { SiteFooterWithSettings } from "@/components/site-footer-server";
 import { SiteHeader } from "@/components/site-header";
 import { getCatalog } from "@/lib/catalog-data";
-import { pageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-config";
 import { catalogHref, parseCatalogQuery, queryCatalog, stockOptions } from "@/lib/catalog-query";
 
@@ -56,6 +57,15 @@ export default async function ProduitsPage({ searchParams }: { searchParams: Pro
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd(
+          [
+            { name: "Accueil", path: "/" },
+            { name: "Produits", path: "/produits" },
+          ],
+          siteConfig.siteUrl,
+        )}
+      />
       <SiteHeader />
 
       <main className="pb-24 md:pb-0">

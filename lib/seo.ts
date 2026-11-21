@@ -65,3 +65,70 @@ export function sitemapEntries(products: { slug: string }[], siteUrl: string): S
     })),
   ];
 }
+
+type JsonLd = Record<string, unknown>;
+
+/** Entreprise : identité et moyens de contact (aucune note, aucun avis). */
+export function organizationJsonLd(
+  settings: { name: string; phoneRaw: string; email: string; address: string },
+  siteUrl: string,
+): JsonLd {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: settings.name,
+    url: absoluteUrl("/", siteUrl),
+    logo: absoluteUrl("/brand/logo-full.png", siteUrl),
+    telephone: settings.phoneRaw,
+    email: settings.email,
+    address: settings.address,
+    areaServed: "MA",
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: settings.phoneRaw,
+      contactType: "sales",
+      areaServed: "MA",
+      availableLanguage: ["French", "Arabic"],
+    },
+  };
+}
+
+/**
+ * Produit : faits du catalogue uniquement. Pas d'offre (pas de prix publié),
+ * ni d'avis ; une image provisoire n'est pas présentée comme photo du produit.
+ */
+export function productJsonLd(
+  product: { slug: string; name: string; description: string; categoryLabel: string; image: string; imagePlaceholder: boolean },
+  siteUrl: string,
+): JsonLd {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    category: product.categoryLabel,
+    url: absoluteUrl(`/produits/${product.slug}`, siteUrl),
+    brand: { "@type": "Brand", name: SITE_NAME },
+    ...(product.imagePlaceholder ? {} : { image: absoluteUrl(product.image, siteUrl) }),
+  };
+}
+
+/** Fil d'Ariane : positions 1..n et URL absolues. */
+export function breadcrumbJsonLd(items: { name: string; path: string }[], siteUrl: string): JsonLd {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: absoluteUrl(item.path, siteUrl),
+    })),
+  };
+}
+
+/** JSON sûr dans une balise <script> : `<` est échappé, donc jamais de « </script> ». */
+export function jsonLdScript(data: JsonLd): string {
+  // Chaque < devient la séquence d'échappement Unicode u003c (barre oblique inverse écrite par son code).
+  return JSON.stringify(data).replace(/</g, `${String.fromCharCode(92)}u003c`);
+}

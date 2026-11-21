@@ -14,7 +14,8 @@ import { MobileCta } from "@/components/mobile-cta";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getCatalog } from "@/lib/catalog-data";
-import { pageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
+import { organizationJsonLd, pageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-config";
 import { getSiteSettings } from "@/lib/site-settings";
 import type { Metadata } from "next";
@@ -42,6 +43,7 @@ export default async function Page() {
 
   return (
     <>
+      <JsonLd data={organizationJsonLd(settings, siteConfig.siteUrl)} />
       <SiteHeader />
       <main className="pb-24 md:pb-0">
         <Hero
