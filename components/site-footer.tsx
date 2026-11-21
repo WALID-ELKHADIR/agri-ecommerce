@@ -4,7 +4,6 @@ import {
   Mail,
   MapPin,
   Phone,
-  ShieldCheck,
   Truck,
   WhatsApp,
 } from "@/components/icons";
@@ -14,17 +13,17 @@ import { whatsappUrl, type SiteConfig } from "@/lib/site-config";
 import { WhatsAppLink } from "@/components/whatsapp-link";
 
 const rangeLinks = [
-  { href: "/produits", label: "Pompes & motopompes" },
-  { href: "/produits", label: "Raccords & fittings" },
-  { href: "/produits", label: "Kits complets" },
-  { href: "/produits", label: "Tuyauterie & filtration" },
+  { href: "/produits?gamme=pompes", label: "Pompes & motopompes" },
+  { href: "/produits?gamme=raccords", label: "Raccords & fittings" },
+  { href: "/produits?gamme=kits", label: "Kits complets" },
+  { href: "/produits?gamme=arrosage", label: "Arrosage & goutte-à-goutte" },
 ];
 
 const infoLinks = [
-  { href: "/#services", label: "Conseil & dimensionnement" },
-  { href: "/#services", label: "Livraison & stock" },
+  { href: "/#services", label: "Comment ça marche" },
+  { href: "/#faq", label: "Questions fréquentes" },
   { href: "/contact", label: "Demander un devis" },
-  { href: "/contact", label: "Service après-vente" },
+  { href: "/contact", label: "Nous contacter" },
 ];
 
 const YEAR = 2026;
@@ -49,10 +48,6 @@ export function SiteFooter({ brand = BRAND }: { brand?: SiteConfig }) {
             </p>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-soil-100 px-3 py-1.5 text-[11px] font-medium text-soil-600">
-                <ShieldCheck className="h-3.5 w-3.5 text-water-600" />
-                Garantie constructeur
-              </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-soil-100 px-3 py-1.5 text-[11px] font-medium text-soil-600">
                 <Truck className="h-3.5 w-3.5 text-water-600" />
                 Livraison nationale

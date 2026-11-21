@@ -11,6 +11,8 @@ export type Category = {
   label: string;
   short: string;
   description: string;
+  /** Image de la gamme choisie dans l'admin (facultative). */
+  imageUrl?: string;
 };
 
 export type ProductSpec = {
