@@ -32,7 +32,7 @@
   - les textes arabes cachés sont exclus des extraits Google.
 - **Photos Unsplash** (licence Unsplash, crédits dans `public/images/_archive/2026-11-stock-unsplash/README.md`) : pompage (Bernd Dittrich) et lignes de goutte-à-goutte (Marc Pell). La diapositive « serres » réutilise une photo déjà présente.
 
-## ⚠️ À faire avant la fusion : la migration
+## Migration (déjà appliquée sur votre base)
 Le produit « gaine goutte-à-goutte » n'apparaîtra qu'après l'exécution de cette migration dans **Supabase → SQL Editor** :
 `supabase/migrations/20261122100000_gaine_goutte_a_goutte.sql`
 
@@ -58,7 +58,7 @@ Elle peut être relancée sans risque (`on conflict do nothing`).
   - texte arabe du carrousel du côté assombri ;
   - aucune erreur JavaScript.
 - [x] E2E des phases 4, 4bis et 5 repassés : liste de devis, enregistrement des clics, animations, PWA, SEO.
-- [ ] Fiche de la gaine : vérifiée après l'exécution de la migration (aujourd'hui en 404, faute de produit en base)
+- [x] Migration appliquée sur la base (21/11). La fiche de la gaine s'affiche avec sa photo et ses 6 caractéristiques « selon modèle » ; elle apparaît aussi dans le catalogue et le plan du site.
 - [x] Lighthouse local : Accessibilité 100, Bonnes pratiques 100, SEO 100. La Performance reste dans la même plage qu'avant ; la mesure de référence est PageSpeed Insights sur saqia.site.
 - [x] Revue de code de toute la branche : aucun point critique. 6 points corrigés, chacun avec un test qui échouait avant la correction :
   - admin passé de droite à gauche ;
