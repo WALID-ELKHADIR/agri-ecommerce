@@ -53,11 +53,31 @@ Plan : `docs/superpowers/plans/2026-11-20-vitrine-mobile.md`
 | `/produits` | 2,19 s | 0,000 | 274 Ko |
 | fiche produit | 1,65 s | 0,000 | 451 Ko |
 
-LCP < 2,5 s et CLS < 0,05 sur les trois pages. Le score Lighthouse officiel n'a pas encore été mesuré (voir la checklist).
+LCP < 2,5 s et CLS < 0,05 sur les trois pages.
+
+### Lighthouse mobile (Lighthouse 12, en local sur ce PC)
+| Page | Performance | Accessibilité | Bonnes pratiques | SEO |
+|---|---|---|---|---|
+| `/` | 64 | 100 | 100 | 100 |
+| `/produits` | 61–64 | 98 | 100 | 100 |
+| fiche produit | 62–77 | 100 | 100 | 100 |
+| *référence : `/admin/login`, page presque vide* | *81* | | | |
+
+**Le score Performance local n'est pas fiable sur ce PC.**
+- Lighthouse le signale lui-même : l'indice de puissance de la machine (*benchmarkIndex* 760–1 260) est sous son seuil de fiabilité.
+- Il simule en plus un processeur 4 fois plus lent. Le temps de blocage est donc gonflé, et les écarts d'une mesure à l'autre sont grands.
+- Même une page presque vide plafonne à 81.
+- **Mesure de référence à faire :** PageSpeed Insights sur le déploiement Vercel (preview ou production).
+
+**Corrigé grâce à ces mesures :**
+- les cartes ne sont plus hydratées une par une : un seul écouteur de clics pour tout le site ;
+- l'image LCP du catalogue est préchargée.
+
+Résultat sur le catalogue : temps de blocage de ~2 s à ~0,9–1,3 s.
 
 ## Checklist
 - [x] `npm run lint`
-- [x] `npm test` : 114 tests (messages WhatsApp, liste de devis, filtres du catalogue, sources des clics)
+- [x] `npm test` : 119 tests (messages WhatsApp, liste de devis, filtres du catalogue, sources des clics, clics délégués)
 - [x] `npx tsc --noEmit`
 - [x] `npm run build`
 - [x] Test de bout en bout sur votre base (Playwright) :
@@ -73,7 +93,8 @@ LCP < 2,5 s et CLS < 0,05 sur les trois pages. Le score Lighthouse officiel n'a 
   Les demandes de test ont été supprimées.
 - [x] LCP < 2,5 s, CLS < 0,05 (mesure Playwright ci-dessus)
 - [x] Revue de code de toute la branche : aucun point critique ; 4 points importants corrigés, plus 2 textes non confirmés retirés
-- [ ] Score Lighthouse mobile ≥ 95 : à mesurer avec Lighthouse (Chrome DevTools)
+- [x] Lighthouse local : Accessibilité 98–100, Bonnes pratiques 100, SEO 100
+- [ ] Performance ≥ 95 : à confirmer avec PageSpeed Insights sur le déploiement Vercel (la mesure locale n'est pas fiable sur ce PC)
 
 ## Points mineurs reportés (relevés par la revue)
 - Zoom de la galerie non utilisable au clavier.
