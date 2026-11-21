@@ -479,8 +479,9 @@ export function whatsappLink(message: string) {
   return buildWhatsappLink(message, BRAND.whatsappNumber);
 }
 
-export function generalMessage() {
-  return buildGeneralMessage(BRAND.name);
+/** Message WhatsApp général, dans la langue du dictionnaire donné (français par défaut). */
+export function generalMessage(copy?: Parameters<typeof buildGeneralMessage>[1]) {
+  return buildGeneralMessage(BRAND.name, copy);
 }
 
 export function productMessage(product: Pick<Product, "slug" | "name">, quantity = 1) {

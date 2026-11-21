@@ -11,6 +11,7 @@ import { notFound } from "next/navigation";
 import { lang } from "next/root-params";
 import { LocaleProvider } from "@/components/i18n/locale-provider";
 import { isLocale, LOCALES } from "@/lib/i18n";
+import { getDictionary } from "@/lib/i18n/server";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -40,16 +41,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.siteUrl),
-  title: {
-    default: `${siteConfig.name} — ${siteConfig.slogan} Pompes, raccords et irrigation`,
-    template: `%s | ${siteConfig.name}`,
-  },
-  applicationName: siteConfig.name,
-  description:
-    "Pompes centrifuges et immergées, raccords PE/PVC et kits d'irrigation pour les professionnels agricoles. Conseil technique et devis sous 24h.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getDictionary();
+  return {
+    metadataBase: new URL(siteConfig.siteUrl),
+    title: { default: t.meta.defaultTitle, template: `%s | ${siteConfig.name}` },
+    applicationName: siteConfig.name,
+    description: t.meta.defaultDescription,
+  };
+}
 
 /** Exécuté avant le premier affichage : tracé du logo une seule fois par visite. */
 const BOOT_SCRIPT =

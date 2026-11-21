@@ -14,6 +14,7 @@ import { getCatalog } from "@/lib/catalog-data";
 import { JsonLd } from "@/components/json-ld";
 import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-config";
+import { getDictionary } from "@/lib/i18n/server";
 import { catalogHref, parseCatalogQuery, queryCatalog, stockOptions } from "@/lib/catalog-query";
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -23,82 +24,70 @@ type SearchParams = Record<string, string | string[] | undefined>;
  * les vues filtrées pointent vers /produits (canonique). Les recherches (?q=)
  * sont exclues de l'exploration dans app/robots.ts.
  */
-export const metadata: Metadata = pageMetadata({
-  title: "Catalogue — pompes, raccords et kits d'irrigation",
-  description:
-    "Découvrez notre catalogue de pompes centrifuges et immergées, raccords PE/PVC et kits de pompage. Devis technique sous 24h.",
-  path: "/produits",
-  siteUrl: siteConfig.siteUrl,
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getDictionary();
+  return pageMetadata({
+    title: t.catalogPage.metaTitle,
+    description: t.catalogPage.metaDescription,
+    path: "/produits",
+    siteUrl: siteConfig.siteUrl,
+    ogLocale: t.meta.ogLocale,
+  });
+}
 
-const trust = [
-  {
-    icon: Truck,
-    title: "Livraison nationale",
-    text: "Expédition partout au Maroc",
-  },
-  {
-    icon: Headset,
-    title: "Conseil technique",
-    text: "Aide au choix de votre matériel",
-  },
-  {
-    icon: Clock,
-    title: "Devis sous 24h",
-    text: "Prix et disponibilité sur WhatsApp",
-  },
-];
+const TRUST_ICONS = [Truck, Headset, Clock];
 
 export default async function ProduitsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const { products } = await getCatalog();
+  const t = await getDictionary();
+  const page = t.catalogPage;
 
   return (
     <>
       <JsonLd
         data={breadcrumbJsonLd(
           [
-            { name: "Accueil", path: "/" },
-            { name: "Produits", path: "/produits" },
+            { name: t.navHome, path: "/" },
+            { name: t.navProducts, path: "/produits" },
           ],
           siteConfig.siteUrl,
         )}
       />
       <SiteHeader />
 
-      <main lang="fr" dir="ltr" className="pb-24 md:pb-0">
+      <main className="pb-24 md:pb-0">
         <section className="relative overflow-hidden bg-field-900">
           <div className="blueprint-grid pointer-events-none absolute inset-0 opacity-70" />
-          <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-water-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute -end-20 -top-20 h-72 w-72 rounded-full bg-water-500/20 blur-3xl" />
 
           <div className="relative mx-auto max-w-7xl px-4 pb-10 pt-8 sm:pb-12 sm:pt-10">
-            <nav aria-label="Fil d'Ariane" className="text-xs text-soil-300">
+            <nav aria-label={t.ui.breadcrumb} className="text-xs text-soil-300">
               <Link href="/" className="relative after:absolute after:-inset-x-2 after:-inset-y-4 after:content-[''] transition hover:text-water-300">
-                Accueil
+                {t.navHome}
               </Link>
               <span aria-hidden="true" className="mx-2 text-soil-400">/</span>
-              <span className="text-soil-200">Produits</span>
+              <span className="text-soil-200">{t.navProducts}</span>
             </nav>
 
             <div className="mt-4 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
               <div className="max-w-2xl">
                 <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                  Catalogue irrigation &amp; pompage
+                  {page.title}
                 </h1>
                 <p className="mt-2 text-sm leading-relaxed text-soil-300/80 sm:text-base">
-                  Pompes, raccords et kits complets. Filtrez par gamme, comparez
-                  les caractéristiques et demandez un devis en un clic.
+                  {page.intro}
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-2 text-[11px] font-medium">
                 <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-water-200">
-                  {products.length} références
+                  {page.references(products.length)}
                 </span>
                 <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-soil-200">
-                  Devis sous 24h
+                  {page.badgeQuote}
                 </span>
                 <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-soil-200">
-                  Conseil technique
+                  {page.badgeAdvice}
                 </span>
               </div>
             </div>
@@ -113,8 +102,8 @@ export default async function ProduitsPage({ searchParams }: { searchParams: Pro
 
         <section className="border-t border-soil-200 bg-white">
           <div className="mx-auto grid max-w-7xl gap-4 px-4 py-10 sm:grid-cols-3">
-            {trust.map((item) => {
-              const Icon = item.icon;
+            {page.trust.map((item, index) => {
+              const Icon = TRUST_ICONS[index];
               return (
                 <div key={item.title} className="flex items-start gap-3">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-water-50 text-water-700">
@@ -141,6 +130,7 @@ export default async function ProduitsPage({ searchParams }: { searchParams: Pro
 
 async function CatalogResults({ params }: { params: SearchParams }) {
   const { products, categories } = await getCatalog();
+  const t = await getDictionary();
   const stocks = stockOptions(products);
   const ranges = categories
     .filter((category) => category.id !== "all")
@@ -158,7 +148,7 @@ async function CatalogResults({ params }: { params: SearchParams }) {
   const active = Number(Boolean(query.q)) + Number(Boolean(query.dispo)) + Number(query.tri !== "featured");
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-6 sm:py-8" aria-label="Résultats du catalogue">
+    <section className="mx-auto max-w-7xl px-4 py-6 sm:py-8" aria-label={t.catalogPage.results}>
       <div className="flex items-center gap-2">
         <div className="min-w-0 flex-1">
           <CategoryChips query={query} categories={ranges} />
@@ -173,8 +163,7 @@ async function CatalogResults({ params }: { params: SearchParams }) {
       </div>
 
       <p className="mt-5 text-sm text-soil-600" aria-live="polite">
-        {visible.length} produit{visible.length > 1 ? "s" : ""}
-        {query.q ? <> pour « {query.q} »</> : null}
+        {query.q ? t.catalogPage.countFor(visible.length, query.q) : t.catalogPage.count(visible.length)}
       </p>
 
       {visible.length > 0 ? (
@@ -193,14 +182,14 @@ async function CatalogResults({ params }: { params: SearchParams }) {
         <EmptyState
           className="mt-6"
           icon={<Search className="h-6 w-6" />}
-          title="Aucun produit ne correspond"
-          description="Essayez un autre mot ou retirez des filtres. Vous pouvez aussi nous décrire votre besoin sur WhatsApp."
+          title={t.catalogPage.emptyTitle}
+          description={t.catalogPage.emptyText}
           action={
             <Link
               href={catalogHref({})}
               className="inline-flex min-h-11 items-center rounded-full bg-field-900 px-5 text-sm font-semibold text-white"
             >
-              Effacer les filtres
+              {t.catalogPage.clearFilters}
             </Link>
           }
         />

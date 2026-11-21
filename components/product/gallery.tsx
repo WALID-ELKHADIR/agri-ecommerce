@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useState, ViewTransition, type PointerEvent } from "react";
+import { useLocale } from "@/components/i18n/locale-provider";
 import { Search } from "@/components/icons";
 import { Dialog } from "@/components/ui/dialog";
 import { cn } from "@/lib/cn";
@@ -15,6 +16,7 @@ export type GalleryImageItem = { src: string; alt: string; blurDataURL?: string;
  */
 export function Gallery({ images, productName, slug }: { images: GalleryImageItem[]; productName: string; slug: string }) {
   const track = useRef<HTMLDivElement>(null);
+  const { t } = useLocale();
   const [current, setCurrent] = useState(0);
   const [zoomOpen, setZoomOpen] = useState(false);
   const [zoom, setZoom] = useState<{ x: number; y: number } | null>(null);
@@ -22,13 +24,15 @@ export function Gallery({ images, productName, slug }: { images: GalleryImageIte
   function goTo(index: number) {
     const element = track.current;
     if (!element) return;
-    element.scrollTo({ left: index * element.clientWidth, behavior: "smooth" });
+    // En arabe (rtl), la position de défilement est négative.
+    const sign = getComputedStyle(element).direction === "rtl" ? -1 : 1;
+    element.scrollTo({ left: sign * index * element.clientWidth, behavior: "smooth" });
   }
 
   function onScroll() {
     const element = track.current;
     if (!element) return;
-    setCurrent(Math.round(element.scrollLeft / element.clientWidth));
+    setCurrent(Math.round(Math.abs(element.scrollLeft) / element.clientWidth));
   }
 
   function toggleZoom(event: PointerEvent<HTMLButtonElement>) {
@@ -52,7 +56,7 @@ export function Gallery({ images, productName, slug }: { images: GalleryImageIte
           ref={track}
           onScroll={onScroll}
           className="flex aspect-square snap-x snap-mandatory overflow-x-auto [scrollbar-width:none]"
-          aria-label={`Photos de ${productName}`}
+          aria-label={t.ui.photosOf(productName)}
           role="region"
           tabIndex={0}
         >
@@ -89,10 +93,10 @@ export function Gallery({ images, productName, slug }: { images: GalleryImageIte
             setZoom(null);
             setZoomOpen(true);
           }}
-          className="absolute bottom-3 right-3 inline-flex min-h-11 items-center gap-1.5 rounded-full bg-white/90 px-3.5 text-xs font-semibold text-soil-900 shadow-sm backdrop-blur hover:bg-white"
+          className="absolute bottom-3 end-3 inline-flex min-h-11 items-center gap-1.5 rounded-full bg-white/90 px-3.5 text-xs font-semibold text-soil-900 shadow-sm backdrop-blur hover:bg-white"
         >
           <Search className="h-4 w-4" />
-          Agrandir
+          {t.ui.enlarge}
         </button>
 
         {images.length > 1 ? (
@@ -114,7 +118,7 @@ export function Gallery({ images, productName, slug }: { images: GalleryImageIte
               key={image.src}
               type="button"
               onClick={() => goTo(index)}
-              aria-label={`Afficher la photo ${index + 1} sur ${images.length}`}
+              aria-label={t.ui.showPhoto(index + 1, images.length)}
               aria-current={index === current}
               className={cn(
                 "relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white",
@@ -131,7 +135,7 @@ export function Gallery({ images, productName, slug }: { images: GalleryImageIte
         <button
           type="button"
           onPointerUp={toggleZoom}
-          aria-label={zoom ? "Réduire la photo" : "Zoomer sur la photo"}
+          aria-label={zoom ? t.ui.zoomOut : t.ui.zoomIn}
           className={cn("relative block aspect-square w-full overflow-hidden bg-white", zoom ? "cursor-zoom-out" : "cursor-zoom-in")}
         >
           <Image

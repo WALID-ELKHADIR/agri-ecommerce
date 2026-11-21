@@ -139,7 +139,7 @@ export function SiteHeader() {
 
             <WhatsAppLink
               source="header"
-              message={generalMessage()}
+              message={generalMessage(t)}
               className="wa-pulse hidden items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-whatsapp-hover sm:inline-flex"
             >
               <WhatsApp className="h-4 w-4" />
@@ -206,7 +206,7 @@ export function SiteHeader() {
             <div className="mt-3 grid gap-2">
               <WhatsAppLink
                 source="header"
-                message={generalMessage()}
+                message={generalMessage(t)}
                 className="flex items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-3 text-sm font-semibold text-white"
               >
                 <WhatsApp className="h-4 w-4" />

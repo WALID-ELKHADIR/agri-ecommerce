@@ -4,7 +4,11 @@ import { ViewTransition, type CSSProperties } from "react";
 import { WhatsApp } from "@/components/icons";
 import { AddToQuoteButton } from "@/components/quote-list/add-to-quote-button";
 import { WhatsAppServerLink } from "@/components/whatsapp-server-link";
-import { productMessage, type Product } from "@/lib/catalog";
+import type { Product } from "@/lib/catalog";
+import { stockLabel } from "@/lib/i18n/labels";
+import { getDictionary } from "@/lib/i18n/server";
+import { siteConfig } from "@/lib/site-config";
+import { productMessage } from "@/lib/whatsapp";
 import { cn } from "@/lib/cn";
 
 /** `sizes` des cartes selon leur contexte (largeurs réelles des colonnes). */
@@ -27,9 +31,10 @@ type ProductCardProps = {
  * Carte produit rendue par le serveur. Seuls le bouton « Ajouter au devis » et
  * le lien WhatsApp (qui enregistre le clic) sont interactifs.
  */
-export function ProductCard({ product, sizes, priority = false, reveal, className }: ProductCardProps) {
+export async function ProductCard({ product, sizes, priority = false, reveal, className }: ProductCardProps) {
   const second = product.gallery[0];
-  const message = productMessage(product);
+  const t = await getDictionary();
+  const message = productMessage(product, 1, siteConfig.siteUrl, t);
 
   return (
     <article
@@ -45,7 +50,7 @@ export function ProductCard({ product, sizes, priority = false, reveal, classNam
       <Link
         href={`/produits/${product.slug}`}
         className="relative block aspect-square overflow-hidden bg-gradient-to-br from-soil-50 via-white to-water-50/60"
-        aria-label={`Voir la fiche de ${product.name}`}
+        aria-label={t.ui.viewProduct(product.name)}
       >
         {/* Même nom que la 1re image de la fiche : l'image glisse de la carte à la fiche. */}
         <ViewTransition name={`produit-${product.slug}`} share="morph" default="none">
@@ -99,16 +104,21 @@ export function ProductCard({ product, sizes, priority = false, reveal, classNam
 
         <p className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-medium text-field-700">
           <span className="h-1.5 w-1.5 rounded-full bg-field-500" />
-          {product.stock}
+          {stockLabel(product.stock, t)}
         </p>
 
         <div className="mt-auto flex items-center gap-2 pt-3">
-          <AddToQuoteButton product={{ slug: product.slug, name: product.name }} size="sm" className="flex-1" />
+          <AddToQuoteButton
+            product={{ slug: product.slug, name: product.name }}
+            size="sm"
+            className="flex-1"
+            labels={{ add: t.addToQuote, added: t.added, aria: t.ui.addToQuoteFor(product.name) }}
+          />
           <WhatsAppServerLink
             source="carte-produit"
             message={message}
             product={{ slug: product.slug, quantity: 1 }}
-            aria-label={`Demander un devis WhatsApp pour ${product.name}`}
+            aria-label={t.ui.whatsappFor(product.name)}
             className="inline-flex min-h-11 w-11 shrink-0 items-center justify-center rounded-full bg-whatsapp text-white transition hover:bg-whatsapp-hover sm:min-h-9 sm:w-9"
           >
             <WhatsApp className="h-4 w-4" />

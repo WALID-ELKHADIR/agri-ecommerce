@@ -8,6 +8,7 @@ import { saveQuoteRequest } from "@/lib/actions/quotes";
 import { quoteList } from "@/lib/quote-list-store";
 import { quoteListMessage, whatsappLink } from "@/lib/whatsapp";
 import { useWhatsappContact } from "@/components/whatsapp-provider";
+import { useLocale } from "@/components/i18n/locale-provider";
 import { onOpenQuoteDrawer, useQuoteList } from "./use-quote-list";
 
 const inputClass =
@@ -16,6 +17,7 @@ const inputClass =
 /** Tiroir récapitulatif de la liste de devis, envoyée en un seul message WhatsApp. */
 export function QuoteDrawer() {
   const { number, brandName } = useWhatsappContact();
+  const { t } = useLocale();
   const { lines, count } = useQuoteList();
   const [open, setOpen] = useState(false);
   // Après l'envoi, la liste est gardée : rien ne garantit que WhatsApp s'est
@@ -33,7 +35,7 @@ export function QuoteDrawer() {
     [],
   );
 
-  const message = quoteListMessage(lines, { name, city }, brandName);
+  const message = quoteListMessage(lines, { name, city }, brandName, t);
 
   // Un vrai lien (et non window.open) : les bloqueurs de fenêtres ne l'arrêtent pas.
   function logRequest() {
@@ -47,16 +49,14 @@ export function QuoteDrawer() {
   }
 
   return (
-    // Pas encore traduit : reste en français, de gauche à droite.
-    <div lang="fr" dir="ltr" className="contents">
     <Sheet
       side="right"
       open={open}
       onClose={() => setOpen(false)}
-      title="Ma liste de devis"
+      title={t.myQuoteList}
       description={
         count > 0
-          ? `${count} article${count > 1 ? "s" : ""} — un seul message WhatsApp, devis gratuit.`
+          ? t.ui.drawerDescription(count)
           : undefined
       }
       footer={
@@ -64,7 +64,7 @@ export function QuoteDrawer() {
           <div className="grid w-full gap-2">
             {sent ? (
               <p role="status" className="text-sm text-soil-700">
-                Votre liste a été préparée dans WhatsApp. Une fois le message envoyé, vous pouvez vider la liste.
+                {t.ui.drawerSent}
               </p>
             ) : null}
             <a
@@ -75,7 +75,7 @@ export function QuoteDrawer() {
               className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
             >
               <WhatsApp className="h-4 w-4" />
-              {sent ? "Rouvrir WhatsApp" : "Envoyer sur WhatsApp"}
+              {sent ? t.ui.reopenWhatsapp : t.sendOnWhatsapp}
             </a>
             {sent ? (
               <button
@@ -87,7 +87,7 @@ export function QuoteDrawer() {
                 }}
                 className="min-h-11 w-full rounded-xl border border-soil-300 bg-white px-4 text-sm font-semibold text-soil-900 hover:border-water-300"
               >
-                Vider la liste
+                {t.ui.clearList}
               </button>
             ) : null}
           </div>
@@ -96,13 +96,13 @@ export function QuoteDrawer() {
     >
       {lines.length === 0 ? (
         <div className="grid gap-3 py-6 text-center">
-          <p className="text-sm text-soil-600">Votre liste est vide.</p>
+          <p className="text-sm text-soil-600">{t.emptyList}</p>
           <Link
             href="/produits"
             onClick={() => setOpen(false)}
             className="mx-auto inline-flex min-h-11 items-center rounded-full border border-soil-300 px-4 text-sm font-semibold text-soil-900 hover:border-water-300"
           >
-            Parcourir le catalogue
+            {t.ui.browseCatalog}
           </Link>
         </div>
       ) : (
@@ -121,7 +121,7 @@ export function QuoteDrawer() {
                   <button
                     type="button"
                     onClick={() => quoteList.setQuantity(line.slug, line.quantity - 1)}
-                    aria-label={`Diminuer la quantité de ${line.name}`}
+                    aria-label={t.ui.decreaseOf(line.name)}
                     className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-soil-100"
                   >
                     <Minus className="h-4 w-4" />
@@ -130,7 +130,7 @@ export function QuoteDrawer() {
                   <button
                     type="button"
                     onClick={() => quoteList.setQuantity(line.slug, line.quantity + 1)}
-                    aria-label={`Augmenter la quantité de ${line.name}`}
+                    aria-label={t.ui.increaseOf(line.name)}
                     className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-soil-100"
                   >
                     <Plus className="h-4 w-4" />
@@ -139,7 +139,7 @@ export function QuoteDrawer() {
                 <button
                   type="button"
                   onClick={() => quoteList.remove(line.slug)}
-                  aria-label={`Retirer ${line.name}`}
+                  aria-label={t.ui.removeItem(line.name)}
                   className="flex h-9 w-9 items-center justify-center rounded-full text-danger-700 hover:bg-danger-50"
                 >
                   <Trash className="h-4 w-4" />
@@ -150,20 +150,19 @@ export function QuoteDrawer() {
 
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="grid gap-1.5 text-xs font-semibold text-soil-600">
-              Nom (facultatif)
+              {t.ui.nameOptional}
               <input value={name} onChange={(e) => setName(e.target.value)} maxLength={120} autoComplete="name" className={inputClass} />
             </label>
             <label className="grid gap-1.5 text-xs font-semibold text-soil-600">
-              Ville (facultatif)
+              {t.ui.cityOptional}
               <input value={city} onChange={(e) => setCity(e.target.value)} maxLength={120} autoComplete="address-level2" className={inputClass} />
             </label>
           </div>
           <p className="text-xs text-soil-500">
-            WhatsApp s&apos;ouvre avec votre liste prête à envoyer. Nous vous répondons avec les prix et la disponibilité.
+            {t.ui.drawerHint}
           </p>
         </div>
       )}
     </Sheet>
-    </div>
   );
 }

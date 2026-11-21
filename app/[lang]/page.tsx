@@ -19,18 +19,22 @@ import { organizationJsonLd, pageMetadata } from "@/lib/seo";
 import { FALLBACK_SITE_CONFIG, siteConfig } from "@/lib/site-config";
 import { getSiteSettings } from "@/lib/site-settings";
 import type { Metadata } from "next";
+import { getDictionary } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  ...pageMetadata({
-    title: `${siteConfig.name} — ${siteConfig.slogan} Pompes, raccords et irrigation`,
-    description:
-      "Pompes centrifuges et immergées, raccords PE/PVC et kits d'irrigation au Maroc. Composez votre liste et recevez votre devis gratuit sur WhatsApp.",
-    path: "/",
-    siteUrl: siteConfig.siteUrl,
-  }),
-  // Titre complet sur l'accueil (sans le suffixe « | Saqia »).
-  title: { absolute: `${siteConfig.name} — ${siteConfig.slogan} Pompes, raccords et irrigation` },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getDictionary();
+  return {
+    ...pageMetadata({
+      title: t.meta.defaultTitle,
+      description: t.meta.homeDescription,
+      path: "/",
+      siteUrl: siteConfig.siteUrl,
+      ogLocale: t.meta.ogLocale,
+    }),
+    // Titre complet sur l'accueil (sans le suffixe « | Saqia »).
+    title: { absolute: t.meta.defaultTitle },
+  };
+}
 
 /** Accueil : sections rendues par le serveur, interactivité limitée aux boutons de devis et WhatsApp. */
 export default async function Page() {
@@ -47,8 +51,6 @@ export default async function Page() {
       <SiteHeader />
       <main className="pb-24 md:pb-0">
         <HeroSlider brandName={settings.name} productCount={products.length} />
-        {/* Contenu pas encore traduit : reste en français, de gauche à droite. */}
-        <div lang="fr" dir="ltr">
         <Reassurance />
         <CategoryCards ranges={ranges} />
         <FeaturedCarousel products={featured.length > 0 ? featured : products.slice(0, 8)} />
@@ -57,7 +59,6 @@ export default async function Page() {
         <Testimonials />
         <Faq />
         <FinalCta brandName={settings.name} />
-        </div>
       </main>
       <SiteFooter brand={settings} />
       <MobileCta />

@@ -13,7 +13,7 @@ export async function MobileCta() {
         <MobileQuoteButton />
         <WhatsAppServerLink
           source="barre-mobile"
-          message={generalMessage()}
+          message={generalMessage(t)}
           className="wa-pulse flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 text-sm font-semibold text-white shadow-lg shadow-field-900/10 transition active:scale-[0.99]"
         >
           <WhatsApp className="h-4 w-4" />
