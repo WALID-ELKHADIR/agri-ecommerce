@@ -1,4 +1,4 @@
-import { Hero } from "@/components/home/hero";
+import { HeroSlider } from "@/components/home/hero-slider";
 import {
   CategoryCards,
   Faq,
@@ -46,11 +46,9 @@ export default async function Page() {
       <JsonLd data={organizationJsonLd(settings, siteConfig.siteUrl, FALLBACK_SITE_CONFIG)} />
       <SiteHeader />
       <main className="pb-24 md:pb-0">
-        <Hero
-          brandName={settings.name}
-          slogan={settings.slogan}
-          productCount={products.length}
-        />
+        <HeroSlider brandName={settings.name} productCount={products.length} />
+        {/* Contenu pas encore traduit : reste en français, de gauche à droite. */}
+        <div lang="fr" dir="ltr">
         <Reassurance />
         <CategoryCards ranges={ranges} />
         <FeaturedCarousel products={featured.length > 0 ? featured : products.slice(0, 8)} />
@@ -59,6 +57,7 @@ export default async function Page() {
         <Testimonials />
         <Faq />
         <FinalCta brandName={settings.name} />
+        </div>
       </main>
       <SiteFooter brand={settings} />
       <MobileCta />

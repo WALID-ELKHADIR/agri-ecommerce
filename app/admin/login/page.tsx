@@ -26,7 +26,7 @@ const errors: Record<string, string> = {
 
 export default function LoginPage({ searchParams }: LoginPageProps) {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-field-900 px-4 py-10">
+    <div lang="fr" dir="ltr" className="relative flex min-h-screen items-center justify-center overflow-hidden bg-field-900 px-4 py-10">
       <div className="blueprint-grid pointer-events-none absolute inset-0 opacity-60" />
       <div className="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-water-500/20 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-water-400/10 blur-3xl" />

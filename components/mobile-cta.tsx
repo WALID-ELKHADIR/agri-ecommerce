@@ -1,4 +1,5 @@
 import { WhatsApp } from "@/components/icons";
+import { T } from "@/components/i18n/t";
 import { MobileQuoteButton } from "@/components/quote-list/mobile-quote-button";
 import { WhatsAppServerLink } from "@/components/whatsapp-server-link";
 import { generalMessage } from "@/lib/catalog";
@@ -15,7 +16,7 @@ export function MobileCta() {
           className="wa-pulse flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 text-sm font-semibold text-white shadow-lg shadow-field-900/10 transition active:scale-[0.99]"
         >
           <WhatsApp className="h-4 w-4" />
-          Devis gratuit sur WhatsApp
+          <T k="mobileFreeQuote" />
         </WhatsAppServerLink>
       </div>
     </div>

@@ -15,7 +15,7 @@ export type AmbianceImage = {
   hash: string;
 };
 
-export type AmbianceKey = "heroDesktop" | "heroMobile" | "goutteAGoutte" | "vergers" | "serres" | "categorieArrosage";
+export type AmbianceKey = "heroDesktop" | "heroMobile" | "goutteAGoutte" | "vergers" | "serres" | "categorieArrosage" | "heroPompageDesktop" | "heroPompageMobile" | "heroSerresDesktop" | "heroSerresMobile" | "produitGaineGoutte";
 
 export const AMBIANCE_IMAGES: Record<AmbianceKey, AmbianceImage> = {
   "heroDesktop": {
@@ -113,5 +113,85 @@ export const AMBIANCE_IMAGES: Record<AmbianceKey, AmbianceImage> = {
     "dominantColor": "#888858",
     "bytes": 113958,
     "hash": "6d4e2b02ab"
+  },
+  "heroPompageDesktop": {
+    "src": "/images/hero/pompage.webp",
+    "width": 1920,
+    "height": 1080,
+    "alt": "Eau pompée qui jaillit d'une conduite vers un bassin d'irrigation",
+    "source": "stock",
+    "credit": {
+      "author": "Bernd 📷 Dittrich",
+      "url": "https://unsplash.com/photos/water-being-pumped-into-a-pond-from-a-machine-3to-jRLc5NE",
+      "license": "Unsplash License"
+    },
+    "blurDataURL": "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAADwAQCdASoQAAkAA4BaJQBOgCHgXtOvt8AA/vM4QDBANlpzKY9J0jEpOnxgOWHyhpLmnNyysASpzBiszAA=",
+    "dominantColor": "#182828",
+    "bytes": 235100,
+    "hash": "e0c3e84077"
+  },
+  "heroPompageMobile": {
+    "src": "/images/hero/pompage-mobile.webp",
+    "width": 1080,
+    "height": 1350,
+    "alt": "Eau pompée qui jaillit d'une conduite vers un bassin d'irrigation",
+    "source": "stock",
+    "credit": {
+      "author": "Bernd 📷 Dittrich",
+      "url": "https://unsplash.com/photos/water-being-pumped-into-a-pond-from-a-machine-3to-jRLc5NE",
+      "license": "Unsplash License"
+    },
+    "blurDataURL": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAADwAwCdASoQABQAPu1iqU2ppaQiMAgBMB2JYwC06CHem8M+PL1uaLSAAP7oybQ0S7wwciWYiF7epf6V4vo7wmnAWC3Zu9SUxABdm+zA8MUlBgFxMdX1jkZltZVbMFIo1P75YBOgDZwmAAAA",
+    "dominantColor": "#182828",
+    "bytes": 235646,
+    "hash": "8d705e214a"
+  },
+  "heroSerresDesktop": {
+    "src": "/images/hero/serres.webp",
+    "width": 1920,
+    "height": 1080,
+    "alt": "Grande serre tunnel avec des cultures en rangs",
+    "source": "stock",
+    "credit": {
+      "author": "wei",
+      "url": "https://unsplash.com/photos/a-large-greenhouse-filled-with-lots-of-green-plants-eoj6t-cMtNs",
+      "license": "Unsplash License"
+    },
+    "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAACQAQCdASoQAAkAA4BaJbAAAZC6hgAA/tYNIX35MgkO7KxQK62Esl3CmqncmiMy2sLpcTiLW7nqcw28JKLqD+nx4/pJKfUAbIAAAA==",
+    "dominantColor": "#d8d8d8",
+    "bytes": 259498,
+    "hash": "b40e17e7e6"
+  },
+  "heroSerresMobile": {
+    "src": "/images/hero/serres-mobile.webp",
+    "width": 1080,
+    "height": 1350,
+    "alt": "Grande serre tunnel avec des cultures en rangs",
+    "source": "stock",
+    "credit": {
+      "author": "wei",
+      "url": "https://unsplash.com/photos/a-large-greenhouse-filled-with-lots-of-green-plants-eoj6t-cMtNs",
+      "license": "Unsplash License"
+    },
+    "blurDataURL": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAADwAwCdASoQABQAPu1iqU2ppaOiMAgBMB2JQAALlHR6cj2/LJjAxnUAAP6Pjp88eTbJZTvevDSp2Bbionf5lp4OuT0WAk4ynimf9PAzVhUizIpnrM2rngNVt3+HdDeZwFpH0CEjm3RzanzQAAA=",
+    "dominantColor": "#d8d8d8",
+    "bytes": 203794,
+    "hash": "09d9fff287"
+  },
+  "produitGaineGoutte": {
+    "src": "/images/products/gaine-goutte-a-goutte/main.webp",
+    "width": 1200,
+    "height": 1200,
+    "alt": "Lignes de goutte-à-goutte posées au pied de jeunes plants",
+    "source": "stock",
+    "credit": {
+      "author": "Marc Pell",
+      "url": "https://unsplash.com/photos/plants-grow-in-a-garden-bed-with-irrigation-3f7AWW0YWAA",
+      "license": "Unsplash License"
+    },
+    "blurDataURL": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAABQAgCdASoQABAAA4BaJbACdAYtzc7QHKTJqHAA/eJGQn5Wb+aj7SMBFLfljI7rJdGVav9uwKrKvjfinNRDPDZGO0VoAlFv1fjALVgNgmWEX5sG7jpKUUcFxL20eXR0gnr1p5ccxD8hyAAA",
+    "dominantColor": "#a88868",
+    "bytes": 158206,
+    "hash": "035e8ff823"
   }
 };

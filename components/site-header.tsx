@@ -19,13 +19,17 @@ import { QuoteCounter } from "@/components/quote-list/quote-counter";
 import { QuoteDrawer } from "@/components/quote-list/quote-drawer";
 import { Sheet } from "@/components/ui/dialog";
 import { WhatsAppLink } from "@/components/whatsapp-link";
+import { LangSwitcher } from "@/components/i18n/lang-switcher";
+import { T } from "@/components/i18n/t";
+import { useLocale } from "@/components/i18n/use-locale";
+import type { TextKey } from "@/lib/i18n/fr";
 
-const links = [
-  { href: "/", label: "Accueil" },
-  { href: "/produits", label: "Produits" },
-  { href: "/#categories", label: "Catégories" },
-  { href: "/#services", label: "Services" },
-  { href: "/contact", label: "Contact" },
+const links: { href: string; label: TextKey }[] = [
+  { href: "/", label: "navHome" },
+  { href: "/produits", label: "navProducts" },
+  { href: "/#categories", label: "navCategories" },
+  { href: "/#services", label: "navServices" },
+  { href: "/contact", label: "navContact" },
 ];
 
 export function SiteHeader() {
@@ -33,6 +37,7 @@ export function SiteHeader() {
   const [term, setTerm] = useState("");
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useLocale();
 
   function handleChange(value: string) {
     setTerm(value);
@@ -50,16 +55,21 @@ export function SiteHeader() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 text-[11px] sm:text-xs">
           <p className="flex items-center gap-2 font-medium">
             <Clock className="h-3.5 w-3.5 text-water-400" />
-            <span className="hidden sm:inline">Conseil technique &amp; devis sous 24h</span>
-            <span className="sm:hidden">Devis sous 24h</span>
+            <span className="hidden sm:inline">
+              <T k="topbarLong" />
+            </span>
+            <span className="sm:hidden">
+              <T k="topbarShort" />
+            </span>
           </p>
           <div className="flex items-center gap-4">
-            <span className="hidden items-center gap-1.5 text-soil-300/80 md:flex">
+            <span lang="fr" dir="ltr" className="hidden items-center gap-1.5 text-soil-300/80 md:flex">
               <MapPin className="h-3.5 w-3.5 text-water-400" />
               {BRAND.address}
             </span>
             <a
               href={`tel:${BRAND.phoneRaw}`}
+              dir="ltr"
               className="relative after:absolute after:-inset-x-2 after:-inset-y-4 after:content-[''] flex items-center gap-1.5 font-semibold text-white transition hover:text-water-300"
             >
               <Phone className="h-3.5 w-3.5 text-water-400" />
@@ -71,11 +81,11 @@ export function SiteHeader() {
 
       <header className="site-header-shell sticky top-0 z-50 border-b border-soil-200/80 bg-soil-50/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
-          <Link href="/" aria-label="Saqia — accueil" className="flex min-h-11 items-center">
+          <Link href="/" aria-label={t.homeLabel} className="flex min-h-11 items-center">
             <Logo className="site-header-logo h-9 w-auto" animated={pathname === "/"} />
           </Link>
 
-          <nav className="ml-6 hidden items-center gap-0.5 lg:flex">
+          <nav className="ms-6 hidden items-center gap-0.5 lg:flex">
             {links.map((link) => {
               const active =
                 link.href === "/"
@@ -95,13 +105,14 @@ export function SiteHeader() {
                       : "text-soil-600 hover:bg-soil-900/5 hover:text-soil-900"
                   }`}
                 >
-                  {link.label}
+                  <T k={link.label} />
                 </Link>
               );
             })}
           </nav>
 
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ms-auto flex items-center gap-2">
+            <LangSwitcher />
             <form
               onSubmit={submitSearch}
               className="hidden items-center gap-2 rounded-full border border-soil-300/80 bg-white px-3.5 py-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-water-600 lg:flex"
@@ -109,19 +120,19 @@ export function SiteHeader() {
             >
               <Search className="h-4 w-4 text-soil-500" />
               <label htmlFor="header-search" className="sr-only">
-                Rechercher un produit
+                <T k="searchLabel" />
               </label>
               <input
                 id="header-search"
                 value={term}
                 onChange={(event) => handleChange(event.target.value)}
-                placeholder="Pompe, raccord, Ø…"
+                placeholder={t.searchPlaceholder}
                 className="w-36 bg-transparent text-sm text-soil-900 placeholder:text-soil-500 focus:outline-none"
               />
               <button
                 type="submit"
                 className="flex h-6 w-6 items-center justify-center rounded-full text-soil-500 transition hover:bg-soil-100 hover:text-soil-900"
-                aria-label="Lancer la recherche"
+                aria-label={t.searchSubmit}
               >
                 <ArrowRight className="h-3.5 w-3.5" />
               </button>
@@ -133,7 +144,7 @@ export function SiteHeader() {
               className="wa-pulse hidden items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-whatsapp-hover sm:inline-flex"
             >
               <WhatsApp className="h-4 w-4" />
-              Devis WhatsApp
+              <T k="quoteWhatsapp" />
             </WhatsAppLink>
 
             <QuoteCounter />
@@ -144,7 +155,7 @@ export function SiteHeader() {
               className="flex h-11 w-11 items-center justify-center rounded-full border border-soil-300/80 bg-white text-soil-900 transition hover:bg-soil-50 lg:hidden"
               aria-haspopup="dialog"
               aria-expanded={open}
-              aria-label="Ouvrir le menu"
+              aria-label={t.openMenu}
             >
               <Menu className="h-5 w-5" />
             </button>
@@ -153,7 +164,7 @@ export function SiteHeader() {
 
       </header>
       {/* Menu mobile : tiroir latéral animé (Sheet natif <dialog>). */}
-      <Sheet side="right" open={open} onClose={() => setOpen(false)} title="Menu">
+      <Sheet side="right" open={open} onClose={() => setOpen(false)} title={t.menu}>
           <div id="mobile-menu">
             <form
               onSubmit={submitSearch}
@@ -162,20 +173,20 @@ export function SiteHeader() {
             >
               <Search className="h-4 w-4 text-soil-500" />
               <label htmlFor="mobile-search" className="sr-only">
-                Rechercher un produit
+                <T k="searchLabel" />
               </label>
               <input
                 id="mobile-search"
                 value={term}
                 onChange={(event) => handleChange(event.target.value)}
-                placeholder="Rechercher un produit…"
+                placeholder={t.searchMobilePlaceholder}
                 className="w-full bg-transparent text-sm text-soil-900 placeholder:text-soil-500 focus:outline-none"
               />
               <button
                 type="submit"
                 className="rounded-full bg-field-900 px-3 py-1.5 text-xs font-semibold text-white"
               >
-                OK
+                <T k="searchOk" />
               </button>
             </form>
 
@@ -187,8 +198,8 @@ export function SiteHeader() {
                   onClick={() => setOpen(false)}
                   className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium text-soil-700 transition hover:bg-soil-900/5"
                 >
-                  {link.label}
-                  <ArrowRight className="h-4 w-4 text-soil-500" />
+                  <T k={link.label} />
+                  <ArrowRight className="h-4 w-4 text-soil-500 rtl:rotate-180" />
                 </Link>
               ))}
             </nav>
@@ -200,10 +211,11 @@ export function SiteHeader() {
                 className="flex items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-3 text-sm font-semibold text-white"
               >
                 <WhatsApp className="h-4 w-4" />
-                Demander un devis
+                <T k="requestQuote" />
               </WhatsAppLink>
               <a
                 href={`tel:${BRAND.phoneRaw}`}
+              dir="ltr"
                 className="flex items-center justify-center gap-2 rounded-xl border border-soil-300 bg-white px-4 py-3 text-sm font-semibold text-soil-900"
               >
                 <Phone className="h-4 w-4" />

@@ -65,7 +65,7 @@ export default async function ProduitsPage({ searchParams }: { searchParams: Pro
       />
       <SiteHeader />
 
-      <main className="pb-24 md:pb-0">
+      <main lang="fr" dir="ltr" className="pb-24 md:pb-0">
         <section className="relative overflow-hidden bg-field-900">
           <div className="blueprint-grid pointer-events-none absolute inset-0 opacity-70" />
           <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-water-500/20 blur-3xl" />

@@ -59,7 +59,12 @@ test("chaque image du manifest existe, fait 1200 × 1200 et pèse moins de 150 K
 test("chaque produit du catalogue de secours a ses images", async () => {
   const { readFileSync } = await import("node:fs");
   const { catalogSlugs, checkImages } = await import("../scripts/images/check-images.ts");
-  const slugs = catalogSlugs(readFileSync("lib/catalog.ts", "utf8"));
+  const { existsSync } = await import("node:fs");
+  const { AMBIANCE_IMAGES } = await import("../lib/ambiance-images.ts");
+  // Produit illustré par une photo d'ambiance (pas de photo fournisseur) : vérifié à part.
+  const ambiance = ["gaine-goutte-a-goutte"];
+  assert.ok(existsSync(`public${AMBIANCE_IMAGES.produitGaineGoutte.src}`));
+  const slugs = catalogSlugs(readFileSync("lib/catalog.ts", "utf8")).filter((slug) => !ambiance.includes(slug));
   assert.equal(slugs.length, 25);
   const report = checkImages(slugs);
   assert.deepEqual(report.missingEntries, []);

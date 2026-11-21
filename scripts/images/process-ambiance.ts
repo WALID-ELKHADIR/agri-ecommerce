@@ -45,6 +45,16 @@ const CREDITS: Record<string, Credit> = {
     url: "https://unsplash.com/photos/ripe-oranges-hanging-from-lush-green-trees-in-an-orchard-ka_OiW3I_uE",
     license: "Unsplash License",
   },
+  "pompage-bassin.jpg": {
+    author: "Bernd 📷 Dittrich",
+    url: "https://unsplash.com/photos/water-being-pumped-into-a-pond-from-a-machine-3to-jRLc5NE",
+    license: "Unsplash License",
+  },
+  "lignes-goutte-a-goutte.jpg": {
+    author: "Marc Pell",
+    url: "https://unsplash.com/photos/plants-grow-in-a-garden-bed-with-irrigation-3f7AWW0YWAA",
+    license: "Unsplash License",
+  },
   "serre-tunnel.jpg": {
     author: "wei",
     url: "https://unsplash.com/photos/a-large-greenhouse-filled-with-lots-of-green-plants-eoj6t-cMtNs",
@@ -80,6 +90,22 @@ const SPECS: Spec[] = [
     "Grande serre tunnel avec des cultures en rangs"),
   spec("categorieArrosage", "asperseurs-champ.jpg", "categories/arrosage.webp", 1200, 900, 150,
     "Asperseurs arrosant un champ"),
+  // Carrousel de l'accueil : diapositives 2 (pompage) et 3 (serres), 16:9 et 4:5.
+  spec("heroPompageDesktop", "pompage-bassin.jpg", "hero/pompage.webp", 1920, 1080, 280,
+    "Eau pompée qui jaillit d'une conduite vers un bassin d'irrigation"),
+  {
+    ...spec("heroPompageMobile", "pompage-bassin.jpg", "hero/pompage-mobile.webp", 1080, 1350, 260,
+      "Eau pompée qui jaillit d'une conduite vers un bassin d'irrigation"),
+    // 4:5 centré sur le jet d'eau et la conduite.
+    crop: { left: 560, top: 0, width: 1280, height: 1600 },
+  },
+  spec("heroSerresDesktop", "serre-tunnel.jpg", "hero/serres.webp", 1920, 1080, 280,
+    "Grande serre tunnel avec des cultures en rangs"),
+  spec("heroSerresMobile", "serre-tunnel.jpg", "hero/serres-mobile.webp", 1080, 1350, 260,
+    "Grande serre tunnel avec des cultures en rangs"),
+  // Photo du produit « Gaine goutte-à-goutte » (photo d'illustration, pas un produit fournisseur).
+  spec("produitGaineGoutte", "lignes-goutte-a-goutte.jpg", "products/gaine-goutte-a-goutte/main.webp", 1200, 1200, 160,
+    "Lignes de goutte-à-goutte posées au pied de jeunes plants"),
 ];
 
 async function encode(image: Buffer, maxBytes: number): Promise<Buffer> {
