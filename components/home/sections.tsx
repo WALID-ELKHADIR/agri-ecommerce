@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { ArrowRight, Headset, Truck, WhatsApp, Clock } from "@/components/icons";
+import { Counter } from "@/components/home/counter";
 import { CARD_SIZES, ProductCard } from "@/components/product-card";
 import { WhatsAppServerLink } from "@/components/whatsapp-server-link";
 import { AMBIANCE_IMAGES } from "@/lib/ambiance-images";
@@ -191,8 +192,8 @@ export function Showcase({ productCount, rangeCount }: { productCount: number; r
             {facts.map((fact) => (
               <div key={fact.label}>
                 <dt className="sr-only">{fact.label}</dt>
-                <dd data-count-to={fact.countTo} className="font-display text-3xl font-semibold tabular-nums text-field-800 sm:text-4xl">
-                  {fact.value}
+                <dd className="font-display text-3xl font-semibold tabular-nums text-field-800 sm:text-4xl">
+                  {fact.countTo === undefined ? fact.value : <Counter to={fact.countTo} />}
                 </dd>
                 <dd className="mt-1 text-xs text-soil-600 sm:text-sm">{fact.label}</dd>
               </div>

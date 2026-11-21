@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useReveal } from "@/lib/hooks/use-reveal";
-import { canTilt, COUNT_MS, countValue, tiltFromPointer } from "@/lib/motion";
+import { canTilt, tiltFromPointer } from "@/lib/motion";
 
 const LOGO_KEY = "saqia:logo-vu";
 
@@ -12,52 +12,12 @@ function reducedMotion(): boolean {
 
 /**
  * Animations qui demandent du JavaScript, pour tout le site, dans un seul
- * composant : repli des apparitions, compteurs, inclinaison des cartes,
+ * composant : repli des apparitions, inclinaison des cartes,
  * header compact (repli) et tracé du logo une fois par visite.
  * Les éléments sont marqués par des attributs `data-*` côté serveur.
  */
 export function Motion() {
   useReveal();
-
-  // Compteurs : de 0 à la valeur rendue par le serveur, à l'entrée dans l'écran.
-  useEffect(() => {
-    if (reducedMotion()) return;
-    const frames = new Set<number>();
-    const observer = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        const element = entry.target as HTMLElement;
-        observer.unobserve(element);
-        const target = Number(element.dataset.countTo);
-        if (!Number.isFinite(target)) continue;
-        const start = performance.now();
-        const step = (now: number) => {
-          element.textContent = String(countValue(target, now - start));
-          if (now - start < COUNT_MS) frames.add(requestAnimationFrame(step));
-        };
-        frames.add(requestAnimationFrame(step));
-      }
-    });
-    const seen = new WeakSet<Element>();
-    function scan() {
-      for (const element of document.querySelectorAll<HTMLElement>("[data-count-to]")) {
-        if (seen.has(element)) continue;
-        seen.add(element);
-        // Remis à 0 seulement s'il n'est pas encore visible : rien ne « recule » à l'écran.
-        if (element.getBoundingClientRect().top >= window.innerHeight) element.textContent = "0";
-        observer.observe(element);
-      }
-    }
-    scan();
-    // Pages affichées ensuite par navigation côté client.
-    const mutations = new MutationObserver(() => scan());
-    mutations.observe(document.body, { childList: true, subtree: true });
-    return () => {
-      observer.disconnect();
-      mutations.disconnect();
-      frames.forEach((frame) => cancelAnimationFrame(frame));
-    };
-  }, []);
 
   // Inclinaison 3D des cartes : un seul écouteur, souris uniquement.
   useEffect(() => {
