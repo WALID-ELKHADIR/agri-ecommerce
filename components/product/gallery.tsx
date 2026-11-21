@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState, type PointerEvent } from "react";
+import { useRef, useState, ViewTransition, type PointerEvent } from "react";
 import { Search } from "@/components/icons";
 import { Dialog } from "@/components/ui/dialog";
 import { cn } from "@/lib/cn";
@@ -13,7 +13,7 @@ export type GalleryImageItem = { src: string; alt: string; blurDataURL?: string;
  * miniatures, et vue agrandie avec zoom ×2 au clic ou au toucher.
  * La première image est l'image LCP de la page.
  */
-export function Gallery({ images, productName }: { images: GalleryImageItem[]; productName: string }) {
+export function Gallery({ images, productName, slug }: { images: GalleryImageItem[]; productName: string; slug: string }) {
   const track = useRef<HTMLDivElement>(null);
   const [current, setCurrent] = useState(0);
   const [zoomOpen, setZoomOpen] = useState(false);
@@ -56,7 +56,8 @@ export function Gallery({ images, productName }: { images: GalleryImageItem[]; p
           role="region"
           tabIndex={0}
         >
-          {images.map((image, index) => (
+          {images.map((image, index) => {
+            const slide = (
             <div key={image.src} className="relative h-full w-full shrink-0 snap-center">
               <Image
                 src={image.src}
@@ -70,7 +71,16 @@ export function Gallery({ images, productName }: { images: GalleryImageItem[]; p
                 className={image.contain === false ? "object-cover" : "object-contain p-6 sm:p-10"}
               />
             </div>
-          ))}
+            );
+            // La 1re image reprend le nom de l'image de la carte (transition carte → fiche).
+            return index === 0 ? (
+              <ViewTransition key={image.src} name={`produit-${slug}`} share="morph" default="none">
+                {slide}
+              </ViewTransition>
+            ) : (
+              slide
+            );
+          })}
         </div>
 
         <button

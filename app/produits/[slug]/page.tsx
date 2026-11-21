@@ -141,6 +141,7 @@ async function ProductDetail({ slug }: { slug: string }) {
           <div className="mt-4 grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
             <div>
               <Gallery
+                slug={product.slug}
                 productName={product.name}
                 images={[
                   { src: product.image, alt: product.imageAlt, blurDataURL: product.imageBlurDataURL },

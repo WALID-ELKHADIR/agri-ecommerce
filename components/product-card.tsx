@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { CSSProperties } from "react";
+import { ViewTransition, type CSSProperties } from "react";
 import { WhatsApp } from "@/components/icons";
 import { AddToQuoteButton } from "@/components/quote-list/add-to-quote-button";
 import { WhatsAppServerLink } from "@/components/whatsapp-server-link";
@@ -47,16 +47,21 @@ export function ProductCard({ product, sizes, priority = false, reveal, classNam
         className="relative block aspect-square overflow-hidden bg-gradient-to-br from-soil-50 via-white to-water-50/60"
         aria-label={`Voir la fiche de ${product.name}`}
       >
-        <Image
-          src={product.image}
-          alt={product.imageAlt}
-          fill
-          sizes={sizes}
-          preload={priority}
-          placeholder={product.imageBlurDataURL ? "blur" : "empty"}
-          blurDataURL={product.imageBlurDataURL}
-          className="object-contain p-4 transition duration-500 group-hover:scale-105 motion-reduce:transition-none"
-        />
+        {/* Même nom que la 1re image de la fiche : l'image glisse de la carte à la fiche. */}
+        <ViewTransition name={`produit-${product.slug}`} share="morph" default="none">
+          <span className="absolute inset-0 block">
+            <Image
+              src={product.image}
+              alt={product.imageAlt}
+              fill
+              sizes={sizes}
+              preload={priority}
+              placeholder={product.imageBlurDataURL ? "blur" : "empty"}
+              blurDataURL={product.imageBlurDataURL}
+              className="object-contain p-4 transition duration-500 group-hover:scale-105 motion-reduce:transition-none"
+            />
+          </span>
+        </ViewTransition>
         {second ? (
           <Image
             src={second.src}
