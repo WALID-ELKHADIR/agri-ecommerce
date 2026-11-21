@@ -3,6 +3,7 @@ import { Motion } from "@/components/motion";
 import { SwRegister } from "@/components/sw-register";
 import { WhatsappProvider } from "@/components/whatsapp-provider";
 import { siteConfig } from "@/lib/site-config";
+import { DEFAULT_LOCALE, direction } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/site-settings";
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
@@ -45,7 +46,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const settings = await getSiteSettings();
   return (
     <html
-      lang="fr"
+      lang={DEFAULT_LOCALE}
+      dir={direction(DEFAULT_LOCALE)}
       className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} h-full antialiased`}
       // data-logo-seen est posé par le script ci-dessous avant l'hydratation.
       suppressHydrationWarning
