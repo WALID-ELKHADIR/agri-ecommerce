@@ -63,12 +63,13 @@ export function SiteHeader() {
             </span>
           </p>
           <div className="flex items-center gap-4">
-            <span className="hidden items-center gap-1.5 text-soil-300/80 md:flex">
+            <span lang="fr" dir="ltr" className="hidden items-center gap-1.5 text-soil-300/80 md:flex">
               <MapPin className="h-3.5 w-3.5 text-water-400" />
               {BRAND.address}
             </span>
             <a
               href={`tel:${BRAND.phoneRaw}`}
+              dir="ltr"
               className="relative after:absolute after:-inset-x-2 after:-inset-y-4 after:content-[''] flex items-center gap-1.5 font-semibold text-white transition hover:text-water-300"
             >
               <Phone className="h-3.5 w-3.5 text-water-400" />
@@ -214,6 +215,7 @@ export function SiteHeader() {
               </WhatsAppLink>
               <a
                 href={`tel:${BRAND.phoneRaw}`}
+              dir="ltr"
                 className="flex items-center justify-center gap-2 rounded-xl border border-soil-300 bg-white px-4 py-3 text-sm font-semibold text-soil-900"
               >
                 <Phone className="h-4 w-4" />

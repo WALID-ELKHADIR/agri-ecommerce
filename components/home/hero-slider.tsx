@@ -112,7 +112,7 @@ export function HeroSlider({ brandName, productCount }: { brandName: string; pro
                 aria-hidden="true"
                 className="absolute inset-0 -z-10 bg-gradient-to-t from-field-900/95 via-field-900/55 to-field-900/10 md:bg-gradient-to-r md:from-field-900/90 md:via-field-900/45 md:to-transparent rtl:md:bg-gradient-to-l"
               />
-              <div className="mx-auto w-full max-w-7xl px-4 pb-36 pt-32 md:pb-28">
+              <div className="hero-inner mx-auto w-full max-w-7xl px-4 pb-36 pt-32 md:pb-28">
                 <div className="hero-copy max-w-2xl">
                   <Heading className="font-display text-[2.6rem] font-semibold leading-[0.98] tracking-tight text-balance sm:text-6xl lg:text-7xl">
                     <T k={slide.title} />

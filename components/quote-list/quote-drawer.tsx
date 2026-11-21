@@ -47,6 +47,8 @@ export function QuoteDrawer() {
   }
 
   return (
+    // Pas encore traduit : reste en français, de gauche à droite.
+    <div lang="fr" dir="ltr" className="contents">
     <Sheet
       side="right"
       open={open}
@@ -162,5 +164,6 @@ export function QuoteDrawer() {
         </div>
       )}
     </Sheet>
+    </div>
   );
 }

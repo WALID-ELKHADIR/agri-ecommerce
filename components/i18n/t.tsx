@@ -17,7 +17,8 @@ export function Tx({ fr: french, ar: arabic }: { fr: string; ar: string }) {
       <span data-l="fr" lang="fr">
         {french}
       </span>
-      <span data-l="ar" lang="ar" dir="rtl">
+      {/* data-nosnippet : texte caché en français, jamais repris dans les extraits Google. */}
+      <span data-l="ar" lang="ar" dir="rtl" data-nosnippet="">
         {arabic}
       </span>
     </>

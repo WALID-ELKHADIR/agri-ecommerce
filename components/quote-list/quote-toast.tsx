@@ -28,6 +28,8 @@ export function QuoteToast() {
 
   return (
     <div
+      lang="fr"
+      dir="ltr"
       role="status"
       aria-live="polite"
       // Caché : plus de clic ni de lecture (le texte précédent reste monté).

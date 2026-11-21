@@ -109,7 +109,7 @@ export function HeroSliderControls({ trackId, count }: { trackId: string; count:
       sync();
     };
     const onFocusOut = (event: FocusEvent) => {
-      if (section.contains(event.relatedTarget as Node | null)) return;
+      if (element.contains(event.relatedTarget as Node | null)) return;
       focus = false;
       sync();
     };
@@ -117,17 +117,19 @@ export function HeroSliderControls({ trackId, count }: { trackId: string; count:
       visible = Boolean(entry?.isIntersecting);
       sync();
     });
-    section.addEventListener("pointerenter", onEnter);
-    section.addEventListener("pointerleave", onLeave);
-    section.addEventListener("focusin", onFocusIn);
-    section.addEventListener("focusout", onFocusOut);
+    // Survol et focus des diapositives seulement : utiliser les commandes
+    // (flèches, puces, lecture) ne met pas le défilement en pause.
+    element.addEventListener("pointerenter", onEnter);
+    element.addEventListener("pointerleave", onLeave);
+    element.addEventListener("focusin", onFocusIn);
+    element.addEventListener("focusout", onFocusOut);
     document.addEventListener("visibilitychange", sync);
     observer.observe(section);
     return () => {
-      section.removeEventListener("pointerenter", onEnter);
-      section.removeEventListener("pointerleave", onLeave);
-      section.removeEventListener("focusin", onFocusIn);
-      section.removeEventListener("focusout", onFocusOut);
+      element.removeEventListener("pointerenter", onEnter);
+      element.removeEventListener("pointerleave", onLeave);
+      element.removeEventListener("focusin", onFocusIn);
+      element.removeEventListener("focusout", onFocusOut);
       document.removeEventListener("visibilitychange", sync);
       observer.disconnect();
     };

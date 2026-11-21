@@ -492,6 +492,7 @@ html[lang="ar"] [data-l="fr"] {
 }
 
 /* Le carrousel garde un défilement de gauche à droite ; ses textes suivent la langue. */
+html[dir="rtl"] .hero-inner,
 html[dir="rtl"] .hero-copy {
   direction: rtl;
   text-align: right;

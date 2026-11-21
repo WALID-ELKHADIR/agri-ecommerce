@@ -50,11 +50,11 @@ export const metadata: Metadata = {
 /**
  * Exécuté avant le premier affichage :
  * - langue choisie (cookie « saqia-lang ») : <html lang dir> posés tout de suite,
- *   donc ni saut ni mauvais sens de lecture ;
+ *   donc ni saut ni mauvais sens de lecture (jamais sur l'admin, en français) ;
  * - tracé du logo une seule fois par visite.
  */
 const BOOT_SCRIPT =
-  "try{if(/(?:^|; )saqia-lang=ar(?:;|$)/.test(document.cookie)){document.documentElement.lang='ar';document.documentElement.dir='rtl'}}catch(e){}" +
+  "try{if(location.pathname.indexOf('/admin')!==0&&/(?:^|; )saqia-lang=ar(?:;|$)/.test(document.cookie)){document.documentElement.lang='ar';document.documentElement.dir='rtl'}}catch(e){}" +
   "try{var k='saqia:logo-vu';if(sessionStorage.getItem(k)){document.documentElement.setAttribute('data-logo-seen','')}else{sessionStorage.setItem(k,'1');setTimeout(function(){document.documentElement.setAttribute('data-logo-seen','')},1200)}}catch(e){}";
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {

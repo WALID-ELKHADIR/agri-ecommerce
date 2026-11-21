@@ -30,7 +30,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-soil-100 lg:grid lg:grid-cols-[260px_1fr]">
+    <div lang="fr" dir="ltr" className="min-h-screen bg-soil-100 lg:grid lg:grid-cols-[260px_1fr]">
       <aside className="sticky top-0 z-40 hidden h-screen flex-col bg-field-900 p-5 lg:flex">
         <Link href="/admin" className="flex items-center gap-2.5">
           <Logo tone="inverse" title="Saqia" className="h-8 w-auto" />
