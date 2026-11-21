@@ -1,23 +1,25 @@
 "use client";
 
-import { direction, type Locale } from "@/lib/i18n";
-import { localeCookie } from "@/lib/i18n/cookie";
 import { cn } from "@/lib/cn";
-import { useLocale } from "./use-locale";
+import type { Locale } from "@/lib/i18n";
+import { localeCookie } from "@/lib/i18n/cookie";
+import { useLocale } from "./locale-provider";
 
 const OPTIONS: { locale: Locale; label: string; name: string }[] = [
   { locale: "ar", label: "AR", name: "العربية" },
   { locale: "fr", label: "FR", name: "Français" },
 ];
 
-/** Retient la langue et l'applique tout de suite (`<html lang dir>`, lu par le CSS et useLocale). */
+/**
+ * Retient la langue (cookie lu par le proxy) puis recharge la page : le serveur
+ * renvoie alors la version de cette langue, à la même adresse.
+ */
 function applyLocale(next: Locale): void {
   document.cookie = localeCookie(next);
-  document.documentElement.setAttribute("lang", next);
-  document.documentElement.setAttribute("dir", direction(next));
+  window.location.reload();
 }
 
-/** Bascule AR | FR : retenue un an (cookie), appliquée sans recharger la page. */
+/** Bascule AR | FR, dans l'en-tête de la vitrine et de l'admin. */
 export function LangSwitcher({ className }: { className?: string }) {
   const { locale, t } = useLocale();
 
@@ -35,7 +37,7 @@ export function LangSwitcher({ className }: { className?: string }) {
           lang={option.locale}
           aria-pressed={locale === option.locale}
           aria-label={option.name}
-          onClick={() => applyLocale(option.locale)}
+          onClick={() => (locale === option.locale ? undefined : applyLocale(option.locale))}
           className={cn(
             "h-9 min-w-9 rounded-full px-2.5 transition",
             locale === option.locale ? "bg-field-900 text-white" : "text-soil-700 hover:bg-soil-100",

@@ -1,6 +1,7 @@
 "use server";
 
-import { revalidatePath, updateTag } from "next/cache";
+import { updateTag } from "next/cache";
+import { revalidateLocalized } from "@/lib/i18n/revalidate";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { parseRegions, type ContactSettings } from "@/lib/settings-merge";
@@ -49,6 +50,6 @@ export async function saveSettingsAction(formData: FormData) {
   if (error) fail(error.message);
 
   updateTag("settings");
-  revalidatePath("/", "layout");
+  revalidateLocalized("/", "layout");
   redirect(`/admin/reglages?ok=${encodeURIComponent("Réglages enregistrés : le site est à jour.")}`);
 }

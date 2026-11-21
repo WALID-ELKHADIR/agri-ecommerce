@@ -1,6 +1,7 @@
 "use server";
 
-import { revalidatePath, updateTag } from "next/cache";
+import { updateTag } from "next/cache";
+import { revalidateLocalized } from "@/lib/i18n/revalidate";
 import { redirect } from "next/navigation";
 import { parseImageList, removedStoragePaths, type ImageEntry } from "@/lib/admin/image-list";
 import { removeUnreferencedFiles } from "@/lib/admin/storage-cleanup";
@@ -25,9 +26,9 @@ function parseSpecs(raw: string): ProductSpec[] {
 
 function refreshCatalog() {
   updateTag("catalog");
-  revalidatePath("/");
-  revalidatePath("/produits");
-  revalidatePath("/admin/produits");
+  revalidateLocalized("/");
+  revalidateLocalized("/produits");
+  revalidateLocalized("/admin/produits");
 }
 
 function fail(path: string, message: string): never {

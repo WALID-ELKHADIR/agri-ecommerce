@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ArrowLeft, ArrowRight } from "@/components/icons";
-import { useLocale } from "@/components/i18n/use-locale";
+import { useLocale } from "@/components/i18n/locale-provider";
 import { cn } from "@/lib/cn";
 import { slideIndex } from "@/lib/slider";
 

@@ -1,6 +1,7 @@
 "use server";
 
-import { revalidatePath, updateTag } from "next/cache";
+import { updateTag } from "next/cache";
+import { revalidateLocalized } from "@/lib/i18n/revalidate";
 import { redirect } from "next/navigation";
 import { parseImageList, storagePathFromUrl } from "@/lib/admin/image-list";
 import { removeUnreferencedFiles } from "@/lib/admin/storage-cleanup";
@@ -10,9 +11,9 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function refresh() {
   updateTag("catalog");
-  revalidatePath("/");
-  revalidatePath("/produits");
-  revalidatePath("/admin/categories");
+  revalidateLocalized("/");
+  revalidateLocalized("/produits");
+  revalidateLocalized("/admin/categories");
 }
 
 function fail(path: string, message: string): never {

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateLocalized } from "@/lib/i18n/revalidate";
 import { requireAdmin } from "@/lib/auth";
 import { type QuoteRequestInput, validateQuoteInput } from "@/lib/quote-validation";
 import { getPublicClient } from "@/lib/supabase/public";
@@ -54,7 +54,7 @@ export async function updateQuoteStatusAction(formData: FormData) {
 
   const supabase = await createSupabaseServerClient();
   await supabase.from("quote_requests").update({ status }).eq("id", id);
-  revalidatePath("/admin/demandes");
+  revalidateLocalized("/admin/demandes");
 }
 
 export async function deleteQuoteAction(formData: FormData) {
@@ -68,5 +68,5 @@ export async function deleteQuoteAction(formData: FormData) {
 
   const supabase = await createSupabaseServerClient();
   await supabase.from("quote_requests").delete().eq("id", id);
-  revalidatePath("/admin/demandes");
+  revalidateLocalized("/admin/demandes");
 }

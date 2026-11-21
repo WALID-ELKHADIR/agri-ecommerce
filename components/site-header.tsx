@@ -21,7 +21,7 @@ import { Sheet } from "@/components/ui/dialog";
 import { WhatsAppLink } from "@/components/whatsapp-link";
 import { LangSwitcher } from "@/components/i18n/lang-switcher";
 import { T } from "@/components/i18n/t";
-import { useLocale } from "@/components/i18n/use-locale";
+import { useLocale } from "@/components/i18n/locale-provider";
 import type { TextKey } from "@/lib/i18n/fr";
 
 const links: { href: string; label: TextKey }[] = [
