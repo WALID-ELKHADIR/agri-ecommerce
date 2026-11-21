@@ -4,8 +4,6 @@ import { useEffect } from "react";
 import { useReveal } from "@/lib/hooks/use-reveal";
 import { canTilt, tiltFromPointer } from "@/lib/motion";
 
-const LOGO_KEY = "saqia:logo-vu";
-
 function reducedMotion(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
@@ -13,7 +11,8 @@ function reducedMotion(): boolean {
 /**
  * Animations qui demandent du JavaScript, pour tout le site, dans un seul
  * composant : repli des apparitions, inclinaison des cartes,
- * header compact (repli) et tracé du logo une fois par visite.
+ * header compact (repli). Le tracé du logo une fois par visite est géré par
+ * un script de <head> (app/layout.tsx).
  * Les éléments sont marqués par des attributs `data-*` côté serveur.
  */
 export function Motion() {
@@ -69,19 +68,6 @@ export function Motion() {
     update();
     window.addEventListener("scroll", update, { passive: true });
     return () => window.removeEventListener("scroll", update);
-  }, []);
-
-  // Logo : tracé du canal d'eau à la première page vue de la visite seulement.
-  useEffect(() => {
-    try {
-      if (window.sessionStorage.getItem(LOGO_KEY)) {
-        document.querySelectorAll(".saqia-logo-animated").forEach((logo) => logo.classList.remove("saqia-logo-animated"));
-      } else {
-        window.sessionStorage.setItem(LOGO_KEY, "1");
-      }
-    } catch {
-      // Stockage indisponible : le tracé se rejoue, sans conséquence.
-    }
   }, []);
 
   return null;

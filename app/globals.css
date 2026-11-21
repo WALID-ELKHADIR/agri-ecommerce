@@ -225,6 +225,11 @@ body {
   }
 }
 
+html[data-logo-seen] .saqia-logo-animated .saqia-channel {
+  animation: none;
+  stroke-dashoffset: 0;
+}
+
 @keyframes saqia-channel-draw {
   to {
     stroke-dashoffset: 0;
@@ -303,7 +308,9 @@ html:has(dialog[open]) {
      rang (--i) décale la plage. */
   @supports (animation-timeline: view()) {
     [data-reveal] {
-      animation: reveal-in linear both;
+      /* backwards : caché avant la plage, puis aucun effet après (le transform
+         de l'inclinaison et le translate du survol restent libres). */
+      animation: reveal-in linear backwards;
       animation-timeline: view();
       animation-range: entry calc(var(--i, 0) * 4%) entry calc(55% + var(--i, 0) * 4%);
     }
@@ -375,7 +382,9 @@ html:has(dialog[open]) {
     transform: scale(0.88);
   }
 
-  /* Inclinaison 3D des cartes (variables posées par components/motion.tsx). */
+  /* Inclinaison 3D des cartes (variables posées par components/motion.tsx),
+     seulement avec une souris : aucune couche 3D sur mobile. */
+  @media (hover: hover) and (pointer: fine) {
   [data-tilt] {
     transform: perspective(800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
     transition:
@@ -384,6 +393,7 @@ html:has(dialog[open]) {
       scale 150ms ease-out,
       box-shadow 300ms ease-out,
       border-color 300ms ease-out;
+  }
   }
 
   /* Morph carte → fiche (<ViewTransition share="morph">). */
@@ -437,11 +447,11 @@ html:has(dialog[open]) {
   }
   7.5% {
     opacity: 0;
-    transform: scale(1.6);
+    transform: scale(1.06, 1.4);
   }
   100% {
     opacity: 0;
-    transform: scale(1.6);
+    transform: scale(1.06, 1.4);
   }
 }
 
