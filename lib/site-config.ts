@@ -43,7 +43,7 @@ export const FALLBACK_SITE_CONFIG: SiteConfig = {
   email: "contact@saqia.com",
   address: "Casablanca, Maroc — livraison nationale",
   hours: "Lun – Sam · 8h30 – 18h30",
-  siteUrl: "https://saqia.com",
+  siteUrl: "https://saqia.site",
 };
 
 function text(value: string | undefined): string | undefined {

@@ -11,15 +11,25 @@ import { MobileCta } from "@/components/mobile-cta";
 import { SiteFooterWithSettings } from "@/components/site-footer-server";
 import { SiteHeader } from "@/components/site-header";
 import { getCatalog } from "@/lib/catalog-data";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
+import { siteConfig } from "@/lib/site-config";
 import { catalogHref, parseCatalogQuery, queryCatalog, stockOptions } from "@/lib/catalog-query";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
-export const metadata: Metadata = {
-  title: "Catalogue — Pompes, raccords et kits d'irrigation | Saqia",
+/**
+ * Métadonnées statiques (dans <head>, lisibles par tous les robots) : toutes
+ * les vues filtrées pointent vers /produits (canonique). Les recherches (?q=)
+ * sont exclues de l'exploration dans app/robots.ts.
+ */
+export const metadata: Metadata = pageMetadata({
+  title: "Catalogue — pompes, raccords et kits d'irrigation",
   description:
     "Découvrez notre catalogue de pompes centrifuges et immergées, raccords PE/PVC et kits de pompage. Devis technique sous 24h.",
-};
+  path: "/produits",
+  siteUrl: siteConfig.siteUrl,
+});
 
 const trust = [
   {
@@ -44,6 +54,15 @@ export default async function ProduitsPage({ searchParams }: { searchParams: Pro
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd(
+          [
+            { name: "Accueil", path: "/" },
+            { name: "Produits", path: "/produits" },
+          ],
+          siteConfig.siteUrl,
+        )}
+      />
       <SiteHeader />
 
       <main className="pb-24 md:pb-0">

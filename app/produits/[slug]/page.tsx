@@ -25,6 +25,9 @@ import {
   getRelatedProducts,
 } from "@/lib/catalog-data";
 import { catalogHref } from "@/lib/catalog-query";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbJsonLd, pageMetadata, productJsonLd } from "@/lib/seo";
+import { siteConfig } from "@/lib/site-config";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -47,13 +50,17 @@ export async function generateMetadata({
   const product = await getProductBySlug(slug);
 
   if (!product) {
-    return { title: "Produit introuvable | Saqia" };
+    return { title: "Produit introuvable", robots: { index: false, follow: true } };
   }
 
-  return {
-    title: `${product.name} — ${product.categoryLabel} | Saqia`,
+  return pageMetadata({
+    title: `${product.name} — ${product.categoryLabel}`,
     description: product.description,
-  };
+    path: `/produits/${product.slug}`,
+    siteUrl: siteConfig.siteUrl,
+    // Image de partage propre à la fiche (app/produits/[slug]/opengraph-image.tsx).
+    image: `/produits/${product.slug}/opengraph-image`,
+  });
 }
 
 const assurances = [
@@ -310,6 +317,17 @@ async function ProductDetail({ slug }: { slug: string }) {
           </div>
         </section>
       ) : null}
+      <JsonLd data={productJsonLd(product, siteConfig.siteUrl)} />
+      <JsonLd
+        data={breadcrumbJsonLd(
+          [
+            { name: "Accueil", path: "/" },
+            { name: "Produits", path: "/produits" },
+            { name: product.name, path: `/produits/${product.slug}` },
+          ],
+          siteConfig.siteUrl,
+        )}
+      />
       <StickyBar product={product} />
     </>
   );
