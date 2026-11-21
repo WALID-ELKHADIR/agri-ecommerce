@@ -1,3 +1,4 @@
+import { ClickTracker } from "@/components/click-tracker";
 import { WhatsappProvider } from "@/components/whatsapp-provider";
 import { siteConfig } from "@/lib/site-config";
 import { getSiteSettings } from "@/lib/site-settings";
@@ -41,6 +42,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col font-sans">
         <WhatsappProvider number={settings.whatsappNumber} brandName={settings.name}>
           {children}
+          <ClickTracker />
         </WhatsappProvider>
       </body>
     </html>

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { WhatsApp } from "@/components/icons";
 import { AddToQuoteButton } from "@/components/quote-list/add-to-quote-button";
-import { WhatsAppLink } from "@/components/whatsapp-link";
+import { WhatsAppServerLink } from "@/components/whatsapp-server-link";
 import { productMessage, type Product } from "@/lib/catalog";
 import { cn } from "@/lib/cn";
 
@@ -15,6 +15,8 @@ export const CARD_SIZES = {
 type ProductCardProps = {
   product: Product;
   sizes: string;
+  /** Carte visible dès le chargement (première rangée) : image chargée en priorité. */
+  priority?: boolean;
   className?: string;
 };
 
@@ -22,7 +24,7 @@ type ProductCardProps = {
  * Carte produit rendue par le serveur. Seuls le bouton « Ajouter au devis » et
  * le lien WhatsApp (qui enregistre le clic) sont interactifs.
  */
-export function ProductCard({ product, sizes, className }: ProductCardProps) {
+export function ProductCard({ product, sizes, priority = false, className }: ProductCardProps) {
   const second = product.gallery[0];
   const message = productMessage(product);
 
@@ -44,6 +46,7 @@ export function ProductCard({ product, sizes, className }: ProductCardProps) {
           alt={product.imageAlt}
           fill
           sizes={sizes}
+          preload={priority}
           placeholder={product.imageBlurDataURL ? "blur" : "empty"}
           blurDataURL={product.imageBlurDataURL}
           className="object-contain p-4 transition duration-500 group-hover:scale-105 motion-reduce:transition-none"
@@ -90,7 +93,7 @@ export function ProductCard({ product, sizes, className }: ProductCardProps) {
 
         <div className="mt-auto flex items-center gap-2 pt-3">
           <AddToQuoteButton product={{ slug: product.slug, name: product.name }} size="sm" className="flex-1" />
-          <WhatsAppLink
+          <WhatsAppServerLink
             source="carte-produit"
             message={message}
             product={{ slug: product.slug, quantity: 1 }}
@@ -98,7 +101,7 @@ export function ProductCard({ product, sizes, className }: ProductCardProps) {
             className="inline-flex min-h-11 w-11 shrink-0 items-center justify-center rounded-full bg-whatsapp text-white transition hover:bg-whatsapp-hover sm:min-h-9 sm:w-9"
           >
             <WhatsApp className="h-4 w-4" />
-          </WhatsAppLink>
+          </WhatsAppServerLink>
         </div>
       </div>
     </article>

@@ -1,7 +1,7 @@
 import { getImageProps } from "next/image";
 import Link from "next/link";
 import { ArrowRight, WhatsApp } from "@/components/icons";
-import { WhatsAppLink } from "@/components/whatsapp-link";
+import { WhatsAppServerLink } from "@/components/whatsapp-server-link";
 import { AMBIANCE_IMAGES } from "@/lib/ambiance-images";
 import { generalMessage } from "@/lib/whatsapp";
 
@@ -53,14 +53,14 @@ export function Hero({ brandName, slogan, productCount }: HeroProps) {
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <WhatsAppLink
+            <WhatsAppServerLink
               source="accueil-hero"
               message={message}
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-whatsapp px-6 text-sm font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-whatsapp-hover"
             >
               <WhatsApp className="h-4 w-4" />
               Demander un devis sur WhatsApp
-            </WhatsAppLink>
+            </WhatsAppServerLink>
             <Link
               href="/produits"
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/35 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/20"

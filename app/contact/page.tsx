@@ -11,7 +11,7 @@ import {
 import { MobileCta } from "@/components/mobile-cta";
 import { QuoteForm } from "@/components/quote-form";
 import { SiteHeader } from "@/components/site-header";
-import { WhatsAppLink } from "@/components/whatsapp-link";
+import { WhatsAppServerLink } from "@/components/whatsapp-server-link";
 import { SiteFooterWithSettings } from "@/components/site-footer-server";
 import { generalMessage } from "@/lib/catalog";
 import { whatsappUrl, type SiteConfig } from "@/lib/site-config";
@@ -90,7 +90,7 @@ export default async function ContactPage() {
                   const Icon = channel.icon;
                   return (
                     channel.accent ? (
-                      <WhatsAppLink
+                      <WhatsAppServerLink
                         key={channel.title}
                         source="contact"
                         message={generalMessage()}
@@ -120,7 +120,7 @@ export default async function ContactPage() {
                           {channel.text}
                         </p>
                       </div>
-                      </WhatsAppLink>
+                      </WhatsAppServerLink>
                     ) : (
                     <a
                       key={channel.title}

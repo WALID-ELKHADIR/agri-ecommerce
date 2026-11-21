@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Headset, Truck, WhatsApp, Clock } from "@/components/icons";
 import { CARD_SIZES, ProductCard } from "@/components/product-card";
-import { WhatsAppLink } from "@/components/whatsapp-link";
+import { WhatsAppServerLink } from "@/components/whatsapp-server-link";
 import { AMBIANCE_IMAGES } from "@/lib/ambiance-images";
 import type { Category, Product } from "@/lib/catalog";
 import { catalogHref } from "@/lib/catalog-query";
@@ -249,14 +249,14 @@ export function FinalCta({ brandName }: { brandName: string }) {
           <h2 className={sectionTitle}>Un projet d&apos;irrigation ou de pompage ?</h2>
           <p className="mt-3 text-soil-700">Décrivez-le sur WhatsApp : vous recevez un devis gratuit sous 24 h.</p>
         </div>
-        <WhatsAppLink
+        <WhatsAppServerLink
           source="accueil-cta"
           message={message}
           className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-full bg-whatsapp px-6 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
         >
           <WhatsApp className="h-4 w-4" />
           Écrire sur WhatsApp
-        </WhatsAppLink>
+        </WhatsAppServerLink>
       </div>
     </section>
   );

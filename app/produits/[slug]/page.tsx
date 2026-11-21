@@ -17,7 +17,7 @@ import { CARD_SIZES, ProductCard } from "@/components/product-card";
 import { ProductQuote } from "@/components/product-quote";
 import { SiteFooterWithSettings } from "@/components/site-footer-server";
 import { SiteHeader } from "@/components/site-header";
-import { WhatsAppLink } from "@/components/whatsapp-link";
+import { WhatsAppServerLink } from "@/components/whatsapp-server-link";
 import { generalMessage } from "@/lib/catalog";
 import {
   getCatalog,
@@ -266,14 +266,14 @@ async function ProductDetail({ slug }: { slug: string }) {
               Nous vous aidons à valider le modèle et les raccords adaptés à
               votre installation avant commande.
             </p>
-            <WhatsAppLink
+            <WhatsAppServerLink
               source="fiche-produit"
               message={generalMessage()}
               className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-3 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
             >
               <WhatsApp className="h-4 w-4" />
               Poser une question
-            </WhatsAppLink>
+            </WhatsAppServerLink>
             <Link
               href={catalogHref({ gamme: product.category })}
               className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-soil-300 bg-white px-4 py-3 text-sm font-semibold text-soil-900 transition hover:border-water-300"

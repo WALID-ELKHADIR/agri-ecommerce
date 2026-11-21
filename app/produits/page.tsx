@@ -160,8 +160,8 @@ async function CatalogResults({ params }: { params: SearchParams }) {
 
       {visible.length > 0 ? (
         <div className="mt-3 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
-          {visible.map((product) => (
-            <ProductCard key={product.slug} product={product} sizes={CARD_SIZES.grid} />
+          {visible.map((product, index) => (
+            <ProductCard key={product.slug} product={product} sizes={CARD_SIZES.grid} priority={index < 2} />
           ))}
         </div>
       ) : (

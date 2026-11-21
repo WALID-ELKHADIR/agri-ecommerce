@@ -10,7 +10,7 @@ import {
 import { Logo } from "@/components/brand/logo";
 import { BRAND, generalMessage } from "@/lib/catalog";
 import type { SiteConfig } from "@/lib/site-config";
-import { WhatsAppLink } from "@/components/whatsapp-link";
+import { WhatsAppServerLink } from "@/components/whatsapp-server-link";
 
 const rangeLinks = [
   { href: "/produits?gamme=pompes", label: "Pompes & motopompes" },
@@ -54,14 +54,14 @@ export function SiteFooter({ brand = BRAND }: { brand?: SiteConfig }) {
               </span>
             </div>
 
-            <WhatsAppLink
+            <WhatsAppServerLink
               source="footer"
               message={generalMessage()}
               className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-whatsapp-hover"
             >
               <WhatsApp className="h-4 w-4" />
               Discuter sur WhatsApp
-            </WhatsAppLink>
+            </WhatsAppServerLink>
           </div>
 
           <div>

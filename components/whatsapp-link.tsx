@@ -1,10 +1,9 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { WhatsAppAnchor } from "@/components/whatsapp-anchor";
 import { useWhatsappContact } from "@/components/whatsapp-provider";
-import { saveQuoteRequest } from "@/lib/actions/quotes";
-import { clickRecord, type QuoteSource } from "@/lib/quote-sources";
-import { whatsappLink } from "@/lib/whatsapp";
+import type { QuoteSource } from "@/lib/quote-sources";
 
 type WhatsAppLinkProps = {
   source: QuoteSource;
@@ -17,24 +16,11 @@ type WhatsAppLinkProps = {
 };
 
 /**
- * Lien WhatsApp vers le numéro des réglages de l'admin, qui enregistre chaque
- * clic dans `quote_requests`. L'enregistrement part en arrière-plan : le lien
- * s'ouvre toujours, sans attendre le serveur (réseau lent, hors ligne, limite de débit).
+ * Lien WhatsApp pour les composants client (header, fiche) : numéro lu dans le
+ * contexte des réglages. Le clic est enregistré par l'écouteur global.
+ * Dans un composant serveur, utilisez directement WhatsAppAnchor.
  */
-export function WhatsAppLink({ source, message, product, className, children, ...rest }: WhatsAppLinkProps) {
+export function WhatsAppLink(props: WhatsAppLinkProps) {
   const { number } = useWhatsappContact();
-  return (
-    <a
-      href={whatsappLink(message, number)}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={className}
-      aria-label={rest["aria-label"]}
-      onClick={() => {
-        void saveQuoteRequest(clickRecord(source, message, product)).catch(() => {});
-      }}
-    >
-      {children}
-    </a>
-  );
+  return <WhatsAppAnchor number={number} {...props} />;
 }
