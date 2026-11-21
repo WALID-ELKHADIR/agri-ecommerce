@@ -21,7 +21,7 @@ import { MobileCta } from "@/components/mobile-cta";
 import { CARD_SIZES, ProductCard } from "@/components/product-card";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { catalogFilters } from "@/lib/catalog-filters";
+import { catalogHref } from "@/lib/catalog-query";
 import {
   BRAND,
   galleryImages,
@@ -130,9 +130,6 @@ export function HomePage({ products, settings }: { products: Product[]; settings
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/produits"
-                  onClick={() =>
-                    catalogFilters.set({ category: "all", query: "" })
-                  }
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-water-400 px-6 py-3.5 text-sm font-semibold text-soil-900 shadow-lg shadow-water-500/20 transition hover:bg-water-300"
                 >
                   Découvrir la gamme
@@ -333,10 +330,7 @@ export function HomePage({ products, settings }: { products: Product[]; settings
                 return (
                   <Link
                     key={family.id}
-                    href="/produits"
-                    onClick={() =>
-                      catalogFilters.set({ category: family.id, query: "" })
-                    }
+                    href={catalogHref({ gamme: family.id })}
                     className="group flex flex-col rounded-2xl border border-soil-200 bg-white p-5 transition hover:-translate-y-1 hover:border-water-200 hover:shadow-lg"
                   >
                     <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-water-50 text-water-700">
@@ -399,9 +393,6 @@ export function HomePage({ products, settings }: { products: Product[]; settings
               </div>
               <Link
                 href="/produits"
-                onClick={() =>
-                  catalogFilters.set({ category: "all", query: "" })
-                }
                 className="inline-flex min-h-11 shrink-0 items-center gap-1.5 text-sm font-semibold text-soil-900 transition hover:text-water-700"
               >
                 Voir tout le catalogue

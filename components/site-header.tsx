@@ -14,7 +14,7 @@ import {
   X,
 } from "@/components/icons";
 import { Logo } from "@/components/brand/logo";
-import { catalogFilters } from "@/lib/catalog-filters";
+import { catalogHref } from "@/lib/catalog-query";
 import { BRAND, generalMessage, whatsappLink } from "@/lib/catalog";
 import { QuoteCounter } from "@/components/quote-list/quote-counter";
 import { QuoteDrawer } from "@/components/quote-list/quote-drawer";
@@ -36,15 +36,11 @@ export function SiteHeader() {
 
   function handleChange(value: string) {
     setTerm(value);
-    if (pathname === "/produits") {
-      catalogFilters.setQuery(value);
-    }
   }
 
   function submitSearch(event: FormEvent) {
     event.preventDefault();
-    catalogFilters.set({ query: term.trim(), category: "all" });
-    router.push("/produits");
+    router.push(catalogHref({ q: term.trim().slice(0, 80) }));
     setOpen(false);
   }
 

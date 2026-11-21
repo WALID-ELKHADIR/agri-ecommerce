@@ -1,11 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CatalogBrowser } from "@/components/catalog-browser";
-import { Clock, ShieldCheck, Truck } from "@/components/icons";
+import { Suspense } from "react";
+import { CategoryChips, FilterForm } from "@/components/catalog/catalog-filters";
+import { FiltersSheet } from "@/components/catalog/filters-sheet";
+import { Clock, Headset, Search, Truck } from "@/components/icons";
+import { CARD_SIZES, ProductCard } from "@/components/product-card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import { MobileCta } from "@/components/mobile-cta";
 import { SiteFooterWithSettings } from "@/components/site-footer-server";
 import { SiteHeader } from "@/components/site-header";
 import { getCatalog } from "@/lib/catalog-data";
+import { catalogHref, parseCatalogQuery, queryCatalog, stockOptions } from "@/lib/catalog-query";
+
+type SearchParams = Record<string, string | string[] | undefined>;
 
 export const metadata: Metadata = {
   title: "Catalogue — Pompes, raccords et kits d'irrigation | Saqia",
@@ -15,14 +23,14 @@ export const metadata: Metadata = {
 
 const trust = [
   {
-    icon: ShieldCheck,
-    title: "Garantie constructeur",
-    text: "Matériel professionnel sélectionné",
-  },
-  {
     icon: Truck,
     title: "Livraison nationale",
     text: "Expédition partout au Maroc",
+  },
+  {
+    icon: Headset,
+    title: "Conseil technique",
+    text: "Aide au choix de votre matériel",
   },
   {
     icon: Clock,
@@ -31,8 +39,8 @@ const trust = [
   },
 ];
 
-export default async function ProduitsPage() {
-  const { products, categories } = await getCatalog();
+export default async function ProduitsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const { products } = await getCatalog();
 
   return (
     <>
@@ -78,7 +86,11 @@ export default async function ProduitsPage() {
           </div>
         </section>
 
-        <CatalogBrowser products={products} categories={categories} />
+        <Suspense fallback={<CatalogSkeleton />}>
+          {searchParams.then((params) => (
+            <CatalogResults params={params} />
+          ))}
+        </Suspense>
 
         <section className="border-t border-soil-200 bg-white">
           <div className="mx-auto grid max-w-7xl gap-4 px-4 py-10 sm:grid-cols-3">
@@ -105,5 +117,86 @@ export default async function ProduitsPage() {
       <SiteFooterWithSettings />
       <MobileCta />
     </>
+  );
+}
+
+async function CatalogResults({ params }: { params: SearchParams }) {
+  const { products, categories } = await getCatalog();
+  const stocks = stockOptions(products);
+  const ranges = categories
+    .filter((category) => category.id !== "all")
+    .map((category) => ({
+      id: category.id,
+      label: category.label,
+      count: products.filter((product) => product.category === category.id).length,
+    }))
+    .filter((category) => category.count > 0);
+  const query = parseCatalogQuery(params, {
+    categories: ranges.map((category) => category.id),
+    stocks: stocks.map((stock) => stock.value),
+  });
+  const visible = queryCatalog(products, query);
+  const active = Number(Boolean(query.q)) + Number(Boolean(query.dispo)) + Number(query.tri !== "featured");
+
+  return (
+    <section className="mx-auto max-w-7xl px-4 py-6 sm:py-8" aria-label="Résultats du catalogue">
+      <div className="flex items-center gap-2">
+        <div className="min-w-0 flex-1">
+          <CategoryChips query={query} categories={ranges} />
+        </div>
+        <FiltersSheet active={active}>
+          <FilterForm query={query} stocks={stocks} layout="sheet" />
+        </FiltersSheet>
+      </div>
+
+      <div className="mt-4 hidden rounded-2xl border border-soil-200 bg-white p-4 md:block">
+        <FilterForm query={query} stocks={stocks} layout="bar" />
+      </div>
+
+      <p className="mt-5 text-sm text-soil-600" aria-live="polite">
+        {visible.length} produit{visible.length > 1 ? "s" : ""}
+        {query.q ? <> pour « {query.q} »</> : null}
+      </p>
+
+      {visible.length > 0 ? (
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
+          {visible.map((product) => (
+            <ProductCard key={product.slug} product={product} sizes={CARD_SIZES.grid} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          className="mt-6"
+          icon={<Search className="h-6 w-6" />}
+          title="Aucun produit ne correspond"
+          description="Essayez un autre mot ou retirez des filtres. Vous pouvez aussi nous décrire votre besoin sur WhatsApp."
+          action={
+            <Link
+              href={catalogHref({})}
+              className="inline-flex min-h-11 items-center rounded-full bg-field-900 px-5 text-sm font-semibold text-white"
+            >
+              Effacer les filtres
+            </Link>
+          }
+        />
+      )}
+    </section>
+  );
+}
+
+function CatalogSkeleton() {
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:py-8" aria-busy="true">
+      <div className="flex gap-2 overflow-hidden">
+        {Array.from({ length: 5 }, (_, i) => (
+          <Skeleton key={i} className="h-11 w-28 shrink-0 rounded-full" />
+        ))}
+      </div>
+      <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
+        {Array.from({ length: 8 }, (_, i) => (
+          <Skeleton key={i} className="aspect-[3/4] w-full rounded-2xl" />
+        ))}
+      </div>
+    </div>
   );
 }
