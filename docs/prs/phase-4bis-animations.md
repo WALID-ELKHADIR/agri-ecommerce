@@ -59,6 +59,20 @@ Aucune régression mesurable. Comme en phase 4, le score Performance local n'est
   - aucune erreur JavaScript.
 - [x] E2E de la phase 4 entièrement repassé : liste de devis, enregistrement des clics, filtres
 - [x] Pas de régression Lighthouse
+- [x] Revue de code de toute la branche : aucun point critique. 5 points corrigés, chacun avec un test qui échouait avant la correction :
+  - toast invisible qui captait les clics ;
+  - inclinaison bloquée sur les cartes apparues au défilement ;
+  - couche 3D inutile sur mobile ;
+  - logo rejoué à chaque retour sur l'accueil ;
+  - anneau de pulsation qui débordait de l'écran.
+
+## Points mineurs reportés (relevés par la revue)
+- L'inclinaison d'une carte peut rester figée si la souris quitte la fenêtre.
+- Navigateurs sans timelines de défilement (repli) :
+  - l'apparition peut se rejouer si le navigateur restaure la position de défilement après le chargement ;
+  - la transition d'apparition ralentit l'inclinaison des cartes.
+- Toast : un même produit ajouté deux fois n'est pas réannoncé aux lecteurs d'écran ; la minuterie ne se suspend pas au survol.
+- Petits restes : attribut `data-count-to` inutilisé ; écouteur de défilement du header actif même en mouvement réduit.
 - [ ] Performance ≥ 95 : à confirmer avec PageSpeed Insights sur Vercel
 
 ## Dépendances ajoutées
