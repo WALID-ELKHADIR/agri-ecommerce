@@ -20,3 +20,12 @@ test("métadonnées de page : canonique, Open Graph marocain, indexation", () =>
   const hidden = pageMetadata({ title: "x", description: "y", path: "/produits", siteUrl: "https://saqia.site", noindex: true });
   assert.deepEqual(hidden.robots, { index: false, follow: true });
 });
+
+test("plan du site : pages publiques et produits, jamais les pages internes", async () => {
+  const { sitemapEntries } = await import("../lib/seo.ts");
+  const urls = sitemapEntries([{ slug: "pompe-a" }, { slug: "te-pvc" }], "https://saqia.site").map((e) => e.url);
+  for (const expected of ["https://saqia.site/", "https://saqia.site/produits", "https://saqia.site/contact", "https://saqia.site/produits/pompe-a", "https://saqia.site/produits/te-pvc"]) {
+    assert.ok(urls.includes(expected), expected);
+  }
+  assert.ok(urls.every((url) => !/\/(brand|design|admin)/.test(url)));
+});

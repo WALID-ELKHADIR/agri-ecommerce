@@ -42,3 +42,26 @@ export function pageMetadata(input: {
     ...(input.noindex ? { robots: { index: false, follow: true } } : {}),
   };
 }
+
+type SitemapEntry = { url: string; changeFrequency: "weekly" | "monthly"; priority: number };
+
+/**
+ * Entrées du plan du site : pages publiques et produits publiés.
+ * Pas de date de modification (aucune date fiable) ; les pages internes
+ * (/brand, /design, /admin) n'y figurent jamais.
+ */
+export function sitemapEntries(products: { slug: string }[], siteUrl: string): SitemapEntry[] {
+  const pages: SitemapEntry[] = [
+    { url: absoluteUrl("/", siteUrl), changeFrequency: "weekly", priority: 1 },
+    { url: absoluteUrl("/produits", siteUrl), changeFrequency: "weekly", priority: 0.9 },
+    { url: absoluteUrl("/contact", siteUrl), changeFrequency: "monthly", priority: 0.5 },
+  ];
+  return [
+    ...pages,
+    ...products.map((product) => ({
+      url: absoluteUrl(`/produits/${product.slug}`, siteUrl),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    })),
+  ];
+}
