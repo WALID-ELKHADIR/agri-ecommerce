@@ -1,5 +1,6 @@
 import { ClickTracker } from "@/components/click-tracker";
 import { Motion } from "@/components/motion";
+import { SwRegister } from "@/components/sw-register";
 import { WhatsappProvider } from "@/components/whatsapp-provider";
 import { siteConfig } from "@/lib/site-config";
 import { getSiteSettings } from "@/lib/site-settings";
@@ -59,6 +60,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           {children}
           <ClickTracker />
           <Motion />
+          <SwRegister />
         </WhatsappProvider>
       </body>
     </html>
