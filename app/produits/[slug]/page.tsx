@@ -58,6 +58,8 @@ export async function generateMetadata({
     description: product.description,
     path: `/produits/${product.slug}`,
     siteUrl: siteConfig.siteUrl,
+    // Image de partage propre à la fiche (app/produits/[slug]/opengraph-image.tsx).
+    image: `/produits/${product.slug}/opengraph-image`,
   });
 }
 

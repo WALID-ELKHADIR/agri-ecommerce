@@ -78,3 +78,29 @@ test("JSON-LD : un texte avec </script> ne ferme pas la balise", async () => {
   assert.equal(out.includes("</script"), false);
   assert.equal(JSON.parse(out).name, 'Pompe "A" </script><script>alert(1)</script>');
 });
+
+test("JSON-LD entreprise : logo hors des chemins bloqués par robots.txt", async () => {
+  const { organizationJsonLd } = await import("../lib/seo.ts");
+  const data = organizationJsonLd(SETTINGS, "https://saqia.site") as Record<string, unknown>;
+  for (const blocked of ["/admin", "/brand", "/design"]) {
+    assert.equal(new URL(String(data.logo)).pathname.startsWith(blocked), false, String(data.logo));
+  }
+});
+
+test("JSON-LD entreprise : coordonnées provisoires jamais publiées comme des faits", async () => {
+  const { organizationJsonLd } = await import("../lib/seo.ts");
+  const fallback = { phoneRaw: "+212600000000", email: "contact@saqia.com", address: "Casablanca, Maroc — livraison nationale" };
+  const data = organizationJsonLd({ name: "Saqia", ...fallback }, "https://saqia.site", fallback) as Record<string, unknown>;
+  for (const key of ["telephone", "email", "address", "contactPoint"]) assert.equal(key in data, false, key);
+  const real = organizationJsonLd({ name: "Saqia", phoneRaw: "+212661234567", email: "ventes@saqia.site", address: "Agadir" }, "https://saqia.site", fallback) as Record<string, unknown>;
+  assert.equal(real.telephone, "+212661234567");
+  assert.equal(real.email, "ventes@saqia.site");
+});
+
+test("chemin d'image locale : jamais en dehors de public/", async () => {
+  const { publicFilePath } = await import("../lib/seo.ts");
+  const root = "/srv/app/public";
+  assert.equal(publicFilePath("/images/products/a/main.webp", root), "/srv/app/public/images/products/a/main.webp");
+  assert.equal(publicFilePath("/../../etc/passwd", root), null);
+  assert.equal(publicFilePath("/images/../../.env.local", root), null);
+});

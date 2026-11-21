@@ -24,7 +24,9 @@ export function pageMetadata(input: {
   image?: string;
 }): Metadata {
   const url = absoluteUrl(input.path, input.siteUrl);
-  const images = input.image ? [{ url: absoluteUrl(input.image, input.siteUrl) }] : undefined;
+  // Un openGraph de page remplace celui du parent : l'image de la racine est
+  // reprise par défaut (une image de dossier, comme celle des fiches, prime).
+  const images = [{ url: absoluteUrl(input.image ?? "/opengraph-image", input.siteUrl) }];
   return {
     title: input.title,
     description: input.description,
@@ -36,9 +38,9 @@ export function pageMetadata(input: {
       url,
       title: input.title,
       description: input.description,
-      ...(images ? { images } : {}),
+      images,
     },
-    twitter: { card: "summary_large_image", title: input.title, description: input.description },
+    twitter: { card: "summary_large_image", title: input.title, description: input.description, images: images.map((image) => image.url) },
     ...(input.noindex ? { robots: { index: false, follow: true } } : {}),
   };
 }
@@ -69,27 +71,44 @@ export function sitemapEntries(products: { slug: string }[], siteUrl: string): S
 type JsonLd = Record<string, unknown>;
 
 /** Entreprise : identité et moyens de contact (aucune note, aucun avis). */
+type Contact = { phoneRaw: string; email: string; address: string };
+
+/**
+ * Entreprise : identité et moyens de contact (aucune note, aucun avis).
+ * Une coordonnée encore égale à sa valeur provisoire (`placeholders`, les
+ * valeurs par défaut du code) n'est pas publiée : ce serait un fait inventé.
+ * Le logo est servi depuis /icons (non bloqué par robots.txt).
+ */
 export function organizationJsonLd(
-  settings: { name: string; phoneRaw: string; email: string; address: string },
+  settings: { name: string } & Contact,
   siteUrl: string,
+  placeholders?: Contact,
 ): JsonLd {
+  const real = (key: keyof Contact) => (settings[key] && settings[key] !== placeholders?.[key] ? settings[key] : null);
+  const telephone = real("phoneRaw");
+  const email = real("email");
+  const address = real("address");
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: settings.name,
     url: absoluteUrl("/", siteUrl),
-    logo: absoluteUrl("/brand/logo-full.png", siteUrl),
-    telephone: settings.phoneRaw,
-    email: settings.email,
-    address: settings.address,
+    logo: absoluteUrl("/icons/icon-512.png", siteUrl),
     areaServed: "MA",
-    contactPoint: {
-      "@type": "ContactPoint",
-      telephone: settings.phoneRaw,
-      contactType: "sales",
-      areaServed: "MA",
-      availableLanguage: ["French", "Arabic"],
-    },
+    ...(telephone ? { telephone } : {}),
+    ...(email ? { email } : {}),
+    ...(address ? { address } : {}),
+    ...(telephone
+      ? {
+          contactPoint: {
+            "@type": "ContactPoint",
+            telephone,
+            contactType: "sales",
+            areaServed: "MA",
+            availableLanguage: ["French", "Arabic"],
+          },
+        }
+      : {}),
   };
 }
 
@@ -131,4 +150,23 @@ export function breadcrumbJsonLd(items: { name: string; path: string }[], siteUr
 export function jsonLdScript(data: JsonLd): string {
   // Chaque < devient la séquence d'échappement Unicode u003c (barre oblique inverse écrite par son code).
   return JSON.stringify(data).replace(/</g, `${String.fromCharCode(92)}u003c`);
+}
+
+/**
+ * Chemin d'un fichier de public/ à partir d'une URL locale (« /images/… »),
+ * ou null s'il sortirait du dossier (« /../ »).
+ */
+export function publicFilePath(src: string, publicRoot: string): string | null {
+  const NUL = String.fromCharCode(0);
+  const BACKSLASH = String.fromCharCode(92);
+  if (!src.startsWith("/") || src.includes(NUL) || src.includes(BACKSLASH)) return null;
+  const segments: string[] = [];
+  for (const segment of src.split("/")) {
+    if (segment === "" || segment === ".") continue;
+    if (segment === "..") return null;
+    segments.push(segment);
+  }
+  let root = publicRoot;
+  while (root.endsWith("/") || root.endsWith(BACKSLASH)) root = root.slice(0, -1);
+  return `${root}/${segments.join("/")}`;
 }

@@ -1,8 +1,10 @@
 // Service worker Saqia — volontairement minimal.
-// Seule la page /hors-ligne est mise en cache : les autres pages viennent
+// Seule la page /hors-ligne.html est mise en cache : les autres pages viennent
 // toujours du réseau, donc jamais de contenu périmé après un déploiement.
-const CACHE = "saqia-hors-ligne-v1";
-const OFFLINE_URL = "/hors-ligne";
+// Changez la version du cache à chaque modification de public/hors-ligne.html.
+const CACHE = "saqia-hors-ligne-v2";
+// Page autonome (styles intégrés) : aucune dépendance aux fichiers de build.
+const OFFLINE_URL = "/hors-ligne.html";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

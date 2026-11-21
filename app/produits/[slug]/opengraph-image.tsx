@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { BRAND_COLORS, logoSvgDocument } from "@/lib/brand/logo-svg";
 import { getProductBySlug } from "@/lib/catalog-data";
+import { publicFilePath } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-config";
 
 export const alt = `Produit ${siteConfig.name} — devis gratuit sur WhatsApp`;
@@ -19,8 +20,11 @@ type Props = { params: Promise<{ slug: string }> };
  */
 async function productPhoto(src: string): Promise<string | null> {
   try {
-    const input = src.startsWith("/")
-      ? await readFile(join(process.cwd(), "public", src))
+    // Fichier local : jamais en dehors de public/ (chemin saisi dans l'admin).
+    const local = src.startsWith("/") ? publicFilePath(src, join(process.cwd(), "public")) : null;
+    if (src.startsWith("/") && !local) return null;
+    const input = local
+      ? await readFile(local)
       : await fetch(src).then(async (response) => (response.ok ? Buffer.from(await response.arrayBuffer()) : null));
     if (!input) return null;
     const { default: sharp } = await import("sharp");
