@@ -11,11 +11,14 @@ import {
   Phone,
   Search,
   WhatsApp,
-  X,
 } from "@/components/icons";
 import { Logo } from "@/components/brand/logo";
-import { catalogFilters } from "@/lib/catalog-filters";
-import { BRAND, generalMessage, whatsappLink } from "@/lib/catalog";
+import { catalogHref } from "@/lib/catalog-query";
+import { BRAND, generalMessage } from "@/lib/catalog";
+import { QuoteCounter } from "@/components/quote-list/quote-counter";
+import { QuoteDrawer } from "@/components/quote-list/quote-drawer";
+import { Sheet } from "@/components/ui/dialog";
+import { WhatsAppLink } from "@/components/whatsapp-link";
 
 const links = [
   { href: "/", label: "Accueil" },
@@ -33,15 +36,11 @@ export function SiteHeader() {
 
   function handleChange(value: string) {
     setTerm(value);
-    if (pathname === "/produits") {
-      catalogFilters.setQuery(value);
-    }
   }
 
   function submitSearch(event: FormEvent) {
     event.preventDefault();
-    catalogFilters.set({ query: term.trim(), category: "all" });
-    router.push("/produits");
+    router.push(catalogHref({ q: term.trim().slice(0, 80) }));
     setOpen(false);
   }
 
@@ -70,10 +69,10 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <header className="sticky top-0 z-50 border-b border-soil-200/80 bg-soil-50/90 backdrop-blur-xl">
+      <header className="site-header-shell sticky top-0 z-50 border-b border-soil-200/80 bg-soil-50/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
           <Link href="/" aria-label="Saqia — accueil" className="flex min-h-11 items-center">
-            <Logo className="h-9 w-auto" />
+            <Logo className="site-header-logo h-9 w-auto" animated={pathname === "/"} />
           </Link>
 
           <nav className="ml-6 hidden items-center gap-0.5 lg:flex">
@@ -128,34 +127,34 @@ export function SiteHeader() {
               </button>
             </form>
 
-            <a
-              href={whatsappLink(generalMessage())}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-whatsapp-hover sm:inline-flex"
+            <WhatsAppLink
+              source="header"
+              message={generalMessage()}
+              className="wa-pulse hidden items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-whatsapp-hover sm:inline-flex"
             >
               <WhatsApp className="h-4 w-4" />
               Devis WhatsApp
-            </a>
+            </WhatsAppLink>
+
+            <QuoteCounter />
 
             <button
               type="button"
               onClick={() => setOpen((value) => !value)}
               className="flex h-11 w-11 items-center justify-center rounded-full border border-soil-300/80 bg-white text-soil-900 transition hover:bg-soil-50 lg:hidden"
+              aria-haspopup="dialog"
               aria-expanded={open}
-              aria-controls="mobile-menu"
-              aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+              aria-label="Ouvrir le menu"
             >
-              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              <Menu className="h-5 w-5" />
             </button>
           </div>
         </div>
 
-        {open ? (
-          <div
-            id="mobile-menu"
-            className="border-t border-soil-200 bg-soil-50 px-4 pb-4 pt-3 lg:hidden"
-          >
+      </header>
+      {/* Menu mobile : tiroir latéral animé (Sheet natif <dialog>). */}
+      <Sheet side="right" open={open} onClose={() => setOpen(false)} title="Menu">
+          <div id="mobile-menu">
             <form
               onSubmit={submitSearch}
               className="flex min-h-11 items-center gap-2 rounded-2xl border border-soil-300/80 bg-white px-3.5 py-2.5 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-water-600"
@@ -195,15 +194,14 @@ export function SiteHeader() {
             </nav>
 
             <div className="mt-3 grid gap-2">
-              <a
-                href={whatsappLink(generalMessage())}
-                target="_blank"
-                rel="noopener noreferrer"
+              <WhatsAppLink
+                source="header"
+                message={generalMessage()}
                 className="flex items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-3 text-sm font-semibold text-white"
               >
                 <WhatsApp className="h-4 w-4" />
                 Demander un devis
-              </a>
+              </WhatsAppLink>
               <a
                 href={`tel:${BRAND.phoneRaw}`}
                 className="flex items-center justify-center gap-2 rounded-xl border border-soil-300 bg-white px-4 py-3 text-sm font-semibold text-soil-900"
@@ -213,8 +211,8 @@ export function SiteHeader() {
               </a>
             </div>
           </div>
-        ) : null}
-      </header>
+      </Sheet>
+      <QuoteDrawer />
     </>
   );
 }

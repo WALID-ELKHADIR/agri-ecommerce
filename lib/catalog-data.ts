@@ -28,6 +28,7 @@ type CategoryRow = {
   label: string;
   short: string;
   description: string;
+  image_url: string | null;
 };
 
 type ProductRow = {
@@ -95,7 +96,7 @@ async function loadCatalog(): Promise<Catalog> {
     const [categoriesResult, productsResult, galleryResult] = await Promise.all([
       supabase
         .from("categories")
-        .select("id, label, short, description, position")
+        .select("id, label, short, description, image_url, position")
         .order("position", { ascending: true }),
       supabase
         .from("products")
@@ -132,6 +133,7 @@ async function loadCatalog(): Promise<Catalog> {
         label: row.label,
         short: row.short,
         description: row.description,
+        ...(row.image_url ? { imageUrl: row.image_url } : {}),
       })),
     ];
 

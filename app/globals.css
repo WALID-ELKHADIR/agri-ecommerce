@@ -225,6 +225,11 @@ body {
   }
 }
 
+html[data-logo-seen] .saqia-logo-animated .saqia-channel {
+  animation: none;
+  stroke-dashoffset: 0;
+}
+
 @keyframes saqia-channel-draw {
   to {
     stroke-dashoffset: 0;
@@ -259,5 +264,217 @@ html:has(dialog[open]) {
     transition-delay: 0ms !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Compteur de la liste de devis : rebond bref à chaque ajout. */
+@keyframes quote-bump {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .quote-bump {
+    animation: quote-bump 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+/* ==========================================================================
+   Phase 4bis — animations (transform et opacity uniquement)
+   Sans JavaScript ni prise en charge du navigateur, tout reste visible.
+   ========================================================================== */
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Apparition liée au défilement : un élément déjà visible au chargement
+     est d'emblée à la fin de sa plage, donc jamais caché. Cascade : chaque
+     rang (--i) décale la plage. */
+  @supports (animation-timeline: view()) {
+    [data-reveal] {
+      /* backwards : caché avant la plage, puis aucun effet après (le transform
+         de l'inclinaison et le translate du survol restent libres). */
+      animation: reveal-in linear backwards;
+      animation-timeline: view();
+      animation-range: entry calc(var(--i, 0) * 4%) entry calc(55% + var(--i, 0) * 4%);
+    }
+  }
+
+  /* Repli (IntersectionObserver de components/motion.tsx) : seuls les
+     éléments sous la flottaison reçoivent data-hidden au montage. */
+  html.motion-js [data-reveal][data-hidden] {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  html.motion-js [data-reveal] {
+    transition:
+      opacity 500ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--i, 0) * 70ms);
+  }
+
+  /* Parallaxe discrète des grandes images, sur ordinateur seulement. */
+  @media (min-width: 1024px) {
+    @supports (animation-timeline: view()) {
+      .parallax {
+        animation: parallax-shift linear both;
+        animation-timeline: view();
+        animation-range: cover;
+      }
+    }
+  }
+
+  /* Pulsation WhatsApp : un anneau bref toutes les 8 s, au repos sinon. */
+  .wa-pulse {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .wa-pulse::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--color-whatsapp);
+    opacity: 0;
+    pointer-events: none;
+    animation: wa-pulse 8s cubic-bezier(0.22, 1, 0.36, 1) 2s infinite;
+  }
+
+  /* Header compact : ombre et logo réduit dès le début du défilement. */
+  @supports (animation-timeline: scroll()) {
+    .site-header-shell::after {
+      animation: header-shadow linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 80px;
+    }
+
+    .site-header-shell .site-header-logo {
+      animation: header-logo linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 80px;
+    }
+  }
+
+  html[data-scrolled] .site-header-shell::after {
+    opacity: 1;
+  }
+
+  html[data-scrolled] .site-header-shell .site-header-logo {
+    transform: scale(0.88);
+  }
+
+  /* Inclinaison 3D des cartes (variables posées par components/motion.tsx),
+     seulement avec une souris : aucune couche 3D sur mobile. */
+  @media (hover: hover) and (pointer: fine) {
+  [data-tilt] {
+    transform: perspective(800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition:
+      transform 150ms ease-out,
+      translate 300ms ease-out,
+      scale 150ms ease-out,
+      box-shadow 300ms ease-out,
+      border-color 300ms ease-out;
+  }
+  }
+
+  /* Morph carte → fiche (<ViewTransition share="morph">). */
+  ::view-transition-group(.morph) {
+    animation-duration: 380ms;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+.site-header-shell::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -12px;
+  height: 12px;
+  background: linear-gradient(to bottom, rgb(26 44 24 / 0.08), transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.site-header-logo {
+  transform-origin: left center;
+  transition: transform 200ms ease-out;
+}
+
+/* Pastille qui vole vers « Ma liste » à l'ajout au devis. */
+.quote-flight {
+  position: fixed;
+  z-index: 60;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border-radius: 9999px;
+  background: var(--color-whatsapp);
+  box-shadow: 0 4px 14px rgb(26 44 24 / 0.25);
+  pointer-events: none;
+}
+
+@keyframes parallax-shift {
+  from {
+    transform: translateY(-6%) scale(1.12);
+  }
+  to {
+    transform: translateY(6%) scale(1.12);
+  }
+}
+
+@keyframes wa-pulse {
+  0% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  7.5% {
+    opacity: 0;
+    transform: scale(1.06, 1.4);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.06, 1.4);
+  }
+}
+
+@keyframes header-shadow {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes header-logo {
+  to {
+    transform: scale(0.88);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-tilt] {
+    transform: none !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

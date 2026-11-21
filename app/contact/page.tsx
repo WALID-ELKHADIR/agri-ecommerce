@@ -11,6 +11,7 @@ import {
 import { MobileCta } from "@/components/mobile-cta";
 import { QuoteForm } from "@/components/quote-form";
 import { SiteHeader } from "@/components/site-header";
+import { WhatsAppServerLink } from "@/components/whatsapp-server-link";
 import { SiteFooterWithSettings } from "@/components/site-footer-server";
 import { generalMessage } from "@/lib/catalog";
 import { whatsappUrl, type SiteConfig } from "@/lib/site-config";
@@ -88,12 +89,43 @@ export default async function ContactPage() {
                 {channels.map((channel) => {
                   const Icon = channel.icon;
                   return (
+                    channel.accent ? (
+                      <WhatsAppServerLink
+                        key={channel.title}
+                        source="contact"
+                        message={generalMessage()}
+                        className={`flex items-start gap-3 rounded-2xl border p-4 transition ${
+                        channel.accent
+                          ? "border-whatsapp/30 bg-white hover:border-whatsapp"
+                          : "border-soil-200 bg-white hover:border-water-300"
+                      }`}
+                      >
+                      <span
+                        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
+                          channel.accent
+                            ? "bg-whatsapp/10 text-whatsapp"
+                            : "bg-water-50 text-water-700"
+                        }`}
+                      >
+                        <Icon className="h-5 w-5" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-soil-500">
+                          {channel.title}
+                        </p>
+                        <p className="truncate text-sm font-semibold text-soil-900">
+                          {channel.value}
+                        </p>
+                        <p className="mt-0.5 text-xs text-soil-500">
+                          {channel.text}
+                        </p>
+                      </div>
+                      </WhatsAppServerLink>
+                    ) : (
                     <a
                       key={channel.title}
                       href={channel.href}
-                      {...(channel.external
-                        ? { target: "_blank", rel: "noopener noreferrer" }
-                        : {})}
+                      {...(channel.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                       className={`flex items-start gap-3 rounded-2xl border p-4 transition ${
                         channel.accent
                           ? "border-whatsapp/30 bg-white hover:border-whatsapp"
@@ -121,6 +153,7 @@ export default async function ContactPage() {
                         </p>
                       </div>
                     </a>
+                    )
                   );
                 })}
               </div>
